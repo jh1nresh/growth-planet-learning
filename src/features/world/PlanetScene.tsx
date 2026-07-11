@@ -1,8 +1,18 @@
-import {Canvas, useThree} from '@react-three/fiber';
-import {Line, Stars, useTexture} from '@react-three/drei';
+import {Canvas, useFrame, useLoader, useThree} from '@react-three/fiber';
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import type {ReactNode} from 'react';
 import type {PointerEvent as ReactPointerEvent} from 'react';
-import {PlaneGeometry, QuadraticBezierCurve3, SRGBColorSpace, Vector3} from 'three';
+import {
+  BufferGeometry,
+  Float32BufferAttribute,
+  Group,
+  MathUtils,
+  PlaneGeometry,
+  QuadraticBezierCurve3,
+  SRGBColorSpace,
+  TextureLoader,
+  Vector3,
+} from 'three';
 import {getRegionDependencyEdges, getRegionStatus} from '../../lib/curriculum';
 import type {Subject, WorldRegion} from '../../types';
 
@@ -85,7 +95,7 @@ function getAtlasPosition(point: AtlasPoint, dimensions: AtlasDimensions, height
 }
 
 function CurvedAtlas({portrait, dimensions}: {portrait: boolean; dimensions: AtlasDimensions}) {
-  const texture = useTexture(portrait ? '/assets/growth-planet-illustrated-atlas-mobile.webp' : '/assets/growth-planet-illustrated-atlas.webp');
+  const texture = useLoader(TextureLoader, portrait ? '/assets/growth-planet-illustrated-atlas-mobile.webp' : '/assets/growth-planet-illustrated-atlas.webp');
   const geometry = useMemo(() => {
     const nextGeometry = new PlaneGeometry(dimensions.width, dimensions.height, 48, 48);
     const positions = nextGeometry.attributes.position;
@@ -106,6 +116,29 @@ function CurvedAtlas({portrait, dimensions}: {portrait: boolean; dimensions: Atl
     <mesh geometry={geometry} renderOrder={0}>
       <meshBasicMaterial map={texture} toneMapped={false} />
     </mesh>
+  );
+}
+
+function StarField() {
+  const geometry = useMemo(() => {
+    const positions: number[] = [];
+
+    for (let index = 0; index < 360; index += 1) {
+      const radius = 10 + Math.random() * 14;
+      const angle = Math.random() * Math.PI * 2;
+      const height = (Math.random() - 0.5) * 14;
+      positions.push(Math.cos(angle) * radius, height, Math.sin(angle) * radius - 8);
+    }
+
+    const nextGeometry = new BufferGeometry();
+    nextGeometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    return nextGeometry;
+  }, []);
+
+  return (
+    <points geometry={geometry}>
+      <pointsMaterial color="#dce8ef" size={0.035} transparent opacity={0.72} sizeAttenuation depthWrite={false} />
+    </points>
   );
 }
 
@@ -151,31 +184,61 @@ function SkillEdge({
   source,
   target,
   selected,
+  muted,
   active,
   hard,
 }: {
   source: Vector3;
   target: Vector3;
   selected: boolean;
+  muted: boolean;
   active: boolean;
   hard: boolean;
 }) {
-  const midpoint = source.clone().lerp(target, 0.5);
-  midpoint.z += selected ? 0.24 : 0.16;
-  const points = new QuadraticBezierCurve3(source, midpoint, target).getPoints(24);
+  const curve = useMemo(() => {
+    const midpoint = source.clone().lerp(target, 0.5);
+    midpoint.z += selected ? 0.24 : 0.16;
+    return new QuadraticBezierCurve3(source, midpoint, target);
+  }, [selected, source.x, source.y, source.z, target.x, target.y, target.z]);
   const color = active ? '#f7d77c' : hard ? '#87989b' : '#68777b';
 
   return (
-    <Line
-      points={points}
-      color={color}
-      lineWidth={selected ? 1.35 : hard ? 0.85 : 0.6}
-      transparent
-      opacity={selected ? 0.72 : active ? 0.42 : 0.2}
-      depthTest={false}
-      renderOrder={2}
-    />
+    <mesh renderOrder={2}>
+      <tubeGeometry args={[curve, 24, selected ? 0.009 : hard ? 0.0055 : 0.004, 5, false]} />
+      <meshBasicMaterial
+        color={color}
+        transparent
+        opacity={selected ? 0.84 : muted ? 0.09 : active ? 0.42 : 0.2}
+        depthTest={false}
+        depthWrite={false}
+      />
+    </mesh>
   );
+}
+
+function FocusedAtlas({target, reducedMotion, children}: {target: Vector3; reducedMotion: boolean; children: ReactNode}) {
+  const groupRef = useRef<Group>(null);
+  const targetScale = target.lengthSq() > 0 ? 1.045 : 1;
+
+  useEffect(() => {
+    const group = groupRef.current;
+    if (reducedMotion && group) {
+      group.position.copy(target);
+      group.scale.setScalar(targetScale);
+    }
+  }, [reducedMotion, target, targetScale]);
+
+  useFrame((_, delta) => {
+    const group = groupRef.current;
+    if (!group || reducedMotion) return;
+    group.position.x = MathUtils.damp(group.position.x, target.x, 16, delta);
+    group.position.y = MathUtils.damp(group.position.y, target.y, 16, delta);
+    group.position.z = MathUtils.damp(group.position.z, target.z, 16, delta);
+    const scale = MathUtils.damp(group.scale.x, targetScale, 16, delta);
+    group.scale.setScalar(scale);
+  });
+
+  return <group ref={groupRef}>{children}</group>;
 }
 
 function WorldScene({activeSubject, completedMissionIds, regions, selectedRegionId, onSelectRegion, reducedMotion, view}: SceneProps & {view: AtlasView}) {
@@ -191,48 +254,57 @@ function WorldScene({activeSubject, completedMissionIds, regions, selectedRegion
   const regionById = new Map(visibleRegions.map((region) => [region.id, region]));
   const edges = getRegionDependencyEdges(activeSubject).filter((edge) => regionById.has(edge.sourceRegionId) && regionById.has(edge.targetRegionId));
   const rotationMultiplier = reducedMotion ? 0.9 : 1.7;
+  const focusTarget = useMemo(() => {
+    const point = selectedRegionId ? points[selectedRegionId] : null;
+    if (!point) return new Vector3();
+    const position = getAtlasPosition(point, dimensions);
+    return new Vector3(position.x * -0.18, position.y * -0.18, 0);
+  }, [dimensions, points, selectedRegionId]);
 
   return (
     <>
       <color attach="background" args={['#040b14']} />
       <ambientLight intensity={0.88} />
       <directionalLight position={[-3, 4, 6]} intensity={0.75} color="#ffe5ae" />
-      <Stars radius={24} depth={14} count={360} factor={1.35} saturation={0.15} fade speed={0} />
+      <StarField />
       <group
         rotation={[view.polarOffset * -rotationMultiplier, view.azimuth * rotationMultiplier, 0]}
         scale={view.zoom}
       >
-        <CurvedAtlas portrait={portrait} dimensions={dimensions} />
-        {edges.map((edge) => {
-          const sourcePoint = points[edge.sourceRegionId];
-          const targetPoint = points[edge.targetRegionId];
-          const sourceRegion = regionById.get(edge.sourceRegionId);
-          const targetRegion = regionById.get(edge.targetRegionId);
-          if (!sourcePoint || !targetPoint || !sourceRegion || !targetRegion) return null;
-          const sourceStatus = getRegionStatus(sourceRegion, completedMissionIds);
-          const targetStatus = getRegionStatus(targetRegion, completedMissionIds);
-          return (
-            <SkillEdge
-              key={`${edge.sourceRegionId}-${edge.targetRegionId}`}
-              source={getAtlasPosition(sourcePoint, dimensions, 0.1)}
-              target={getAtlasPosition(targetPoint, dimensions, 0.1)}
-              selected={edge.strength === 'hard' && (selectedRegionId === edge.sourceRegionId || selectedRegionId === edge.targetRegionId)}
-              active={sourceStatus === 'complete' || targetStatus === 'available' || targetStatus === 'complete'}
-              hard={edge.strength === 'hard'}
+        <FocusedAtlas target={focusTarget} reducedMotion={reducedMotion}>
+          <CurvedAtlas portrait={portrait} dimensions={dimensions} />
+          {edges.map((edge) => {
+            const sourcePoint = points[edge.sourceRegionId];
+            const targetPoint = points[edge.targetRegionId];
+            const sourceRegion = regionById.get(edge.sourceRegionId);
+            const targetRegion = regionById.get(edge.targetRegionId);
+            if (!sourcePoint || !targetPoint || !sourceRegion || !targetRegion) return null;
+            const sourceStatus = getRegionStatus(sourceRegion, completedMissionIds);
+            const targetStatus = getRegionStatus(targetRegion, completedMissionIds);
+            return (
+              <SkillEdge
+                key={`${edge.sourceRegionId}-${edge.targetRegionId}`}
+                source={getAtlasPosition(sourcePoint, dimensions, 0.1)}
+                target={getAtlasPosition(targetPoint, dimensions, 0.1)}
+                selected={edge.strength === 'hard' && (selectedRegionId === edge.sourceRegionId || selectedRegionId === edge.targetRegionId)}
+                muted={Boolean(selectedRegionId) && selectedRegionId !== edge.sourceRegionId && selectedRegionId !== edge.targetRegionId}
+                active={sourceStatus === 'complete' || targetStatus === 'available' || targetStatus === 'complete'}
+                hard={edge.strength === 'hard'}
+              />
+            );
+          })}
+          {visibleRegions.map((region) => (
+            <AtlasNode
+              key={region.id}
+              point={points[region.id]}
+              dimensions={dimensions}
+              region={region}
+              selected={selectedRegionId === region.id}
+              status={getRegionStatus(region, completedMissionIds)}
+              onSelect={() => onSelectRegion(region.id)}
             />
-          );
-        })}
-        {visibleRegions.map((region) => (
-          <AtlasNode
-            key={region.id}
-            point={points[region.id]}
-            dimensions={dimensions}
-            region={region}
-            selected={selectedRegionId === region.id}
-            status={getRegionStatus(region, completedMissionIds)}
-            onSelect={() => onSelectRegion(region.id)}
-          />
-        ))}
+          ))}
+        </FocusedAtlas>
       </group>
     </>
   );

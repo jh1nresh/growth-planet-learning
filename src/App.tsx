@@ -28,7 +28,7 @@ const playableMathMissionIds = new Set(missions.filter((mission) => mathRegions.
 function PlanetLoading() {
   return (
     <div className="planet-loading" role="status">
-      <img src="/assets/growth-planet-illustrated-atlas.jpg" alt="" />
+      <div className="planet-loading-art" aria-hidden="true" />
       <span>正在組裝 3D 成長星球…</span>
     </div>
   );
