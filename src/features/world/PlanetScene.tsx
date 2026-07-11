@@ -1,6 +1,6 @@
 import {Canvas, useLoader, useThree} from '@react-three/fiber';
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import type {PointerEvent as ReactPointerEvent} from 'react';
+import type {PointerEvent as ReactPointerEvent, ReactNode} from 'react';
 import {
   BackSide,
   BufferGeometry,
@@ -158,6 +158,70 @@ function StarField() {
   );
 }
 
+function SurfaceGroup({latitude, longitude, radius, children}: {latitude: number; longitude: number; radius: number; children: ReactNode}) {
+  const normal = useMemo(() => latLonToVector3(latitude, longitude, 1), [latitude, longitude]);
+  const position = useMemo(() => normal.clone().multiplyScalar(radius), [normal, radius]);
+  const orientation = useMemo(() => new Quaternion().setFromUnitVectors(SURFACE_NORMAL, normal), [normal]);
+  return <group position={position} quaternion={orientation}>{children}</group>;
+}
+
+function MathTerrain({regions, radius}: {regions: WorldRegion[]; radius: number}) {
+  return (
+    <>
+      {regions.map((region, index) => (
+        <SurfaceGroup key={`terrain-${region.id}`} latitude={region.latitude} longitude={region.longitude} radius={radius + 0.015}>
+          <mesh scale={[0.5 + (index % 3) * 0.07, 0.38 + (index % 2) * 0.07, 0.14]}>
+            <icosahedronGeometry args={[1, 1]} />
+            <meshStandardMaterial color={index % 2 ? '#58713d' : '#6f8448'} roughness={0.94} />
+          </mesh>
+        </SurfaceGroup>
+      ))}
+    </>
+  );
+}
+
+function LandmarkGeometry({region}: {region: WorldRegion}) {
+  const stone = '#927b5b';
+  if (region.id === 'place_value_tower') return (
+    <group>
+      <mesh position={[0, 0, 0.16]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.07, 0.1, 0.3, 10]} />
+        <meshStandardMaterial color="#bd9655" roughness={0.7} metalness={0.08} />
+      </mesh>
+      <mesh position={[0, 0, 0.36]} rotation={[Math.PI / 2, 0, 0]}>
+        <coneGeometry args={[0.11, 0.16, 10]} />
+        <meshStandardMaterial color="#315f78" roughness={0.58} />
+      </mesh>
+    </group>
+  );
+  if (region.id === 'bundle_bridge') return (
+    <group>
+      <mesh position={[0, 0, 0.13]}><boxGeometry args={[0.32, 0.08, 0.05]} /><meshStandardMaterial color="#a66e3d" roughness={0.82} /></mesh>
+      {[-0.12, 0.12].map((x) => <mesh key={x} position={[x, 0, 0.07]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.025, 0.035, 0.14, 7]} /><meshStandardMaterial color={stone} /></mesh>)}
+    </group>
+  );
+  if (region.id === 'operations_forest') return (
+    <group>
+      {[-0.12, 0, 0.13].map((x, index) => <mesh key={x} position={[x, index % 2 ? 0.06 : -0.04, 0.13]} rotation={[Math.PI / 2, 0, 0]}><coneGeometry args={[0.07, 0.22 + index * 0.03, 7]} /><meshStandardMaterial color={index % 2 ? '#397047' : '#4d844c'} roughness={0.95} /></mesh>)}
+    </group>
+  );
+  if (region.id === 'supply_station') return (
+    <group>
+      {[-0.13, 0, 0.14].map((x, index) => <mesh key={x} position={[x, index % 2 ? 0.08 : -0.03, 0.12 + index * 0.035]} rotation={[Math.PI / 2, 0, 0]}><coneGeometry args={[0.11, 0.28 + index * 0.08, 6]} /><meshStandardMaterial color={index === 1 ? '#d9dfd9' : '#8e9a92'} roughness={0.9} /></mesh>)}
+    </group>
+  );
+  return (
+    <group>
+      <mesh position={[0, 0, 0.11]}><boxGeometry args={[0.16, 0.14, 0.18]} /><meshStandardMaterial color={stone} roughness={0.85} /></mesh>
+      <mesh position={[0, 0, 0.24]} rotation={[Math.PI / 2, 0, 0]}><coneGeometry args={[0.12, 0.12, 6]} /><meshStandardMaterial color={region.color} roughness={0.65} /></mesh>
+    </group>
+  );
+}
+
+function MathLandmarks({regions, radius}: {regions: WorldRegion[]; radius: number}) {
+  return <>{regions.map((region) => <SurfaceGroup key={`landmark-${region.id}`} latitude={region.latitude} longitude={region.longitude} radius={radius + 0.08}><LandmarkGeometry region={region} /></SurfaceGroup>)}</>;
+}
+
 function GlobeNode({
   radius,
   region,
@@ -172,7 +236,7 @@ function GlobeNode({
   onSelect: () => void;
 }) {
   const normal = useMemo(() => latLonToVector3(region.latitude, region.longitude, 1), [region.latitude, region.longitude]);
-  const position = useMemo(() => normal.clone().multiplyScalar(radius + 0.045), [normal, radius]);
+  const position = useMemo(() => normal.clone().multiplyScalar(radius + 0.38), [normal, radius]);
   const orientation = useMemo(() => new Quaternion().setFromUnitVectors(SURFACE_NORMAL, normal), [normal]);
   const locked = status === 'locked' || status === 'coming-soon';
   const color = status === 'complete' ? '#b7e58d' : locked ? '#9ba5a7' : '#fff0a5';
@@ -227,7 +291,7 @@ function SkillEdge({
   const curve = useMemo(() => {
     const sourcePosition = latLonToVector3(source.latitude, source.longitude, radius);
     const targetPosition = latLonToVector3(target.latitude, target.longitude, radius);
-    return new CatmullRomCurve3(getGreatCirclePoints(sourcePosition, targetPosition, radius + 0.025, 28));
+    return new CatmullRomCurve3(getGreatCirclePoints(sourcePosition, targetPosition, radius + 0.17, 28));
   }, [radius, source.latitude, source.longitude, target.latitude, target.longitude]);
   const color = active ? '#f7d77c' : hard ? '#9ba8a5' : '#718184';
 
@@ -259,6 +323,8 @@ function WorldScene({activeSubject, completedMissionIds, regions, selectedRegion
       <StarField />
       <group rotation={[view.pitch, view.yaw, 0]} scale={view.zoom}>
         <GlobeSurface radius={globeRadius} />
+        {activeSubject === 'Mathematics' && <MathTerrain regions={visibleRegions} radius={globeRadius} />}
+        {activeSubject === 'Mathematics' && <MathLandmarks regions={visibleRegions} radius={globeRadius} />}
         {edges.map((edge) => {
           const source = regionById.get(edge.sourceRegionId);
           const target = regionById.get(edge.targetRegionId);
