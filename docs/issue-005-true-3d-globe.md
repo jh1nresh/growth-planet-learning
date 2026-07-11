@@ -56,5 +56,7 @@
 - Mobile: Browser viewport override 實際回報 796 CSS px，未能建立真 390 px viewport；該寬度下 `scrollWidth === clientWidth`、controls 存在、console 0 errors。真窄螢幕 visual 留作 PR preview human check。
 - Visual limitation: Browser screenshots 不包含 WebGL framebuffer，即使 always-render ablation 亦相同；Canvas/backing buffer 尺寸正常，shader console 0 errors。前／側／背像素證據因此標記為未驗證，不以 DOM screenshot 冒充。
 - Rendering rail: final code 使用 `frameloop="demand"`、DPR 1–1.5、texture-ready 單次且可取消的 rAF invalidate，沒有 idle loop。
-- Automated gate: `npm run check` 通過（taxonomy 18 topics / 18 dependencies / 9 clusters / 9 missions，3 test files / 11 tests，production build）；`npm audit --audit-level=high` 回報 0 vulnerabilities；`git diff --check` 通過。
+- Automated gate: `npm run check` 通過（taxonomy 18 topics / 18 dependencies / 9 clusters / 9 missions，3 test files / 12 tests，production build）；`npm audit --audit-level=high` 回報 0 vulnerabilities；`git diff --check` 通過。
 - Build note: Vite 仍回報既有的大型 chunk warning；3D renderer chunk 為 889.64 kB / gzip 237.09 kB，未新增 dependency，後續若要處理應獨立做全站 code-splitting，而非混入本功能 PR。
+- Capture compatibility: Codex in-app Browser 與 Chrome automation 都能載入 Canvas 並更新 yaw，但畫面擷取層會把 WebGL framebuffer 顯示為空白／破圖。`?renderer=compat` 現提供同步 yaw / pitch / zoom 的雙面 CSS 3D 星球；正常網址仍使用真正 WebGL renderer。
+- Compatibility verification: 相容預覽正面插畫可見，7 次向右控制將 yaw `0.845 → 2.391` 並顯示程序化背面；新增 transform unit test，完整 gate 為 3 test files / 12 tests。

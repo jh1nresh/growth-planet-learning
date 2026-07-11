@@ -2,6 +2,10 @@ import {Vector3} from 'three';
 
 const DEG_TO_RAD = Math.PI / 180;
 
+export function getFallbackGlobeTransform(view: {yaw: number; pitch: number; zoom: number}) {
+  return `rotateX(${-view.pitch}rad) rotateY(${view.yaw}rad) scale(${view.zoom})`;
+}
+
 export function latLonToVector3(latitude: number, longitude: number, radius: number) {
   const latitudeRadians = latitude * DEG_TO_RAD;
   const longitudeRadians = longitude * DEG_TO_RAD;

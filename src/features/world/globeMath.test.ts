@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {getGreatCirclePoints, latLonToVector3} from './globeMath';
+import {getFallbackGlobeTransform, getGreatCirclePoints, latLonToVector3} from './globeMath';
 
 describe('globe geometry', () => {
   it('places longitude zero on the camera-facing hemisphere', () => {
@@ -30,5 +30,10 @@ describe('globe geometry', () => {
     expect(points[0].length()).toBeCloseTo(2.05);
     expect(points[6].length()).toBeCloseTo(2.05);
     expect(points[12].length()).toBeCloseTo(2.05);
+  });
+
+  it('keeps the capture-safe globe aligned with the interactive view', () => {
+    expect(getFallbackGlobeTransform({yaw: 0.5, pitch: -0.25, zoom: 1.2}))
+      .toBe('rotateX(0.25rad) rotateY(0.5rad) scale(1.2)');
   });
 });

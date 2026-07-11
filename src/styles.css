@@ -321,6 +321,69 @@ input:focus-visible {
   touch-action: none;
 }
 
+.globe-fallback-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  perspective: 1100px;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(40, 119, 143, 0.22), transparent 40%),
+    #040b14;
+}
+
+.globe-capture-fallback {
+  position: relative;
+  width: min(72%, 560px);
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+  border-radius: 50%;
+  box-shadow: 0 2.2rem 5rem rgba(0, 0, 0, 0.5);
+  will-change: transform;
+}
+
+.globe-fallback-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgba(157, 225, 239, 0.45);
+  border-radius: 50%;
+  backface-visibility: hidden;
+  box-shadow:
+    inset -2.4rem -1.2rem 3.5rem rgba(0, 5, 13, 0.66),
+    inset 1.2rem 0.8rem 2.6rem rgba(255, 229, 164, 0.2),
+    0 0 2.2rem rgba(84, 194, 216, 0.2);
+}
+
+.globe-fallback-front {
+  background: center / cover no-repeat url('/assets/growth-planet-illustrated-atlas.webp');
+}
+
+.globe-fallback-back {
+  transform: rotateY(180deg);
+  background:
+    radial-gradient(ellipse at 28% 32%, #71894a 0 11%, transparent 12%),
+    radial-gradient(ellipse at 63% 25%, #486b38 0 15%, transparent 16%),
+    radial-gradient(ellipse at 70% 68%, #779059 0 12%, transparent 13%),
+    radial-gradient(ellipse at 36% 72%, #355d37 0 18%, transparent 19%),
+    radial-gradient(circle at 34% 24%, #2e94a7, #0b415d 58%, #052338 100%);
+}
+
+.globe-compat-badge {
+  position: absolute;
+  bottom: 4.8rem;
+  left: 50%;
+  translate: -50% 0;
+  padding: 0.42rem 0.72rem;
+  border: 1px solid rgba(241, 213, 146, 0.3);
+  border-radius: 999px;
+  color: #f7e8bd;
+  background: rgba(8, 22, 34, 0.82);
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .planet-loading {
   display: grid;
   place-items: center;

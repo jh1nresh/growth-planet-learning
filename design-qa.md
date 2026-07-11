@@ -29,6 +29,6 @@ The renderer is no longer a curved plane. It uses a true `SphereGeometry`; world
 
 ## Residual visual risk
 
-The in-app Browser screenshot surface did not capture the WebGL framebuffer; it returned the DOM chrome with an empty Canvas in both demand and temporary always-render modes. Therefore front/side/back pixel fidelity and exact node occlusion are not claimed from screenshots. The PR preview requires a human visual check before merge. A production-quality 2:1 equirectangular painting remains the upgrade path for fully authored backside detail.
+The in-app Browser and Chrome automation screenshot surfaces do not capture the WebGL framebuffer; they return an empty or broken Canvas even though the Canvas mounts and view state updates. `?renderer=compat` now provides a capture-safe, double-sided CSS 3D globe that follows the same yaw, pitch, and zoom controls. The normal route remains the true WebGL sphere, so its exact node occlusion still requires a human visual check in a normal browser before merge. A production-quality 2:1 equirectangular painting remains the upgrade path for fully authored backside detail.
 
-final result: conditional pass — implementation and interaction evidence pass; WebGL pixel review remains human-gated.
+final result: conditional pass — implementation, interaction, and visible compatibility fallback pass; true WebGL pixel review remains human-gated.

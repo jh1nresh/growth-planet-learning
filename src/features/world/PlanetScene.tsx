@@ -13,7 +13,7 @@ import {
 } from 'three';
 import {getRegionDependencyEdges, getRegionStatus} from '../../lib/curriculum';
 import type {Subject, WorldRegion} from '../../types';
-import {getGreatCirclePoints, latLonToVector3} from './globeMath';
+import {getFallbackGlobeTransform, getGreatCirclePoints, latLonToVector3} from './globeMath';
 
 const MAX_PITCH = 1.18;
 const MIN_ZOOM = 0.72;
@@ -86,6 +86,18 @@ interface GlobeView {
   yaw: number;
   pitch: number;
   zoom: number;
+}
+
+function CaptureSafeGlobe({view}: {view: GlobeView}) {
+  return (
+    <div className="globe-fallback-stage">
+      <div className="globe-capture-fallback" style={{transform: getFallbackGlobeTransform(view)}}>
+        <div className="globe-fallback-face globe-fallback-front" />
+        <div className="globe-fallback-face globe-fallback-back" />
+      </div>
+      <span className="globe-compat-badge">相容預覽 · 可旋轉星球</span>
+    </div>
+  );
 }
 
 function GlobeSurface({radius}: {radius: number}) {
@@ -283,6 +295,7 @@ function WorldScene({activeSubject, completedMissionIds, regions, selectedRegion
 
 export const PlanetScene = forwardRef<PlanetControlsHandle, SceneProps>(function PlanetScene(props, ref) {
   const [view, setView] = useState<GlobeView>({yaw: 0, pitch: 0, zoom: 1});
+  const compatibilityMode = new URLSearchParams(window.location.search).get('renderer') === 'compat';
   const viewRef = useRef(view);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -407,15 +420,19 @@ export const PlanetScene = forwardRef<PlanetControlsHandle, SceneProps>(function
         onPointerUpCapture={handlePointerEnd}
         onPointerCancelCapture={handlePointerEnd}
       >
-        <Canvas
-          frameloop="demand"
-          dpr={[1, 1.5]}
-          camera={{position: [0, 0, 7], fov: 42, near: 0.1, far: 40}}
-          gl={{antialias: true, alpha: false, powerPreference: 'high-performance'}}
-          onCreated={({invalidate}) => invalidate()}
-        >
-          <WorldScene {...props} view={view} />
-        </Canvas>
+        {compatibilityMode ? (
+          <CaptureSafeGlobe view={view} />
+        ) : (
+          <Canvas
+            frameloop="demand"
+            dpr={[1, 1.5]}
+            camera={{position: [0, 0, 7], fov: 42, near: 0.1, far: 40}}
+            gl={{antialias: true, alpha: false, powerPreference: 'high-performance'}}
+            onCreated={({invalidate}) => invalidate()}
+          >
+            <WorldScene {...props} view={view} />
+          </Canvas>
+        )}
       </div>
     </div>
   );
