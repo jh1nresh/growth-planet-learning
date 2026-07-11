@@ -1,0 +1,17 @@
+{
+  "name": "成長星球",
+  "short_name": "成長星球",
+  "description": "為華語孩子打造的 3D 學習世界",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "lang": "zh-Hant-TW",
+  "icons": [
+    {
+      "src": "/assets/growth-planet-orbital-atlas.png",
+      "sizes": "1048x1501",
+      "type": "image/png"
+    }
+  ]
+}

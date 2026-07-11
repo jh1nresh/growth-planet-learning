@@ -1,0 +1,24 @@
+{
+  "version": "tw-v1",
+  "dependencyCount": 18,
+  "dependencies": [
+    { "topicId": "tw_math_g1_count_100", "prerequisiteId": "tw_math_g1_count_20", "strength": "hard", "reason": "必須先穩定掌握較小數量的數序。" },
+    { "topicId": "tw_math_g1_bundle_ten", "prerequisiteId": "tw_math_g1_count_20", "strength": "hard", "reason": "要能確認十個單位物件的總數。" },
+    { "topicId": "tw_math_g1_tens_ones", "prerequisiteId": "tw_math_g1_bundle_ten", "strength": "hard", "reason": "位值建立在十個一換成一個十。" },
+    { "topicId": "tw_math_g1_zero_placeholder", "prerequisiteId": "tw_math_g1_tens_ones", "strength": "hard", "reason": "要先理解不同位置代表的單位。" },
+    { "topicId": "tw_math_g1_compare_two_digit", "prerequisiteId": "tw_math_g1_tens_ones", "strength": "hard", "reason": "比較兩位數時必須先看十位。" },
+    { "topicId": "tw_math_g1_number_bonds_10", "prerequisiteId": "tw_math_g1_count_20", "strength": "hard", "reason": "分解與合成需要穩定數量概念。" },
+    { "topicId": "tw_math_g1_add_20", "prerequisiteId": "tw_math_g1_number_bonds_10", "strength": "hard", "reason": "湊十是 20 以內加法的核心策略。" },
+    { "topicId": "tw_math_g1_subtract_20", "prerequisiteId": "tw_math_g1_add_20", "strength": "soft", "reason": "可用加法反推與檢查減法。" },
+    { "topicId": "tw_math_g1_shapes_3d", "prerequisiteId": "tw_math_g1_shapes_2d", "strength": "soft", "reason": "辨認立體表面時會用到平面圖形語言。" },
+    { "topicId": "tw_math_g1_length_compare", "prerequisiteId": "tw_math_g1_compare_two_digit", "strength": "soft", "reason": "測量結果需要進行大小比較。" },
+    { "topicId": "tw_math_g1_coin_values", "prerequisiteId": "tw_math_g1_add_20", "strength": "soft", "reason": "湊金額需要基本合成與加法。" },
+    { "topicId": "tw_math_g1_mixed_review", "prerequisiteId": "tw_math_g1_zero_placeholder", "strength": "hard", "reason": "綜合挑戰包含位值判斷。" },
+    { "topicId": "tw_math_g1_mixed_review", "prerequisiteId": "tw_math_g1_subtract_20", "strength": "hard", "reason": "綜合挑戰包含加減策略。" },
+    { "topicId": "tw_math_g1_mixed_review", "prerequisiteId": "tw_math_g1_shapes_3d", "strength": "soft", "reason": "綜合挑戰包含圖形分類。" },
+    { "topicId": "tw_math_g1_mixed_review", "prerequisiteId": "tw_math_g1_length_compare", "strength": "soft", "reason": "綜合挑戰包含測量情境。" },
+    { "topicId": "tw_eng_g1_sight_words", "prerequisiteId": "tw_eng_g1_letter_sounds", "strength": "soft", "reason": "字母音能協助辨認與記憶常見字。" },
+    { "topicId": "tw_eng_g1_greetings", "prerequisiteId": "tw_eng_g1_sight_words", "strength": "soft", "reason": "常見字能支撐短句理解。" },
+    { "topicId": "tw_math_g1_time_hour", "prerequisiteId": "tw_math_g1_count_20", "strength": "soft", "reason": "讀鐘面需要數序與位置概念。" }
+  ]
+}

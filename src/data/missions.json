@@ -1,0 +1,114 @@
+{
+  "version": "tw-v1",
+  "missions": [
+    {
+      "id": "mission_counting_harbor",
+      "regionId": "counting_harbor",
+      "title": "找回遺失的貨箱",
+      "durationMinutes": 4,
+      "xp": 40,
+      "topicIds": ["tw_math_g1_count_20", "tw_math_g1_count_100"],
+      "questions": [
+        { "id": "count-1", "prompt": "碼頭依序排著 27、28、29 號貨箱，下一箱是幾號？", "options": ["20", "30", "39"], "correctOption": "30", "explanation": "29 再往前數一個就是 30。" },
+        { "id": "count-2", "prompt": "船長想十個十個數貨物：20、30、40，下一個數是？", "options": ["41", "45", "50"], "correctOption": "50", "explanation": "十個十個數，每次增加 10。" }
+      ]
+    },
+    {
+      "id": "mission_bundle_bridge",
+      "regionId": "bundle_bridge",
+      "title": "用十個一修好橋",
+      "durationMinutes": 4,
+      "xp": 45,
+      "topicIds": ["tw_math_g1_bundle_ten"],
+      "questions": [
+        { "id": "bundle-1", "prompt": "十根小木條綁成一束。這一束代表什麼？", "options": ["一個一", "一個十", "十個十"], "correctOption": "一個十", "explanation": "十個一可以換成一個十。" },
+        { "id": "bundle-2", "prompt": "一束十和 6 根小木條合起來是多少？", "options": ["16", "60", "106"], "correctOption": "16", "explanation": "一個十是 10，再加 6 個一就是 16。" }
+      ]
+    },
+    {
+      "id": "mission_place_value_tower",
+      "regionId": "place_value_tower",
+      "title": "點亮位值塔",
+      "durationMinutes": 5,
+      "xp": 55,
+      "topicIds": ["tw_math_g1_tens_ones", "tw_math_g1_zero_placeholder"],
+      "questions": [
+        { "id": "place-1", "prompt": "34 裡面有 3 個十和幾個一？", "options": ["3", "4", "34"], "correctOption": "4", "explanation": "十位的 3 表示三個十，個位的 4 表示四個一。" },
+        { "id": "place-2", "prompt": "5 個十和 0 個一組成哪個數？", "options": ["5", "50", "500"], "correctOption": "50", "explanation": "個位沒有一，所以用 0 佔住個位。" }
+      ]
+    },
+    {
+      "id": "mission_compare_canyon",
+      "regionId": "compare_canyon",
+      "title": "選出安全的峽谷路",
+      "durationMinutes": 4,
+      "xp": 50,
+      "topicIds": ["tw_math_g1_compare_two_digit"],
+      "questions": [
+        { "id": "compare-1", "prompt": "47 和 39，哪一個比較大？", "options": ["39", "47", "一樣大"], "correctOption": "47", "explanation": "先看十位：4 個十比 3 個十多。" },
+        { "id": "compare-2", "prompt": "把 18、81、28 從小排到大。", "options": ["18、28、81", "81、28、18", "18、81、28"], "correctOption": "18、28、81", "explanation": "先比較十位，再比較個位。" }
+      ]
+    },
+    {
+      "id": "mission_operations_forest",
+      "regionId": "operations_forest",
+      "title": "找到運算森林出口",
+      "durationMinutes": 6,
+      "xp": 65,
+      "topicIds": ["tw_math_g1_number_bonds_10", "tw_math_g1_add_20", "tw_math_g1_subtract_20"],
+      "questions": [
+        { "id": "operation-1", "prompt": "8 + 7 是多少？想想先讓 8 變成 10。", "options": ["13", "15", "17"], "correctOption": "15", "explanation": "把 7 分成 2 和 5，8 + 2 = 10，再加 5 得到 15。" },
+        { "id": "operation-2", "prompt": "13 - 5 是多少？", "options": ["7", "8", "9"], "correctOption": "8", "explanation": "因為 8 + 5 = 13，所以 13 - 5 = 8。" }
+      ]
+    },
+    {
+      "id": "mission_shape_workshop",
+      "regionId": "shape_workshop",
+      "title": "啟動圖形工坊",
+      "durationMinutes": 5,
+      "xp": 55,
+      "topicIds": ["tw_math_g1_shapes_2d", "tw_math_g1_shapes_3d"],
+      "questions": [
+        { "id": "shape-1", "prompt": "哪一個平面圖形有四條一樣長的邊？", "options": ["三角形", "正方形", "圓形"], "correctOption": "正方形", "explanation": "正方形有四條一樣長的直邊。" },
+        { "id": "shape-2", "prompt": "哪一個立體形體最容易往各方向滾動？", "options": ["球", "正方體", "長方體"], "correctOption": "球", "explanation": "球的表面都是曲面，所以容易往不同方向滾動。" }
+      ]
+    },
+    {
+      "id": "mission_measure_market",
+      "regionId": "measure_market",
+      "title": "完成測量市集清單",
+      "durationMinutes": 6,
+      "xp": 60,
+      "topicIds": ["tw_math_g1_length_compare", "tw_math_g1_time_hour", "tw_math_g1_coin_values"],
+      "questions": [
+        { "id": "measure-1", "prompt": "要公平比較兩枝鉛筆長短，第一步要怎麼做？", "options": ["把一端對齊", "拿高一點", "只看顏色"], "correctOption": "把一端對齊", "explanation": "從相同起點比較，結果才公平。" },
+        { "id": "measure-2", "prompt": "買 15 元的物品，哪一組硬幣剛好？", "options": ["10 元和 5 元", "10 元和 1 元", "5 元和 1 元"], "correctOption": "10 元和 5 元", "explanation": "10 + 5 = 15。" }
+      ]
+    },
+    {
+      "id": "mission_supply_station",
+      "regionId": "supply_station",
+      "title": "數學大陸補給挑戰",
+      "durationMinutes": 7,
+      "xp": 80,
+      "topicIds": ["tw_math_g1_mixed_review"],
+      "questions": [
+        { "id": "review-1", "prompt": "42 是 4 個十和幾個一？", "options": ["2", "4", "20"], "correctOption": "2", "explanation": "個位的 2 表示兩個一。" },
+        { "id": "review-2", "prompt": "9 + 6 是多少？", "options": ["14", "15", "16"], "correctOption": "15", "explanation": "9 先加 1 變 10，再加剩下的 5。" },
+        { "id": "review-3", "prompt": "完成挑戰後，哪一個做法最能檢查答案？", "options": ["換一種方法再算一次", "挑最喜歡的數字", "跳過不看"], "correctOption": "換一種方法再算一次", "explanation": "用另一種方法檢查，可以發現不合理的答案。" }
+      ]
+    },
+    {
+      "id": "mission_english_first_dock",
+      "regionId": "english_first_dock",
+      "title": "英文港口第一艘船",
+      "durationMinutes": 4,
+      "xp": 45,
+      "topicIds": ["tw_eng_g1_letter_sounds"],
+      "questions": [
+        { "id": "english-1", "prompt": "Which word begins with the /b/ sound?", "options": ["ball", "sun", "cat"], "correctOption": "ball", "explanation": "Ball begins with the letter B and the /b/ sound." },
+        { "id": "english-2", "prompt": "看到朋友時，可以先說哪一句？", "options": ["Hello!", "Goodbye!", "Thank you!"], "correctOption": "Hello!", "explanation": "Hello 是見面時常用的招呼語。" }
+      ]
+    }
+  ]
+}

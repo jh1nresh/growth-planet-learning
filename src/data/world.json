@@ -1,0 +1,16 @@
+{
+  "version": "world-v1",
+  "regions": [
+    { "id": "counting_harbor", "subject": "Mathematics", "clusterId": "cluster_math_counting_harbor", "name": "數數碼頭", "shortName": "碼頭", "description": "從數序與數量出發。", "latitude": 18, "longitude": -32, "order": 1, "color": "#f0c66b" },
+    { "id": "bundle_bridge", "subject": "Mathematics", "clusterId": "cluster_math_bundle_bridge", "name": "十個一造橋", "shortName": "造橋", "description": "把十個一換成一個十。", "latitude": 7, "longitude": -16, "order": 2, "color": "#f0c66b" },
+    { "id": "place_value_tower", "subject": "Mathematics", "clusterId": "cluster_math_place_tower", "name": "位值塔", "shortName": "位值塔", "description": "看懂十位、個位與零。", "latitude": -6, "longitude": -2, "order": 3, "color": "#ffd66f" },
+    { "id": "compare_canyon", "subject": "Mathematics", "clusterId": "cluster_math_compare_canyon", "name": "比較峽谷", "shortName": "峽谷", "description": "先看十位，再看個位。", "latitude": -20, "longitude": 12, "order": 4, "color": "#eda85f" },
+    { "id": "operations_forest", "subject": "Mathematics", "clusterId": "cluster_math_operations_forest", "name": "運算森林", "shortName": "森林", "description": "用策略解開 20 以內加減。", "latitude": -28, "longitude": -8, "order": 5, "color": "#8ccc69" },
+    { "id": "shape_workshop", "subject": "Mathematics", "clusterId": "cluster_math_shape_workshop", "name": "圖形工坊", "shortName": "工坊", "description": "觀察邊、角與曲面。", "latitude": -18, "longitude": -28, "order": 6, "color": "#7dbb7a" },
+    { "id": "measure_market", "subject": "Mathematics", "clusterId": "cluster_math_measure_market", "name": "測量市集", "shortName": "市集", "description": "把數學帶進時間、長度和金錢。", "latitude": 1, "longitude": -42, "order": 7, "color": "#d7a95e" },
+    { "id": "supply_station", "subject": "Mathematics", "clusterId": "cluster_math_supply_station", "name": "補給站", "shortName": "補給站", "description": "完成第一圈數學大陸。", "latitude": 24, "longitude": -10, "order": 8, "color": "#e5b25d" },
+    { "id": "english_first_dock", "subject": "English", "clusterId": "cluster_english_first_dock", "name": "英文港口", "shortName": "English", "description": "從字母聲音與第一句招呼出航。", "latitude": 2, "longitude": 78, "order": 1, "color": "#67c7d7" },
+    { "id": "science_wilds", "subject": "Science", "clusterId": null, "name": "自然荒野", "shortName": "自然", "description": "即將開放。", "latitude": 38, "longitude": 146, "order": 99, "color": "#809293", "comingSoon": true },
+    { "id": "life_kingdom", "subject": "Life Skills", "clusterId": null, "name": "生活王國", "shortName": "生活", "description": "即將開放。", "latitude": -38, "longitude": 154, "order": 99, "color": "#928577", "comingSoon": true }
+  ]
+}
