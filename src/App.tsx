@@ -16,7 +16,6 @@ import {RegionPanel} from './features/world/RegionPanel';
 import {WorldControls} from './features/world/WorldControls';
 import type {PlanetControlsHandle} from './features/world/PlanetScene';
 import {useProgress} from './hooks/useProgress';
-import {useReducedMotion} from './hooks/useReducedMotion';
 import {getRegionStatus, getSubjectRegions, missionByRegionId, missions, regions} from './lib/curriculum';
 import type {Subject, WorldRegion} from './types';
 
@@ -36,7 +35,6 @@ function PlanetLoading() {
 
 export default function App() {
   const auth = useAuth();
-  const reducedMotion = useReducedMotion();
   const namespace = auth.userId ? `privy:${auth.userId}` : 'guest';
   const {progress, setChildAlias, completeMission} = useProgress(namespace);
   const completedMissionIds = useMemo(() => new Set(progress.completedMissionIds), [progress.completedMissionIds]);
@@ -118,7 +116,6 @@ export default function App() {
               regions={regions}
               selectedRegionId={selectedRegionId}
               onSelectRegion={setSelectedRegionId}
-              reducedMotion={reducedMotion}
             />
           </Suspense>
 

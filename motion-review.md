@@ -1,21 +1,19 @@
-# Motion review — WebGL Skill Graph
+# Motion review — True 3D Globe
 
 | Before | After | Why |
 | --- | --- | --- |
-| CSS transformed a DOM picture while WebGL markers remained a separate layer | One R3F group rotates/scales the curved texture, nodes, and edges together | Maintains spatial consistency under every input |
-| Pointer capture began on press | Capture begins after 8px hysteresis, or immediately for pinch | Preserves tap selection and makes drag intent explicit |
-| Wheel handling depended on React event delivery over Canvas | Passive-disabled native wheel listener with cleanup | Prevents page scroll and keeps zoom continuous over WebGL |
-| Full motion multiplier `1.7` | Reduced-motion multiplier `0.9` | Keeps orientation feedback while reducing large-surface tilt |
-| Selected node changed only its glow | Atlas shifts 18% toward the selected point and scales to `1.045` with critically damped interpolation | Makes graph location legible without a camera flight or loss of user control |
-| All dependency paths retained similar prominence | Unrelated paths dim to `0.09`; selected hard dependencies rise to `0.84` | Uses state contrast to explain the selected skill relationship |
+| Curved plane clamped to ±0.24 rad horizontal tilt | `SphereGeometry` yaw is unbounded; controls verified `+6.545 rad` in one pass | A globe must support a complete orbit, not simulate depth with a small tilt |
+| Selected skill used a continuous `useFrame` damping loop | Selection maps latitude/longitude to the front immediately | Route selection is frequent and keyboard-accessible; no animation is faster, interruptible by definition, and reduced-motion safe |
+| Canvas rendered continuously while idle | `frameloop="demand"` plus one cancellable texture-ready frame | Removes idle GPU work without an unbounded custom rAF loop |
+| Plane drag divided movement by 850/1100 and hit hard bounds | Pointer capture tracks yaw/pitch directly after 8px hysteresis; yaw remains unbounded and pitch alone is clamped | Keeps content attached to the pointer while preventing pole flips |
 
 ## Verdict
 
-- Purpose and frequency: motion exists only for direct world inspection and spatial continuity when a skill is selected; there is no decorative entrance or idle oscillation.
-- Interruptibility and timing: pointer movement maps directly to bounded group rotation; selection focus retargets from its live Three.js group transform and reaches roughly 98% in 245ms (`lambda 16`), with no keyframe or input lock.
-- Input matrix: pointer drag, touch/pinch, wheel/trackpad, native buttons, and reset share one view state. HTML route navigation remains the keyboard path.
-- Performance: scene geometry is bounded to one 48×48 plane, 8 nodes, 11 native Three.js tubes, 360 static points, and capped DPR 1–1.5. One component-level `useFrame` performs only transform interpolation; no layout/paint read, independent rAF, blur, or filter animation was added.
-- Accessibility: reduced motion lowers rotation response and applies focus position/scale immediately without interpolation; visible focus and labeled equivalent controls remain.
-- Review escalations: no `transition: all`, `scale(0)`, `ease-in`, layout-property animation, ungated hover motion, or uninterruptible keyframe exists in the changed surface.
+- **Purpose and frequency:** movement exists only for direct globe inspection, zoom, and immediate spatial wayfinding. There is no idle rotation, entrance animation, decorative oscillation, or animated keyboard action.
+- **Performance:** React state updates only transforms; no DOM layout read/write loop, blur, filter, scroll polling, or independent animation timer exists. R3F renders on demand at DPR 1–1.5.
+- **Interruptibility & timing:** drag and pinch are 1:1 and can reverse every pointer frame. Button and HTML route actions are immediate. No keyframe or fixed-duration transition can block input.
+- **Accessibility:** the Canvas stays `aria-hidden`; labeled HTML controls and the full landmark list remain the keyboard path. With no automatic positional animation, reduced-motion users receive the same immediate state change while direct manipulation remains under their control.
+- **Dynamic evidence:** 25 right-control presses changed yaw by `6.545 rad`; drag changed yaw `0.140 → 1.148` and pitch `-0.489 → -0.237`; wheel changed zoom `1.000 → 1.141`; reset returned yaw/pitch/zoom to zero/zero/one; console errors remained zero.
+- **Review escalations:** no `transition: all`, `scale(0)`, `ease-in`, layout-property animation, ungated hover motion, or uninterruptible keyframe is present in the changed surface.
 
-**Approve** — no feel-breaking regression, obvious removable motion, easy GPU fix, missing reduced-motion path, or interaction-blocking timing remains.
+**Approve** — no feel-breaking regression, removable automatic motion, unbounded loop, missing reduced-motion behavior, or input-blocking timing remains.

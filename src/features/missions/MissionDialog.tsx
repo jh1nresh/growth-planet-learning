@@ -26,7 +26,7 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
   }, [mission?.id, open]);
 
   if (!mission) return null;
-  const question = mission.questions[questionIndex];
+  const question = mission.questions[questionIndex] ?? mission.questions[0];
   const correct = selectedOption === question.correctOption;
   const lastQuestion = questionIndex === mission.questions.length - 1;
 

@@ -273,7 +273,6 @@ input:focus-visible {
   grid-column: 2;
   grid-row: 2;
   position: relative;
-  container-type: size;
   min-width: 0;
   min-height: 620px;
   overflow: hidden;
@@ -334,12 +333,6 @@ input:focus-visible {
   inset: 0;
   background: center / cover no-repeat url('/assets/growth-planet-illustrated-atlas.webp');
   opacity: 0.55;
-}
-
-@container (max-aspect-ratio: 82 / 100) {
-  .planet-loading-art {
-    background-image: url('/assets/growth-planet-illustrated-atlas-mobile.webp');
-  }
 }
 
 .planet-loading span {
