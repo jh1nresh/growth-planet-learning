@@ -1,46 +1,42 @@
-# Design QA
+# Design QA — illustrated Growth Planet
 
-- Source visual truth: `/Users/jhinresh/projects/growth-planet-learning/artifacts/reference-growth-planet.png`
-- Browser-rendered implementation: `/Users/jhinresh/projects/growth-planet-learning/artifacts/implementation-visible-stage-postfix.png`
-- Mobile focused evidence: `/Users/jhinresh/projects/growth-planet-learning/artifacts/implementation-mobile-postfix.png`
-- Same-input comparison: `/Users/jhinresh/projects/growth-planet-learning/artifacts/design-qa-comparison.png`
+- Source visual truth: `/Users/jhinresh/projects/growth-planet-learning/design/reference-growth-planet-original.jpg`
+- Desktop implementation: `/Users/jhinresh/projects/growth-planet-learning/artifacts/illustrated-world-desktop-final.png`
+- Mobile implementation: `/Users/jhinresh/projects/growth-planet-learning/artifacts/illustrated-world-mobile-390-final.png`
+- Same-input comparison: `/Users/jhinresh/projects/growth-planet-learning/artifacts/illustrated-detail-comparison.png`
 - Rendered URL: `http://127.0.0.1:4173/`
-- Viewport/state: CSS 805×452 tablet viewport, Mathematics selected, guest device progress 1/8; focused mobile pass at CSS 390×817.
+- Tested states: Mathematics selected, guest progress 1/8, default and manipulated atlas views.
 
-## Findings
+## Final result
 
-No actionable P0/P1/P2 finding remains.
-
-- [P3] The source is a portrait, painterly orbital atlas while the implementation is a responsive product interface with a real-time low-poly globe. This is an intentional product constraint: the source is the art-direction truth, not a pixel clone. The implementation keeps the deep-space, warm-gold, teal-ocean, green-land, parchment-label hierarchy and uses the source artwork as the loading/fallback asset.
+No actionable P0/P1/P2 visual finding remains. The exact supplied illustration is now the terrain source, so the implementation retains the reference's mountains, forest, rivers, architecture, character, atmospheric lighting, locked lands, and connected luminous route.
 
 ## Required fidelity surfaces
 
-- Fonts and typography: Songti-style display text and PingFang/Noto/JhengHei UI fallbacks preserve the source's storybook/editorial contrast. Mobile title now fits on one line at 28px/30.24px in the measured 390px viewport.
-- Spacing and layout rhythm: fixed left route, center world, right mission hierarchy on wide screens; two-column tablet; stacked mobile. Primary planet area measured 676px wide after the tablet fix, up from the incorrect 220px.
-- Colors and visual tokens: space `#07111f`, gold `#e0b65f`/`#f3d781`, teal and green map directly to the reference palette; status colors remain distinguishable.
-- Image quality and asset fidelity: original generated orbital atlas is retained at native 1048×1501 for loading/fallback and social preview. The live globe is intentionally procedural because direct 3D manipulation is the requested core experience.
-- Copy and content: standalone Traditional Chinese copy explains the child task, time, energy reward, progress, guest privacy, and English Port scope without leaking build instructions.
-- Icons: one Phosphor family is used for all product controls; text arrow glyphs were removed.
-- Accessibility and states: visible focus, skip link, semantic route navigation, native dialogs, reduced motion/transparency/contrast preferences, loading, locked, available, correct, completed, and guest states are present.
+- Typography: the illustration's original Traditional Chinese landmark labels remain intact. App chrome continues to use the existing Songti/PingFang hierarchy.
+- Layout: desktop preserves route/world/mission hierarchy. The measured mobile viewport is 390×817 CSS pixels; the stage is 380.5×556 pixels and document scroll width is 380 pixels, with no horizontal overflow.
+- Color: the exact source palette is preserved rather than approximated with procedural teal and green materials.
+- Image quality: measured source crops use Lanczos scaling and responsive desktop/mobile assets. No placeholder, CSS illustration, or generated substitute appears in the primary world surface.
+- Copy: existing product copy, curriculum route, progress, and guest states are unchanged. Redundant overlay headings were visually hidden so they no longer cover source labels while remaining available semantically.
+- Icons: existing Phosphor direction, zoom, reset, profile, and subject icons remain consistent.
+- Accessibility: the decorative picture/WebGL layer is hidden from the accessibility tree; equivalent labeled controls and semantic landmark navigation remain available. Focus, reduced motion, reduced transparency, and increased contrast paths remain intact.
 
-## Full-view and focused comparison evidence
+## Same-input comparison findings
 
-The combined 1800×720 comparison shows the shared orbital hierarchy and palette while making the intentional portrait-to-responsive change explicit. A focused mobile pass was required because the initial title wrapping could not be judged from the tablet view alone.
+| Before | After | Why |
+| --- | --- | --- |
+| Procedural low-poly sphere, generic land blobs, cones, and floating labels | Exact supplied painterly atlas as the dominant world surface | Restores authored terrain and narrative density instead of approximating it |
+| Large HTML title and WebGL tooltip covered mountains and map labels | Semantic title is screen-reader-only; landmark state uses small rings plus external route navigation | Preserves the original composition and keeps interactions understandable |
+| Oversized selected marker competed with the castle | Selected ring reduced to a restrained outline | Indicates state without obscuring the illustration |
+| Orbit input could not be verified consistently through the browser harness | Pointer-captured drag, wheel zoom, pinch scaling, labeled controls, and reset share one view state | Makes direct manipulation deterministic, continuous, and testable |
 
-## Comparison history
+## Interaction and runtime evidence
 
-1. Initial tablet capture: P1 — the globe rendered in the 220px route column. Fix: explicitly assigned route/world/panel grid columns and tablet panel row. Post-fix evidence measured a 676px planet area at the same runtime width.
-2. Initial mobile capture: P2 — the heading wrapped to three lines and collided with 3D labels. Fix: changed the mobile heading to a 16rem measure at 28px and hid redundant pointer-only 3D labels on mobile. Post-fix evidence shows a single-line heading and clean globe.
-3. Accessibility follow-up: the profile dialog inherited the mission dialog's accessible name because both used `modal-title`. Fix: each modal now receives a React `useId()` title ID. Browser read-back reports `dialog "探險家設定"`.
-
-## Primary interactions tested
-
-- 3D rotate control changed the captured world-region pixel hash.
-- Complete both questions in the first Math mission; progress advanced from 0/8 to 1/8 and the second region changed from locked to available.
-- English Port tab exposed its first playable mission.
-- Guest profile saved a child nickname locally and closed correctly.
-- Console: zero application errors; one upstream Three.js deprecation warning from a dependency.
-
-Focused region comparison was used for mobile typography and modal labeling; no additional icon crop was needed because the full implementation capture renders the shared Phosphor set clearly at product size.
+- Drag changed the live transform from `rotateX(0deg) rotateY(0deg)` to `rotateX(-1.09091deg) rotateY(3.52941deg)`.
+- Wheel zoom changed `scale(1)` to `scale(1.2411)` while page scroll remained at zero.
+- Reset returned the atlas to `rotateX(0deg) rotateY(0deg) scale(1)`.
+- Desktop and 390px mobile screenshots show the detailed source art and functional controls.
+- Browser console errors: zero.
+- `npm run check`: taxonomy validation, 6 tests, TypeScript, and production build passed.
 
 final result: passed

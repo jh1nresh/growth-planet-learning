@@ -1,12 +1,23 @@
 import {Canvas, useThree} from '@react-three/fiber';
-import {Html, OrbitControls, Stars} from '@react-three/drei';
-import {forwardRef, useImperativeHandle, useMemo, useRef} from 'react';
-import type {Ref} from 'react';
-import {Color, MathUtils, Quaternion, Vector3} from 'three';
+import {Stars} from '@react-three/drei';
+import {forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import type {CSSProperties, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent} from 'react';
 import {getRegionStatus} from '../../lib/curriculum';
 import type {Subject, WorldRegion} from '../../types';
 
-const PLANET_RADIUS = 2.28;
+const ATLAS_HEIGHT = 5.35;
+const DESKTOP_ATLAS_ASPECT = 1536 / 1446;
+const MOBILE_ATLAS_ASPECT = 1080 / 1547;
+const MIN_AZIMUTH = -0.24;
+const MAX_AZIMUTH = 0.24;
+const MIN_POLAR_OFFSET = -0.15;
+const MAX_POLAR_OFFSET = 0.15;
+const MIN_ZOOM = 0.75;
+const MAX_ZOOM = 1.25;
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
 
 export interface PlanetControlsHandle {
   rotateLeft: () => void;
@@ -18,15 +29,6 @@ export interface PlanetControlsHandle {
   reset: () => void;
 }
 
-interface OrbitApi {
-  getAzimuthalAngle: () => number;
-  getPolarAngle: () => number;
-  setAzimuthalAngle: (angle: number) => void;
-  setPolarAngle: (angle: number) => void;
-  reset: () => void;
-  update: () => void;
-}
-
 interface SceneProps {
   activeSubject: Subject;
   completedMissionIds: Set<string>;
@@ -36,209 +38,219 @@ interface SceneProps {
   reducedMotion: boolean;
 }
 
-function latLonVector(latitude: number, longitude: number, radius = PLANET_RADIUS) {
-  const phi = MathUtils.degToRad(90 - latitude);
-  const theta = MathUtils.degToRad(longitude + 180);
-  return new Vector3(
-    -radius * Math.sin(phi) * Math.cos(theta),
-    radius * Math.cos(phi),
-    radius * Math.sin(phi) * Math.sin(theta),
-  );
+interface AtlasView {
+  azimuth: number;
+  polarOffset: number;
+  zoom: number;
 }
 
-function surfaceTransform(latitude: number, longitude: number, radius = PLANET_RADIUS) {
-  const position = latLonVector(latitude, longitude, radius);
-  const normal = position.clone().normalize();
-  const quaternion = new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), normal);
-  return {position, quaternion};
-}
+type AtlasPoint = readonly [number, number];
 
-interface LandMassProps {
-  latitude: number;
-  longitude: number;
-  color: string;
-  scale: number;
-  pieces: Array<[number, number, number]>;
-}
+const desktopPoints: Record<string, AtlasPoint> = {
+  counting_harbor: [0.34, 0.27],
+  bundle_bridge: [0.41, 0.40],
+  place_value_tower: [0.37, 0.60],
+  compare_canyon: [0.62, 0.88],
+  operations_forest: [0.29, 0.72],
+  shapes_workshop: [0.70, 0.15],
+  measurement_market: [0.76, 0.44],
+  math_supply_station: [0.78, 0.73],
+  english_first_dock: [0.70, 0.17],
+};
 
-function LandMass({latitude, longitude, color, scale, pieces}: LandMassProps) {
-  const transform = useMemo(() => surfaceTransform(latitude, longitude, PLANET_RADIUS - 0.03), [latitude, longitude]);
-  return (
-    <group position={transform.position} quaternion={transform.quaternion}>
-      {pieces.map(([x, y, size], index) => (
-        <mesh key={`${x}-${y}-${index}`} position={[x * scale, y * scale, 0.05]} scale={[size * scale, size * scale * 0.82, 0.22]}>
-          <dodecahedronGeometry args={[0.52, 0]} />
-          <meshStandardMaterial color={color} roughness={0.9} metalness={0.02} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
+const mobilePoints: Record<string, AtlasPoint> = {
+  counting_harbor: [0.34, 0.29],
+  bundle_bridge: [0.52, 0.41],
+  place_value_tower: [0.48, 0.61],
+  compare_canyon: [0.86, 0.91],
+  operations_forest: [0.34, 0.73],
+  shapes_workshop: [0.79, 0.14],
+  measurement_market: [0.90, 0.50],
+  math_supply_station: [0.90, 0.77],
+  english_first_dock: [0.78, 0.15],
+};
 
-function LandmarkModel({status, color}: {status: ReturnType<typeof getRegionStatus>; color: string}) {
-  const active = status === 'available';
-  const complete = status === 'complete';
-  const base = complete ? '#82d68b' : active ? color : '#6f7476';
-  return (
-    <group>
-      <mesh position={[0, 0, 0.07]}>
-        <cylinderGeometry args={[0.08, 0.12, 0.18, 8]} />
-        <meshStandardMaterial color={base} roughness={0.55} metalness={0.18} />
-      </mesh>
-      <mesh position={[0, 0.03, 0.2]} rotation={[Math.PI / 2, 0, 0]}>
-        <coneGeometry args={[0.11, 0.18, 8]} />
-        <meshStandardMaterial color={complete ? '#d9f59d' : '#f3ce71'} roughness={0.48} />
-      </mesh>
-    </group>
-  );
-}
-
-interface RegionMarkerProps {
+interface AtlasMarkerProps {
+  portrait: boolean;
   region: WorldRegion;
   selected: boolean;
   status: ReturnType<typeof getRegionStatus>;
   onSelect: () => void;
 }
 
-function RegionMarker({region, selected, status, onSelect}: RegionMarkerProps) {
-  const transform = useMemo(() => surfaceTransform(region.latitude, region.longitude, PLANET_RADIUS + 0.08), [region.latitude, region.longitude]);
-  const disabled = status === 'locked' || status === 'coming-soon';
+function AtlasMarker({portrait, region, selected, status, onSelect}: AtlasMarkerProps) {
+  const points = portrait ? mobilePoints : desktopPoints;
+  const point = points[region.id];
+  if (!point) return null;
+
+  const aspect = portrait ? MOBILE_ATLAS_ASPECT : DESKTOP_ATLAS_ASPECT;
+  const width = ATLAS_HEIGHT * aspect;
+  const [horizontal, vertical] = point;
+  const position: [number, number, number] = [
+    (horizontal - 0.5) * width,
+    (0.5 - vertical) * ATLAS_HEIGHT,
+    0.12,
+  ];
+  const locked = status === 'locked' || status === 'coming-soon';
+  const color = status === 'complete' ? '#b7e58d' : locked ? '#9ba5a7' : '#fff0a5';
+
   return (
-    <group position={transform.position} quaternion={transform.quaternion}>
+    <group position={position}>
       <mesh
         onClick={(event) => {
           event.stopPropagation();
           onSelect();
         }}
-        scale={selected ? 1.22 : 1}
+        scale={selected ? 1.12 : 1}
       >
-        <sphereGeometry args={[0.16, 16, 12]} />
-        <meshStandardMaterial
-          color={disabled ? '#5f6768' : region.color}
-          emissive={new Color(selected ? region.color : '#000000')}
-          emissiveIntensity={selected ? 0.55 : 0}
-          roughness={0.4}
-        />
+        <ringGeometry args={[selected ? 0.075 : 0.052, selected ? 0.108 : 0.076, 32]} />
+        <meshBasicMaterial color={color} transparent opacity={locked ? 0.58 : 0.96} depthTest={false} />
       </mesh>
-      <LandmarkModel status={status} color={region.color} />
-      <Html center distanceFactor={7.6} position={[0, 0.42, 0.16]} occlude>
-        <div
-          className={`world-label world-label-${status}${selected ? ' is-selected' : ''}`}
-          aria-hidden="true"
-          onClick={onSelect}
-        >
-          <span>{region.shortName}</span>
-          <small>{status === 'complete' ? '完成' : status === 'available' ? '探索' : status === 'coming-soon' ? '即將開放' : '鎖定'}</small>
-        </div>
-      </Html>
     </group>
   );
 }
 
-function CameraControls({controlsHandle, reducedMotion}: {controlsHandle: Ref<PlanetControlsHandle>; reducedMotion: boolean}) {
-  const controlsRef = useRef<OrbitApi | null>(null);
-  const {camera, invalidate} = useThree();
-
-  const rotate = (azimuthDelta: number, polarDelta: number) => {
-    const controls = controlsRef.current;
-    if (!controls) return;
-    controls.setAzimuthalAngle(controls.getAzimuthalAngle() + azimuthDelta);
-    controls.setPolarAngle(MathUtils.clamp(controls.getPolarAngle() + polarDelta, 0.38, Math.PI - 0.38));
-    controls.update();
-    invalidate();
-  };
-
-  const zoom = (factor: number) => {
-    const distance = MathUtils.clamp(camera.position.length() * factor, 4.2, 8.4);
-    camera.position.setLength(distance);
-    camera.updateProjectionMatrix();
-    invalidate();
-  };
-
-  useImperativeHandle(controlsHandle, () => ({
-    rotateLeft: () => rotate(-0.28, 0),
-    rotateRight: () => rotate(0.28, 0),
-    rotateUp: () => rotate(0, -0.22),
-    rotateDown: () => rotate(0, 0.22),
-    zoomIn: () => zoom(0.88),
-    zoomOut: () => zoom(1.12),
-    reset: () => {
-      controlsRef.current?.reset();
-      invalidate();
-    },
-  }), [camera, invalidate]);
-
-  return (
-    <OrbitControls
-      ref={(instance) => { controlsRef.current = instance as unknown as OrbitApi; }}
-      makeDefault
-      enableDamping={false}
-      enablePan={false}
-      minDistance={4.2}
-      maxDistance={8.4}
-      minPolarAngle={0.38}
-      maxPolarAngle={Math.PI - 0.38}
-      rotateSpeed={reducedMotion ? 0.55 : 0.72}
-      zoomSpeed={0.72}
-    />
-  );
-}
-
-function WorldScene({activeSubject, completedMissionIds, regions, selectedRegionId, onSelectRegion, reducedMotion, controlsHandle}: SceneProps & {controlsHandle: Ref<PlanetControlsHandle>}) {
-  const visibleRegions = regions.filter((region) => region.subject === activeSubject || region.comingSoon);
-  const mathPieces: Array<[number, number, number]> = [[0, 0, 1.2], [-0.48, 0.14, 0.9], [0.43, 0.18, 0.82], [-0.18, -0.42, 0.95], [0.48, -0.34, 0.72]];
-  const englishPieces: Array<[number, number, number]> = [[0, 0, 0.78], [0.35, -0.08, 0.5], [-0.3, 0.12, 0.46]];
-  const futurePieces: Array<[number, number, number]> = [[0, 0, 0.9], [0.4, 0.1, 0.54], [-0.34, -0.14, 0.58]];
+function WorldScene({activeSubject, completedMissionIds, regions, selectedRegionId, onSelectRegion}: SceneProps) {
+  const {size} = useThree();
+  const portrait = size.width / size.height < 0.82;
+  const visibleRegions = regions.filter((region) => region.subject === activeSubject && !region.comingSoon);
 
   return (
     <>
-      <color attach="background" args={['#07111f']} />
-      <fog attach="fog" args={['#07111f', 8, 14]} />
-      <ambientLight intensity={1.15} />
-      <directionalLight position={[-4, 5, 6]} intensity={2.4} color="#ffe0a2" />
-      <directionalLight position={[5, -2, -3]} intensity={0.7} color="#6cc3de" />
-      <Stars radius={28} depth={18} count={900} factor={2.2} saturation={0.2} fade speed={0} />
-
-      <mesh>
-        <icosahedronGeometry args={[PLANET_RADIUS, 7]} />
-        <meshStandardMaterial color="#176d7c" roughness={0.78} metalness={0.04} />
-      </mesh>
-      <mesh scale={1.013}>
-        <icosahedronGeometry args={[PLANET_RADIUS, 4]} />
-        <meshBasicMaterial color="#8ed7dd" transparent opacity={0.055} wireframe />
-      </mesh>
-
-      <LandMass latitude={-3} longitude={-18} color="#5d984e" scale={1.06} pieces={mathPieces} />
-      <LandMass latitude={3} longitude={78} color="#4fa6a4" scale={0.88} pieces={englishPieces} />
-      <LandMass latitude={34} longitude={148} color="#64716c" scale={0.82} pieces={futurePieces} />
-      <LandMass latitude={-36} longitude={154} color="#6b625b" scale={0.74} pieces={futurePieces} />
-
+      <ambientLight intensity={0.55} />
+      <Stars radius={24} depth={14} count={420} factor={1.5} saturation={0.15} fade speed={0} />
       {visibleRegions.map((region) => (
-        <RegionMarker
+        <AtlasMarker
           key={region.id}
+          portrait={portrait}
           region={region}
           selected={selectedRegionId === region.id}
           status={getRegionStatus(region, completedMissionIds)}
           onSelect={() => onSelectRegion(region.id)}
         />
       ))}
-
-      <CameraControls controlsHandle={controlsHandle} reducedMotion={reducedMotion} />
     </>
   );
 }
 
 export const PlanetScene = forwardRef<PlanetControlsHandle, SceneProps>(function PlanetScene(props, ref) {
+  const [view, setView] = useState<AtlasView>({azimuth: 0, polarOffset: 0, zoom: 1});
+  const viewRef = useRef(view);
+  const [dragging, setDragging] = useState(false);
+  const pointersRef = useRef(new Map<number, {x: number; y: number}>());
+  const gestureRef = useRef<{
+    view: AtlasView;
+    center: {x: number; y: number};
+    distance: number;
+  } | null>(null);
+  const tiltMultiplier = props.reducedMotion ? 18 : 30;
+  const atlasStyle: CSSProperties = {
+    transform: `perspective(1100px) rotateX(${view.polarOffset * -tiltMultiplier}deg) rotateY(${view.azimuth * tiltMultiplier}deg) scale(${view.zoom})`,
+  };
+
+  const commitView = (nextView: AtlasView) => {
+    viewRef.current = nextView;
+    setView(nextView);
+  };
+
+  const adjustView = (updater: (current: AtlasView) => AtlasView) => {
+    commitView(updater(viewRef.current));
+  };
+
+  const gestureMetrics = () => {
+    const points = [...pointersRef.current.values()];
+    const first = points[0];
+    const second = points[1];
+    if (!first) return null;
+    if (!second) return {center: first, distance: 0};
+    return {
+      center: {x: (first.x + second.x) / 2, y: (first.y + second.y) / 2},
+      distance: Math.hypot(second.x - first.x, second.y - first.y),
+    };
+  };
+
+  const restartGesture = () => {
+    const metrics = gestureMetrics();
+    gestureRef.current = metrics ? {view: viewRef.current, ...metrics} : null;
+  };
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    pointersRef.current.set(event.pointerId, {x: event.clientX, y: event.clientY});
+    setDragging(true);
+    restartGesture();
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!pointersRef.current.has(event.pointerId)) return;
+    pointersRef.current.set(event.pointerId, {x: event.clientX, y: event.clientY});
+    const gesture = gestureRef.current;
+    const metrics = gestureMetrics();
+    if (!gesture || !metrics) return;
+
+    const horizontalDelta = metrics.center.x - gesture.center.x;
+    const verticalDelta = metrics.center.y - gesture.center.y;
+    const pinchScale = gesture.distance > 0 && metrics.distance > 0 ? metrics.distance / gesture.distance : 1;
+    commitView({
+      azimuth: clamp(gesture.view.azimuth + horizontalDelta / 850, MIN_AZIMUTH, MAX_AZIMUTH),
+      polarOffset: clamp(gesture.view.polarOffset + verticalDelta / 1100, MIN_POLAR_OFFSET, MAX_POLAR_OFFSET),
+      zoom: clamp(gesture.view.zoom * pinchScale, MIN_ZOOM, MAX_ZOOM),
+    });
+  };
+
+  const handlePointerEnd = (event: ReactPointerEvent<HTMLDivElement>) => {
+    pointersRef.current.delete(event.pointerId);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    setDragging(pointersRef.current.size > 0);
+    restartGesture();
+  };
+
+  const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const zoomFactor = Math.exp(-event.deltaY * 0.0012);
+    adjustView((current) => ({
+      ...current,
+      zoom: clamp(current.zoom * zoomFactor, MIN_ZOOM, MAX_ZOOM),
+    }));
+  };
+
+  useImperativeHandle(ref, () => ({
+    rotateLeft: () => adjustView((current) => ({...current, azimuth: clamp(current.azimuth - 0.055, MIN_AZIMUTH, MAX_AZIMUTH)})),
+    rotateRight: () => adjustView((current) => ({...current, azimuth: clamp(current.azimuth + 0.055, MIN_AZIMUTH, MAX_AZIMUTH)})),
+    rotateUp: () => adjustView((current) => ({...current, polarOffset: clamp(current.polarOffset - 0.045, MIN_POLAR_OFFSET, MAX_POLAR_OFFSET)})),
+    rotateDown: () => adjustView((current) => ({...current, polarOffset: clamp(current.polarOffset + 0.045, MIN_POLAR_OFFSET, MAX_POLAR_OFFSET)})),
+    zoomIn: () => adjustView((current) => ({...current, zoom: clamp(current.zoom * 1.1, MIN_ZOOM, MAX_ZOOM)})),
+    zoomOut: () => adjustView((current) => ({...current, zoom: clamp(current.zoom / 1.1, MIN_ZOOM, MAX_ZOOM)})),
+    reset: () => commitView({azimuth: 0, polarOffset: 0, zoom: 1}),
+  }), []);
+
   return (
     <div className="planet-canvas" aria-hidden="true">
-      <Canvas
-        frameloop="demand"
-        dpr={[1, 1.5]}
-        camera={{position: [0, 0.35, 6.2], fov: 42, near: 0.1, far: 50}}
-        gl={{antialias: true, alpha: false, powerPreference: 'high-performance'}}
+      <div
+        className={`illustrated-atlas-viewport${dragging ? ' is-dragging' : ''}`}
+        style={atlasStyle}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
+        onWheel={handleWheel}
       >
-        <WorldScene {...props} controlsHandle={ref} />
-      </Canvas>
+        <picture className="illustrated-atlas-art">
+          <source media="(max-width: 760px)" srcSet="/assets/growth-planet-illustrated-atlas-mobile.jpg" />
+          <img src="/assets/growth-planet-illustrated-atlas.jpg" alt="" draggable="false" />
+        </picture>
+        <Canvas
+          frameloop="demand"
+          dpr={[1, 1.5]}
+          camera={{position: [0, 0, 7], fov: 42, near: 0.1, far: 40}}
+          gl={{antialias: true, alpha: true, powerPreference: 'high-performance'}}
+        >
+          <WorldScene {...props} />
+        </Canvas>
+      </div>
     </div>
   );
 });
