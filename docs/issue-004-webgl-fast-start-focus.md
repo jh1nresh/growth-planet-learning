@@ -16,7 +16,7 @@
 - **Harness:** 本地 Vite preview；React state／WebGL 畫面為 state surface，build/test/browser 為 feedback signals。
 - **Convergence condition:** 驗收條件全過、無 console error、無 critical motion/accessibility finding，且 diff 僅含本 issue。
 - **Human boundary:** PR #1 merge 已授權；本階段可建立 branch/commit/PR，但不部署、不合併新 PR。
-- **Risk:** texture preload media query 可能選錯資產；焦點補間可能與拖曳打架。Demand rendering 實測會漏畫首幀，本階段明確不採用。
+- **Risk:** fallback 與 WebGL 必須使用相同的 stage aspect-ratio 門檻選圖；焦點補間可能與拖曳打架。Demand rendering 實測會漏畫首幀，本階段明確不採用。
 - **Security scan receipt:** 產品程式碼需執行 npm high-severity audit；不新增 auth、資料或外部輸入面。
 - **Dynamic harness mode:** off；本地 serial work 足夠。
 - **Context risk:** monitor。
@@ -40,7 +40,7 @@
 - `npm audit --audit-level=high`: pass — 0 vulnerabilities。
 - `git diff --check`: pass。
 - Bundle: `PlanetScene` 909.96 kB / gzip 243.19 kB → 888.72 kB / gzip 236.92 kB；移除 Drei 後 package lock 淨減 437 行 dependency metadata。
-- Cold-load asset: fallback 從 379.6 kB JPG 改為和 WebGL 共用的 responsive WebP；不加入可能猜錯 DPR 的 preload。
+- Cold-load asset: fallback 從 379.6 kB JPG 改為和 WebGL 共用的 responsive WebP；CSS size container 與 Canvas 都以 stage aspect ratio `0.82` 選圖，不依 viewport 或猜測 DPR。
 - Browser desktop: 數學地標 2 → 3 → 4 快速切換後，`比較峽谷` 保持 `aria-current="step"`，panel heading 唯一，console 0 errors。
 - Browser gestures: 3D stage 完成 pointer drag 與 wheel zoom，console 0 errors。
 - Accessibility: 沒有新增不可達的 Canvas-only control；既有 HTML 地標 navigation、標示控制與 aria-live 保持為等價操作面。
