@@ -1,41 +1,34 @@
-# Design QA — WebGL Skill Graph
+# Design QA — True 3D Globe v1
 
 - Source visual truth: `/Users/jhinresh/projects/growth-planet-learning/design/reference-growth-planet-original.jpg`
-- Mobile implementation: `/Users/jhinresh/projects/growth-planet-learning/artifacts/webgl-skill-graph-mobile.png`
-- Same-input comparison: `/Users/jhinresh/projects/growth-planet-learning/artifacts/webgl-skill-graph-comparison.png`
-- Rendered URL: `http://127.0.0.1:4173/`
-- Tested state: Mathematics selected, guest progress 1/8, 390×817 CSS-pixel mobile viewport.
+- Active renderer: `/Users/jhinresh/projects/growth-planet-learning/src/features/world/PlanetScene.tsx`
+- Local route: `http://127.0.0.1:5174/`
+- Tested states: Math front/360° rotation/drag/zoom, all Math missions, English starter, guest fallback.
 
-## Final result
+## Result
 
-No actionable P0/P1/P2 visual finding remains. The exact illustration now renders as a texture on a shallow curved WebGL mesh. Raised 3D nodes and taxonomy prerequisite curves add spatial structure while preserving mountains, water, forests, architecture, character, source labels, and the luminous authored route.
+The renderer is no longer a curved plane. It uses a true `SphereGeometry`; world regions are placed from latitude/longitude, dependency paths follow great-circle points, and depth-tested nodes/paths can move behind the globe. The authored illustration is projected only onto the front hemisphere and blends into a procedural ocean/land backside, avoiding a false rectangular UV wrap.
 
-## Required fidelity surfaces
-
-- Typography and copy: the source Traditional Chinese labels remain inside the texture; existing Songti/PingFang product chrome and curriculum copy are unchanged.
-- Layout: the measured mobile stage is 380.5×556 pixels inside a 390×817 viewport; document scroll width is 380 pixels with no horizontal overflow.
-- Color and image quality: WebP texture copies retain the source crop and color density. WebP is required for reliable GPU upload in the in-app browser; the JPEGs remain as loading/fallback assets.
-- Graph hierarchy: complete/available/locked states use small raised nodes. Hard and soft prerequisite curves differ in weight and stay subordinate to the source artwork.
-- Accessibility: the WebGL layer remains decorative to assistive technology; all regions have equivalent native HTML route buttons, focus treatment, status announcements, and labeled view controls.
-
-## Same-input comparison findings
+## Design decisions
 
 | Before | After | Why |
 | --- | --- | --- |
-| DOM illustration with WebGL rings floating above it | Exact illustration on a 48×48 curved WebGL mesh | Surface, nodes, and connections now share real perspective |
-| Region order implied a single linear route | 11 deduplicated region-level prerequisite edges from taxonomy topic dependencies | Makes the Marble-inspired DAG visible without changing curriculum data |
-| Three incorrect hotspot IDs omitted Shape, Measure, and Supply nodes | Coordinates use the actual region IDs | All eight Math landmarks now render |
-| Immediate pointer capture prevented node clicks | 8px drag hysteresis before pointer capture | A tap selects a node while a drag remains direct and interruptible |
-| React wheel handling could allow page scroll over the canvas | Non-passive native wheel listener isolates zoom | Trackpad/wheel zoom changes the world without moving the document |
-| JPEG texture decoded as an untextured surface in the WebGL harness | Equivalent high-quality WebP textures | Stable GPU texture upload with comparable size and fidelity |
+| 48×48 curved plane | 96×64 sphere with atmosphere shell | Provides a real silhouette, side, and back |
+| Desktop/mobile 2D hotspot coordinates | `world.json` latitude/longitude | One spatial source of truth across viewport sizes |
+| Quadratic paths above a plane | Great-circle tubes at a fixed globe radius | Paths remain attached while orbiting |
+| ±0.24 rad horizontal clamp | Unbounded yaw | A globe must complete a full orbit |
+| Atlas UV displayed as a rectangle | Object-normal front projection blended into procedural backside | Retains the detailed authored face without wrapping stars and labels around the back |
 
 ## Evidence
 
-- Taxonomy projection test passes with 11 expected Math region edges.
-- 3D node click changed the selected HTML route from Counting Harbor to Bundle Bridge.
-- Pointer drag changed the rendered frame hash.
-- Wheel zoom changed the rendered frame while document scroll remained unchanged.
-- Mobile and desktop browser reads reported zero application console errors.
-- `npm run check` and dependency audit receipts are recorded in the PR/deploy handoff.
+- Geometry unit tests cover front, east, back hemisphere, and constant-radius great-circle paths.
+- State instrumentation verified more than 360° rotation, direct drag on both axes, wheel zoom, reset, and latitude/longitude focus.
+- Eight Math missions and the English starter mission completed through visible UI with zero final console errors.
+- Canvas is 575.6×590 CSS pixels with an 863×884 capped-DPR backing buffer in the desktop harness.
+- Motion review verdict: **Approve**.
 
-final result: passed
+## Residual visual risk
+
+The in-app Browser and Chrome automation screenshot surfaces do not capture the WebGL framebuffer; they return an empty or broken Canvas even though the Canvas mounts and view state updates. `?renderer=compat` now provides a capture-safe, double-sided CSS 3D globe that follows the same yaw, pitch, and zoom controls. The normal route remains the true WebGL sphere, so its exact node occlusion still requires a human visual check in a normal browser before merge. A production-quality 2:1 equirectangular painting remains the upgrade path for fully authored backside detail.
+
+final result: conditional pass — implementation, interaction, and visible compatibility fallback pass; true WebGL pixel review remains human-gated.

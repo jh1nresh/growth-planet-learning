@@ -13,17 +13,19 @@ import {useAuth} from './features/auth/auth-context';
 import {MissionDialog} from './features/missions/MissionDialog';
 import {ProfileDialog} from './features/profile/ProfileDialog';
 import {RegionPanel} from './features/world/RegionPanel';
+import {SkillConstellation} from './features/world/SkillConstellation';
 import {WorldControls} from './features/world/WorldControls';
 import type {PlanetControlsHandle} from './features/world/PlanetScene';
 import {useProgress} from './hooks/useProgress';
-import {useReducedMotion} from './hooks/useReducedMotion';
-import {getRegionStatus, getSubjectRegions, missionByRegionId, missions, regions} from './lib/curriculum';
+import {clusterById, getRegionStatus, getSubjectRegions, missionByRegionId, missions, regions, topics} from './lib/curriculum';
 import type {Subject, WorldRegion} from './types';
 
 const PlanetScene = lazy(() => import('./features/world/PlanetScene').then((module) => ({default: module.PlanetScene})));
+const useExperimentalPlanet = new URLSearchParams(window.location.search).get('view') === 'planet';
 const mathRegions = getSubjectRegions('Mathematics');
 const englishRegions = getSubjectRegions('English');
 const playableMathMissionIds = new Set(missions.filter((mission) => mathRegions.some((region) => region.id === mission.regionId)).map((mission) => mission.id));
+const playableEnglishMissionIds = new Set(missions.filter((mission) => englishRegions.some((region) => region.id === mission.regionId)).map((mission) => mission.id));
 
 function PlanetLoading() {
   return (
@@ -36,12 +38,12 @@ function PlanetLoading() {
 
 export default function App() {
   const auth = useAuth();
-  const reducedMotion = useReducedMotion();
   const namespace = auth.userId ? `privy:${auth.userId}` : 'guest';
   const {progress, setChildAlias, completeMission} = useProgress(namespace);
   const completedMissionIds = useMemo(() => new Set(progress.completedMissionIds), [progress.completedMissionIds]);
   const [activeSubject, setActiveSubject] = useState<Subject>('Mathematics');
   const [selectedRegionId, setSelectedRegionId] = useState('counting_harbor');
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>('tw_math_g1_count_20');
   const [missionOpen, setMissionOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const controlsRef = useRef<PlanetControlsHandle>(null);
@@ -49,19 +51,23 @@ export default function App() {
   const selectedRegion = regions.find((region) => region.id === selectedRegionId) ?? mathRegions[0];
   const selectedMission = missionByRegionId.get(selectedRegion.id) ?? null;
   const selectedStatus = getRegionStatus(selectedRegion, completedMissionIds);
-  const completedMath = [...playableMathMissionIds].filter((id) => completedMissionIds.has(id)).length;
-  const progressPercent = Math.round((completedMath / playableMathMissionIds.size) * 100);
+  const activeMissionIds = activeSubject === 'Mathematics' ? playableMathMissionIds : playableEnglishMissionIds;
+  const completedActive = [...activeMissionIds].filter((id) => completedMissionIds.has(id)).length;
+  const progressPercent = Math.round((completedActive / activeMissionIds.size) * 100);
   const activeRegions = activeSubject === 'Mathematics' ? mathRegions : englishRegions;
 
   const chooseSubject = (subject: Subject) => {
     setActiveSubject(subject);
     const first = getSubjectRegions(subject)[0];
     if (first) setSelectedRegionId(first.id);
+    setSelectedTopicId(topics.find((topic) => topic.subject === subject)?.id ?? null);
   };
 
   const chooseRegion = (region: WorldRegion) => {
     if (region.subject === 'Mathematics' || region.subject === 'English') setActiveSubject(region.subject);
     setSelectedRegionId(region.id);
+    const cluster = region.clusterId ? clusterById.get(region.clusterId) : undefined;
+    setSelectedTopicId(cluster?.topicIds[0] ?? null);
   };
 
   return (
@@ -76,10 +82,10 @@ export default function App() {
           </div>
         </div>
 
-        <div className="topbar-progress" aria-label={`數學大陸完成 ${progressPercent}%`}>
+        <div className="topbar-progress" aria-label={`${activeSubject === 'Mathematics' ? '數學星系' : '英文星系'}完成 ${progressPercent}%`}>
           <div>
-            <span>數學大陸</span>
-            <strong>{completedMath}／{playableMathMissionIds.size}</strong>
+            <span>{activeSubject === 'Mathematics' ? '數學星系' : '英文星系'}</span>
+            <strong>{completedActive}／{activeMissionIds.size}</strong>
           </div>
           <div className="progress-track" aria-hidden="true"><span style={{width: `${progressPercent}%`}} /></div>
         </div>
@@ -103,26 +109,42 @@ export default function App() {
           </button>
         </nav>
 
-        <section className="world-stage" aria-label="可旋轉的 3D 成長星球">
+        <section className="world-stage" aria-label={useExperimentalPlanet ? '可旋轉的 3D 成長星球' : '數學與英文技能星圖'}>
           <div className="sr-only">
-            <span><Compass aria-hidden="true" /> {activeSubject === 'Mathematics' ? '第一個大陸區' : '下一段航線'}</span>
-            <h1>{activeSubject === 'Mathematics' ? '把數學走成一場冒險' : '從第一個聲音開始出航'}</h1>
-            <p>{activeSubject === 'Mathematics' ? '拖曳星球找地標，完成任務後路線會一站一站亮起。' : '英文港口已開放第一艘船，先找到 B 的聲音。'}</p>
+            <span><Compass aria-hidden="true" /> {useExperimentalPlanet ? '實驗星球模式' : activeSubject === 'Mathematics' ? '數學技能星系' : '英文技能星系'}</span>
+            <h1>{activeSubject === 'Mathematics' ? '沿著先修路徑點亮數學能力' : '從字母音走到第一句英文'}</h1>
+            <p>{useExperimentalPlanet ? '拖曳星球找地標，完成任務後路線會一站一站亮起。' : '選擇科目，再點一顆能力星查看學習內容與學會的證據。'}</p>
           </div>
 
-          <Suspense fallback={<PlanetLoading />}>
-            <PlanetScene
-              ref={controlsRef}
+          {useExperimentalPlanet ? (
+            <>
+              <Suspense fallback={<PlanetLoading />}>
+                <PlanetScene
+                  ref={controlsRef}
+                  activeSubject={activeSubject}
+                  completedMissionIds={completedMissionIds}
+                  regions={regions}
+                  selectedRegionId={selectedRegionId}
+                  onSelectRegion={(regionId) => {
+                    const region = regions.find((item) => item.id === regionId);
+                    if (region) chooseRegion(region);
+                  }}
+                />
+              </Suspense>
+              <WorldControls controls={controlsRef} />
+            </>
+          ) : (
+            <SkillConstellation
               activeSubject={activeSubject}
+              selectedTopicId={selectedTopicId}
               completedMissionIds={completedMissionIds}
-              regions={regions}
-              selectedRegionId={selectedRegionId}
-              onSelectRegion={setSelectedRegionId}
-              reducedMotion={reducedMotion}
+              onChooseSubject={chooseSubject}
+              onSelectTopic={(topicId, regionId) => {
+                setSelectedTopicId(topicId);
+                setSelectedRegionId(regionId);
+              }}
             />
-          </Suspense>
-
-          <WorldControls controls={controlsRef} />
+          )}
         </section>
 
         <nav id="region-navigation" className="region-navigation" aria-label={`${activeSubject === 'Mathematics' ? '數學大陸' : '英文港口'}地標`}>
@@ -155,6 +177,7 @@ export default function App() {
 
         <RegionPanel
           region={selectedRegion}
+          selectedTopicId={selectedTopicId}
           status={selectedStatus}
           onStartMission={() => setMissionOpen(true)}
         />

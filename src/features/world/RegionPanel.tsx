@@ -4,14 +4,16 @@ import type {WorldRegion} from '../../types';
 
 interface RegionPanelProps {
   region: WorldRegion;
+  selectedTopicId: string | null;
   status: 'coming-soon' | 'locked' | 'complete' | 'available';
   onStartMission: () => void;
 }
 
-export function RegionPanel({region, status, onStartMission}: RegionPanelProps) {
+export function RegionPanel({region, selectedTopicId, status, onStartMission}: RegionPanelProps) {
   const cluster = region.clusterId ? clusterById.get(region.clusterId) : undefined;
   const mission = missionByRegionId.get(region.id);
   const topicNames = cluster?.topicIds.map((id) => topicById.get(id)?.name).filter(Boolean) ?? [];
+  const selectedTopic = selectedTopicId ? topicById.get(selectedTopicId) : undefined;
   const locked = status === 'locked' || status === 'coming-soon';
 
   return (
@@ -24,6 +26,16 @@ export function RegionPanel({region, status, onStartMission}: RegionPanelProps) 
         <h2 id="region-title">{region.name}</h2>
         <p>{cluster?.summary ?? region.description}</p>
       </div>
+
+      {selectedTopic ? (
+        <section className="topic-focus" aria-labelledby="topic-focus-title">
+          <span>{selectedTopic.domain} · {selectedTopic.ageRangeStart}–{selectedTopic.ageRangeEnd} 歲</span>
+          <h3 id="topic-focus-title">{selectedTopic.name}</h3>
+          <p>{selectedTopic.description}</p>
+          <strong>學會的證據</strong>
+          <ul>{selectedTopic.evidence.map((item) => <li key={item}>{item}</li>)}</ul>
+        </section>
+      ) : null}
 
       {topicNames.length > 0 ? (
         <div className="region-topics">
