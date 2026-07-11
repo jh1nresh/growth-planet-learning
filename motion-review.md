@@ -1,19 +1,19 @@
-# Motion review — illustrated atlas
+# Motion review — WebGL Skill Graph
 
 | Before | After | Why |
 | --- | --- | --- |
-| Orbit behavior depended on a separate WebGL camera state | Illustration and WebGL markers share one transform state | Keeps art and hotspots spatially aligned |
-| Browser drag and wheel behavior were not deterministic | Pointer capture tracks drag 1:1; wheel and pinch update the same bounded zoom | Direct manipulation is immediate, interruptible, and verifiable |
-| Large rotation range risked distorting painterly labels | Rotation is constrained to ±0.24 radians horizontally and ±0.15 vertically | Adds depth while preserving legibility and authored composition |
-| Full motion used a 30× tilt multiplier | Reduced-motion preference uses an 18× multiplier | Retains useful spatial feedback with gentler movement |
+| CSS transformed a DOM picture while WebGL markers remained a separate layer | One R3F group rotates/scales the curved texture, nodes, and edges together | Maintains spatial consistency under every input |
+| Pointer capture began on press | Capture begins after 8px hysteresis, or immediately for pinch | Preserves tap selection and makes drag intent explicit |
+| Wheel handling depended on React event delivery over Canvas | Passive-disabled native wheel listener with cleanup | Prevents page scroll and keeps zoom continuous over WebGL |
+| Full motion multiplier `1.7` | Reduced-motion multiplier `0.9` | Keeps orientation feedback while reducing large-surface tilt |
 
 ## Verdict
 
-- Directness: pointer movement updates the compositor transform continuously; there is no gesture-completion animation or input lockout.
-- Interruptibility: every pointer move retargets from the active gesture state, and pointer capture keeps the world attached to the finger/cursor outside its bounds.
-- Multi-input: primary mouse/touch drag, two-pointer pinch, wheel zoom, direction/zoom buttons, and reset use the same bounded view model.
-- Performance: only `transform` changes during interaction. One continuously manipulated atlas viewport uses `will-change`; Canvas remains on-demand with DPR capped at 1–1.5.
-- Accessibility: controls are labeled and keyboard accessible. Reduced motion lowers the tilt response; no decorative entrance or looping world animation was added.
-- Cohesion: frequent controls respond immediately and use the existing 130ms active feedback, with no slow or ornamental transition on the world itself.
+- Purpose and frequency: motion exists only for direct world inspection and state selection; there is no decorative entrance or idle oscillation.
+- Interruptibility: pointer movement maps directly to bounded group rotation; no keyframe or timed transition blocks input.
+- Input matrix: pointer drag, touch/pinch, wheel/trackpad, native buttons, and reset share one view state. HTML route navigation remains the keyboard path.
+- Performance: scene geometry is bounded to one 48×48 plane, 8 nodes, 11 curves, capped DPR 1–1.5, and no component-level `useFrame` work. The engine-owned render loop stops with Canvas lifecycle and browser visibility; no independent runaway rAF loop was added.
+- Accessibility: reduced motion halves the rotation response; visible focus and labeled equivalent controls remain.
+- Review escalations: no `transition: all`, `scale(0)`, `ease-in`, layout-property animation, ungated hover motion, or uninterruptible keyframe exists in the changed surface.
 
-**Approve** — no feel-breaking motion regression, uninterruptible gesture, layout-property animation, or missing equivalent control remains.
+**Approve** — no feel-breaking regression, obvious removable motion, easy GPU fix, missing reduced-motion path, or interaction-blocking timing remains.

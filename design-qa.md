@@ -1,42 +1,41 @@
-# Design QA — illustrated Growth Planet
+# Design QA — WebGL Skill Graph
 
 - Source visual truth: `/Users/jhinresh/projects/growth-planet-learning/design/reference-growth-planet-original.jpg`
-- Desktop implementation: `/Users/jhinresh/projects/growth-planet-learning/artifacts/illustrated-world-desktop-final.png`
-- Mobile implementation: `/Users/jhinresh/projects/growth-planet-learning/artifacts/illustrated-world-mobile-390-final.png`
-- Same-input comparison: `/Users/jhinresh/projects/growth-planet-learning/artifacts/illustrated-detail-comparison.png`
+- Mobile implementation: `/Users/jhinresh/projects/growth-planet-learning/artifacts/webgl-skill-graph-mobile.png`
+- Same-input comparison: `/Users/jhinresh/projects/growth-planet-learning/artifacts/webgl-skill-graph-comparison.png`
 - Rendered URL: `http://127.0.0.1:4173/`
-- Tested states: Mathematics selected, guest progress 1/8, default and manipulated atlas views.
+- Tested state: Mathematics selected, guest progress 1/8, 390×817 CSS-pixel mobile viewport.
 
 ## Final result
 
-No actionable P0/P1/P2 visual finding remains. The exact supplied illustration is now the terrain source, so the implementation retains the reference's mountains, forest, rivers, architecture, character, atmospheric lighting, locked lands, and connected luminous route.
+No actionable P0/P1/P2 visual finding remains. The exact illustration now renders as a texture on a shallow curved WebGL mesh. Raised 3D nodes and taxonomy prerequisite curves add spatial structure while preserving mountains, water, forests, architecture, character, source labels, and the luminous authored route.
 
 ## Required fidelity surfaces
 
-- Typography: the illustration's original Traditional Chinese landmark labels remain intact. App chrome continues to use the existing Songti/PingFang hierarchy.
-- Layout: desktop preserves route/world/mission hierarchy. The measured mobile viewport is 390×817 CSS pixels; the stage is 380.5×556 pixels and document scroll width is 380 pixels, with no horizontal overflow.
-- Color: the exact source palette is preserved rather than approximated with procedural teal and green materials.
-- Image quality: measured source crops use Lanczos scaling and responsive desktop/mobile assets. No placeholder, CSS illustration, or generated substitute appears in the primary world surface.
-- Copy: existing product copy, curriculum route, progress, and guest states are unchanged. Redundant overlay headings were visually hidden so they no longer cover source labels while remaining available semantically.
-- Icons: existing Phosphor direction, zoom, reset, profile, and subject icons remain consistent.
-- Accessibility: the decorative picture/WebGL layer is hidden from the accessibility tree; equivalent labeled controls and semantic landmark navigation remain available. Focus, reduced motion, reduced transparency, and increased contrast paths remain intact.
+- Typography and copy: the source Traditional Chinese labels remain inside the texture; existing Songti/PingFang product chrome and curriculum copy are unchanged.
+- Layout: the measured mobile stage is 380.5×556 pixels inside a 390×817 viewport; document scroll width is 380 pixels with no horizontal overflow.
+- Color and image quality: WebP texture copies retain the source crop and color density. WebP is required for reliable GPU upload in the in-app browser; the JPEGs remain as loading/fallback assets.
+- Graph hierarchy: complete/available/locked states use small raised nodes. Hard and soft prerequisite curves differ in weight and stay subordinate to the source artwork.
+- Accessibility: the WebGL layer remains decorative to assistive technology; all regions have equivalent native HTML route buttons, focus treatment, status announcements, and labeled view controls.
 
 ## Same-input comparison findings
 
 | Before | After | Why |
 | --- | --- | --- |
-| Procedural low-poly sphere, generic land blobs, cones, and floating labels | Exact supplied painterly atlas as the dominant world surface | Restores authored terrain and narrative density instead of approximating it |
-| Large HTML title and WebGL tooltip covered mountains and map labels | Semantic title is screen-reader-only; landmark state uses small rings plus external route navigation | Preserves the original composition and keeps interactions understandable |
-| Oversized selected marker competed with the castle | Selected ring reduced to a restrained outline | Indicates state without obscuring the illustration |
-| Orbit input could not be verified consistently through the browser harness | Pointer-captured drag, wheel zoom, pinch scaling, labeled controls, and reset share one view state | Makes direct manipulation deterministic, continuous, and testable |
+| DOM illustration with WebGL rings floating above it | Exact illustration on a 48×48 curved WebGL mesh | Surface, nodes, and connections now share real perspective |
+| Region order implied a single linear route | 11 deduplicated region-level prerequisite edges from taxonomy topic dependencies | Makes the Marble-inspired DAG visible without changing curriculum data |
+| Three incorrect hotspot IDs omitted Shape, Measure, and Supply nodes | Coordinates use the actual region IDs | All eight Math landmarks now render |
+| Immediate pointer capture prevented node clicks | 8px drag hysteresis before pointer capture | A tap selects a node while a drag remains direct and interruptible |
+| React wheel handling could allow page scroll over the canvas | Non-passive native wheel listener isolates zoom | Trackpad/wheel zoom changes the world without moving the document |
+| JPEG texture decoded as an untextured surface in the WebGL harness | Equivalent high-quality WebP textures | Stable GPU texture upload with comparable size and fidelity |
 
-## Interaction and runtime evidence
+## Evidence
 
-- Drag changed the live transform from `rotateX(0deg) rotateY(0deg)` to `rotateX(-1.09091deg) rotateY(3.52941deg)`.
-- Wheel zoom changed `scale(1)` to `scale(1.2411)` while page scroll remained at zero.
-- Reset returned the atlas to `rotateX(0deg) rotateY(0deg) scale(1)`.
-- Desktop and 390px mobile screenshots show the detailed source art and functional controls.
-- Browser console errors: zero.
-- `npm run check`: taxonomy validation, 6 tests, TypeScript, and production build passed.
+- Taxonomy projection test passes with 11 expected Math region edges.
+- 3D node click changed the selected HTML route from Counting Harbor to Bundle Bridge.
+- Pointer drag changed the rendered frame hash.
+- Wheel zoom changed the rendered frame while document scroll remained unchanged.
+- Mobile and desktop browser reads reported zero application console errors.
+- `npm run check` and dependency audit receipts are recorded in the PR/deploy handoff.
 
 final result: passed

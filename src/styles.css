@@ -301,43 +301,22 @@ input:focus-visible {
   background: #040b14;
 }
 
-.illustrated-atlas-viewport,
-.illustrated-atlas-art {
+.illustrated-atlas-viewport {
   position: absolute;
   inset: 0;
-}
-
-.illustrated-atlas-viewport {
   z-index: 0;
   overflow: hidden;
   cursor: grab;
   touch-action: none;
-  transform-origin: center;
-  transform-style: preserve-3d;
-  will-change: transform;
 }
 
 .illustrated-atlas-viewport.is-dragging {
   cursor: grabbing;
 }
 
-.illustrated-atlas-art {
-  z-index: 0;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-.illustrated-atlas-art img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  user-select: none;
-}
-
 .planet-canvas canvas {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
   touch-action: none;
 }
