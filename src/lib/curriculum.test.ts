@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {dependencies, getRegionStatus, missions, regions, topicById, topics} from './curriculum';
+import {dependencies, getRegionDependencyEdges, getRegionStatus, missions, regions, topicById, topics} from './curriculum';
 
 describe('curriculum graph', () => {
   it('keeps all dependency references valid', () => {
@@ -23,5 +23,21 @@ describe('curriculum graph', () => {
 
     completed.add(missions.find((mission) => mission.regionId === math[0].id)!.id);
     expect(getRegionStatus(math[1], completed)).toBe('available');
+  });
+
+  it('projects topic prerequisites into a deduplicated Math region graph', () => {
+    expect(getRegionDependencyEdges('Mathematics')).toEqual([
+      {sourceRegionId: 'counting_harbor', targetRegionId: 'bundle_bridge', strength: 'hard'},
+      {sourceRegionId: 'bundle_bridge', targetRegionId: 'place_value_tower', strength: 'hard'},
+      {sourceRegionId: 'place_value_tower', targetRegionId: 'compare_canyon', strength: 'hard'},
+      {sourceRegionId: 'counting_harbor', targetRegionId: 'operations_forest', strength: 'hard'},
+      {sourceRegionId: 'counting_harbor', targetRegionId: 'measure_market', strength: 'soft'},
+      {sourceRegionId: 'compare_canyon', targetRegionId: 'measure_market', strength: 'soft'},
+      {sourceRegionId: 'operations_forest', targetRegionId: 'measure_market', strength: 'soft'},
+      {sourceRegionId: 'place_value_tower', targetRegionId: 'supply_station', strength: 'hard'},
+      {sourceRegionId: 'operations_forest', targetRegionId: 'supply_station', strength: 'hard'},
+      {sourceRegionId: 'shape_workshop', targetRegionId: 'supply_station', strength: 'soft'},
+      {sourceRegionId: 'measure_market', targetRegionId: 'supply_station', strength: 'soft'},
+    ]);
   });
 });

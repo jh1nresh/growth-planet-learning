@@ -277,10 +277,7 @@ input:focus-visible {
   min-height: 620px;
   overflow: hidden;
   isolation: isolate;
-  background-color: #07111f;
-  background-image: url('/assets/growth-planet-orbital-atlas.png');
-  background-size: cover;
-  background-position: center;
+  background: #040b14;
 }
 
 .world-stage::after {
@@ -289,44 +286,7 @@ input:focus-visible {
   z-index: 1;
   inset: 0;
   pointer-events: none;
-  background: rgba(4, 12, 22, 0.32);
-}
-
-.world-title {
-  position: absolute;
-  z-index: 4;
-  top: clamp(1rem, 3vw, 2.2rem);
-  left: clamp(1rem, 3vw, 2.2rem);
-  width: min(31rem, calc(100% - 2rem));
-  pointer-events: none;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.68);
-}
-
-.world-title > span {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--gold-bright);
-  font-size: 0.76rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-}
-
-.world-title h1 {
-  max-width: 12ch;
-  margin: 0.45rem 0 0.65rem;
-  font-family: "Songti TC", "Noto Serif TC", serif;
-  font-size: clamp(2rem, 4.2vw, 4.2rem);
-  line-height: 1.04;
-  letter-spacing: -0.04em;
-}
-
-.world-title p {
-  max-width: 34rem;
-  margin: 0;
-  color: #d7e0df;
-  font-size: clamp(0.9rem, 1.25vw, 1.06rem);
-  line-height: 1.65;
+  background: rgba(4, 12, 22, 0.08);
 }
 
 .planet-canvas,
@@ -336,7 +296,28 @@ input:focus-visible {
   inset: 0;
 }
 
+.planet-canvas {
+  overflow: hidden;
+  background: #040b14;
+}
+
+.illustrated-atlas-viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+
+.illustrated-atlas-viewport.is-dragging {
+  cursor: grabbing;
+}
+
 .planet-canvas canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   touch-action: none;
 }
 
@@ -365,51 +346,6 @@ input:focus-visible {
   color: #fff0c4;
   background: rgba(7, 17, 31, 0.86);
   font-weight: 800;
-}
-
-.world-label {
-  min-width: 88px;
-  display: grid;
-  gap: 0.08rem;
-  padding: 0.44rem 0.62rem;
-  border: 2px solid rgba(240, 202, 121, 0.6);
-  border-radius: 0.8rem;
-  color: #332718;
-  background: rgba(246, 226, 183, 0.94);
-  box-shadow: 0 9px 24px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
-  text-align: center;
-  transform: translateZ(0);
-  transition: transform 140ms var(--ease-out), border-color 160ms ease;
-}
-
-.world-label.is-selected {
-  transform: scale(1.05);
-  border-color: #fff0a4;
-}
-
-.world-label span {
-  font-size: 0.74rem;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-.world-label small {
-  color: #6f5a3f;
-  font-size: 0.58rem;
-  font-weight: 800;
-}
-
-.world-label-locked,
-.world-label-coming-soon {
-  color: #d0d3d2;
-  background: rgba(40, 49, 53, 0.9);
-  border-color: rgba(174, 187, 193, 0.34);
-}
-
-.world-label-locked small,
-.world-label-coming-soon small {
-  color: #aeb9bb;
 }
 
 .world-controls {
@@ -1075,28 +1011,6 @@ input:focus-visible {
     height: 68dvh;
   }
 
-  .world-title {
-    top: 1rem;
-    left: 1rem;
-  }
-
-  .world-title h1 {
-    max-width: 16rem;
-    margin-top: 0.35rem;
-    font-size: clamp(1.75rem, 7vw, 2.4rem);
-    line-height: 1.08;
-  }
-
-  .world-title p {
-    max-width: 25rem;
-    padding-right: 1rem;
-    font-size: 0.8rem;
-  }
-
-  .world-label {
-    display: none;
-  }
-
   .world-controls {
     right: 0.55rem;
     bottom: 0.55rem;
@@ -1162,10 +1076,6 @@ input:focus-visible {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .world-label:hover {
-    transform: scale(1.05);
-  }
-
   .region-navigation li button:hover,
   .answer-option:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -1180,8 +1090,6 @@ input:focus-visible {
     transition-duration: 0.01ms !important;
   }
 
-  .world-label:hover,
-  .world-label.is-selected,
   .answer-option:hover:not(:disabled),
   .region-navigation li button:hover {
     transform: none;

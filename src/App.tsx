@@ -28,7 +28,7 @@ const playableMathMissionIds = new Set(missions.filter((mission) => mathRegions.
 function PlanetLoading() {
   return (
     <div className="planet-loading" role="status">
-      <img src="/assets/growth-planet-orbital-atlas.png" alt="" />
+      <img src="/assets/growth-planet-illustrated-atlas.jpg" alt="" />
       <span>正在組裝 3D 成長星球…</span>
     </div>
   );
@@ -104,7 +104,7 @@ export default function App() {
         </nav>
 
         <section className="world-stage" aria-label="可旋轉的 3D 成長星球">
-          <div className="world-title">
+          <div className="sr-only">
             <span><Compass aria-hidden="true" /> {activeSubject === 'Mathematics' ? '第一個大陸區' : '下一段航線'}</span>
             <h1>{activeSubject === 'Mathematics' ? '把數學走成一場冒險' : '從第一個聲音開始出航'}</h1>
             <p>{activeSubject === 'Mathematics' ? '拖曳星球找地標，完成任務後路線會一站一站亮起。' : '英文港口已開放第一艘船，先找到 B 的聲音。'}</p>

@@ -1,14 +1,19 @@
-# Motion review
+# Motion review — WebGL Skill Graph
 
 | Before | After | Why |
 | --- | --- | --- |
-| No remaining blocking motion issue | No change required | Final implementation uses direct manipulation plus 130–160ms transform/color feedback; it contains no `transition: all`, keyframes, `scale(0)`, layout-property animation, or UI duration above 300ms. |
+| CSS transformed a DOM picture while WebGL markers remained a separate layer | One R3F group rotates/scales the curved texture, nodes, and edges together | Maintains spatial consistency under every input |
+| Pointer capture began on press | Capture begins after 8px hysteresis, or immediately for pinch | Preserves tap selection and makes drag intent explicit |
+| Wheel handling depended on React event delivery over Canvas | Passive-disabled native wheel listener with cleanup | Prevents page scroll and keeps zoom continuous over WebGL |
+| Full motion multiplier `1.7` | Reduced-motion multiplier `0.9` | Keeps orientation feedback while reducing large-surface tilt |
 
 ## Verdict
 
-- Direct manipulation: orbit rotation and zoom respond immediately and are interruptible through OrbitControls; a browser image-hash check confirmed the rotation control changes the rendered world.
-- Performance: the Canvas uses on-demand rendering, capped DPR 1–1.5, no damping/idle loop, and transform-only UI movement. The large Three/Privy bundles are load-performance concerns, not frame-loop motion regressions.
-- Accessibility: movement hover effects are gated by `(hover: hover) and (pointer: fine)`; `prefers-reduced-motion` removes movement and shortens transitions; the planet has equivalent labeled direction/zoom/reset buttons.
-- Cohesion: crisp 130–160ms feedback fits a frequently used child-learning interface without decorative entrance animation.
+- Purpose and frequency: motion exists only for direct world inspection and state selection; there is no decorative entrance or idle oscillation.
+- Interruptibility: pointer movement maps directly to bounded group rotation; no keyframe or timed transition blocks input.
+- Input matrix: pointer drag, touch/pinch, wheel/trackpad, native buttons, and reset share one view state. HTML route navigation remains the keyboard path.
+- Performance: scene geometry is bounded to one 48×48 plane, 8 nodes, 11 curves, capped DPR 1–1.5, and no component-level `useFrame` work. The engine-owned render loop stops with Canvas lifecycle and browser visibility; no independent runaway rAF loop was added.
+- Accessibility: reduced motion halves the rotation response; visible focus and labeled equivalent controls remain.
+- Review escalations: no `transition: all`, `scale(0)`, `ease-in`, layout-property animation, ungated hover motion, or uninterruptible keyframe exists in the changed surface.
 
-**Approve** — no feel-breaking regression, unjustified repeated motion, easy GPU fix, or missing reduced-motion path remains.
+**Approve** — no feel-breaking regression, obvious removable motion, easy GPU fix, missing reduced-motion path, or interaction-blocking timing remains.
