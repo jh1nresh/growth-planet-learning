@@ -2,20 +2,19 @@
 
 ## Automated
 
-- `npm run validate:taxonomy`: 18 topics, 18 dependencies, 9 clusters, 9 missions; references valid; dependency graph is a DAG.
-- `npm run test`: 2 files, 6 tests passed.
+- `npm run validate:taxonomy`: 698 Marble topics and 1,326 dependencies; filter and references valid; dependency graph is a DAG.
+- `npm run test`: 8 files, 29 tests passed, including import accessors, graph layout, subject filters, and graph interaction helpers.
 - `npm run build`: TypeScript and Vite production build passed.
 - `npm audit --audit-level=high`: zero known vulnerabilities after pinned Privy-compatible Solana peers and dependency overrides.
 
 ## Browser
 
-- 3D rotate changed the rendered stage hash; zoom/reset controls were present and uniquely labeled.
-- First Math mission answered end-to-end; progress became 1/8 and region two unlocked.
-- English Port first route and mission were visible and available.
-- Guest nickname save returned `小宇` in the profile control.
-- Tablet main stage measured 676px after grid correction; 390px mobile had no horizontal page overflow.
-- Profile dialog read back with the correct accessible name after unique-title fix.
-- Console had no application error; only an upstream `THREE.Clock` deprecation warning.
+- The WebGL graph was visible and drag rotation changed its viewpoint.
+- Hover and click exposed topic identity, evidence, direct prerequisites, and unlocks.
+- Mathematics-only filtering changed the visible count from 698 to 446; reselecting a cross-subject relation restores its subject.
+- The native concept selector provides a keyboard path to every currently visible topic.
+- Desktop and mobile layouts had no horizontal page overflow.
+- The graph is lazy-loaded; WebGL failure/context loss leaves the native selector and detail content available.
 
 ## Human boundary
 

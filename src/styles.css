@@ -34,7 +34,7 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   min-height: 100vh;
   overflow-x: hidden;
   background: var(--space);
@@ -1463,6 +1463,528 @@ input:focus-visible {
   .answer-option:hover:not(:disabled),
   .region-navigation li button:hover {
     transform: none;
+  }
+}
+
+/* Marble taxonomy explorer: graph first, with no world-map metaphor. */
+.taxonomy-app {
+  min-height: 100dvh;
+  color: #f3f0e7;
+  background: #08090b;
+}
+
+.taxonomy-loading {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  color: #969a9f;
+  background: #08090b;
+  font-size: 14px;
+}
+
+.taxonomy-canvas-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  padding: 32px;
+  text-align: center;
+  color: #f5f1e8;
+  background: radial-gradient(circle at center, #18222a 0%, #08090b 72%);
+}
+
+.taxonomy-canvas-fallback strong {
+  font-size: 20px;
+}
+
+.taxonomy-canvas-fallback span {
+  max-width: 520px;
+  color: #aeb9c2;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.taxonomy-topbar {
+  position: fixed;
+  z-index: 30;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 9, 11, 0.78);
+  backdrop-filter: blur(16px);
+}
+
+.taxonomy-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.taxonomy-brand strong {
+  font-family: "Songti TC", "Noto Serif TC", serif;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+}
+
+.taxonomy-brand span,
+.taxonomy-intro span,
+.taxonomy-subjects > span,
+.taxonomy-controls,
+.taxonomy-attribution {
+  color: #969a9f;
+  font-size: 12px;
+}
+
+.taxonomy-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: #f3f0e7;
+  background: transparent;
+  cursor: pointer;
+}
+
+.taxonomy-profile:hover,
+.taxonomy-subjects button:hover,
+.taxonomy-detail-close:hover {
+  color: #fff4c2;
+  border-color: rgba(244, 201, 93, 0.5);
+}
+
+.taxonomy-profile svg {
+  width: 22px;
+  height: 22px;
+}
+
+.taxonomy-explorer {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #08090b;
+}
+
+.taxonomy-intro {
+  position: absolute;
+  z-index: 12;
+  top: 92px;
+  left: clamp(24px, 4vw, 64px);
+  max-width: 520px;
+  pointer-events: none;
+}
+
+.taxonomy-intro p {
+  margin: 0 0 8px;
+  color: #f4c95d;
+  font-family: Georgia, "Songti TC", serif;
+  font-size: 16px;
+  font-style: italic;
+}
+
+.taxonomy-intro h1 {
+  margin: 0 0 10px;
+  font-family: Georgia, "Songti TC", serif;
+  font-size: clamp(30px, 4vw, 58px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.taxonomy-subjects {
+  position: absolute;
+  z-index: 14;
+  top: 94px;
+  right: clamp(24px, 4vw, 64px);
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+
+.taxonomy-subjects button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 0;
+  border: 0;
+  color: #666b70;
+  background: transparent;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.taxonomy-subjects button.is-active {
+  color: #f3f0e7;
+}
+
+.taxonomy-subjects i,
+.taxonomy-topic-meta i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.taxonomy-keyboard-picker {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  color: #969a9f;
+  font-size: 12px;
+}
+
+.taxonomy-keyboard-picker select {
+  width: min(240px, 40vw);
+  min-height: 44px;
+  padding: 8px 34px 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  color: #f3f0e7;
+  background: #111419;
+  font-size: 16px;
+}
+
+.taxonomy-canvas {
+  position: absolute;
+  inset: 64px 0 0;
+}
+
+.taxonomy-canvas canvas {
+  cursor: grab;
+  touch-action: none;
+}
+
+.taxonomy-canvas canvas:active {
+  cursor: grabbing;
+}
+
+.taxonomy-age-axis {
+  position: absolute;
+  top: 23%;
+  bottom: 18%;
+  left: clamp(16px, 2vw, 32px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #555b61;
+  font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  pointer-events: none;
+}
+
+.taxonomy-age-axis::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -8px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.taxonomy-controls {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.taxonomy-tooltip {
+  position: absolute;
+  bottom: 54px;
+  left: 50%;
+  display: grid;
+  gap: 3px;
+  min-width: 220px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(15, 16, 18, 0.9);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.taxonomy-tooltip strong {
+  font-size: 13px;
+}
+
+.taxonomy-tooltip span {
+  color: #969a9f;
+  font-size: 11px;
+}
+
+.taxonomy-detail {
+  position: absolute;
+  z-index: 22;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  width: min(430px, 100%);
+  overflow-y: auto;
+  padding: 52px 34px 40px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 13, 15, 0.96);
+  backdrop-filter: blur(20px);
+}
+
+.taxonomy-detail-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  color: #b7b9bb;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.taxonomy-topic-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #a6aaad;
+  font-size: 12px;
+}
+
+.taxonomy-detail h2 {
+  margin: 15px 0 12px;
+  font-family: Georgia, "Songti TC", serif;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.taxonomy-detail > p {
+  margin: 0;
+  color: #c2c3c1;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.taxonomy-prerequisite-count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 28px 0;
+  padding: 18px 0;
+  border-block: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.taxonomy-prerequisite-count strong {
+  color: #f4c95d;
+  font-family: Georgia, serif;
+  font-size: 34px;
+  font-weight: 400;
+}
+
+.taxonomy-prerequisite-count span {
+  color: #a6aaad;
+  font-size: 13px;
+}
+
+.taxonomy-evidence,
+.taxonomy-relations {
+  margin-top: 28px;
+}
+
+.taxonomy-evidence h3,
+.taxonomy-relations h3 {
+  margin: 0 0 12px;
+  color: #f3f0e7;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.taxonomy-relations h3 span {
+  margin-left: 6px;
+  color: #777c81;
+  font-weight: 400;
+}
+
+.taxonomy-evidence ul,
+.taxonomy-relations ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.taxonomy-evidence li {
+  position: relative;
+  margin: 8px 0;
+  padding-left: 16px;
+  color: #c2c3c1;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.taxonomy-evidence li::before {
+  content: "·";
+  position: absolute;
+  left: 2px;
+  color: #f4c95d;
+}
+
+.taxonomy-relations li {
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.taxonomy-relations button {
+  padding: 0;
+  border: 0;
+  color: #f3f0e7;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.taxonomy-relations button:hover {
+  color: #f4c95d;
+}
+
+.taxonomy-relations li p,
+.empty-relation {
+  margin: 5px 0 0;
+  color: #858a8e;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.taxonomy-attribution {
+  position: absolute;
+  z-index: 14;
+  bottom: 22px;
+  left: 24px;
+  max-width: min(520px, calc(100% - 48px));
+  color: #6f7478;
+  text-decoration: none;
+}
+
+.taxonomy-attribution:hover {
+  color: #b7babd;
+}
+
+@media (max-width: 720px) {
+  .taxonomy-topbar {
+    min-height: 58px;
+    padding: 0 14px;
+  }
+
+  .taxonomy-brand span,
+  .taxonomy-profile span {
+    display: none;
+  }
+
+  .taxonomy-explorer {
+    min-height: 100svh;
+  }
+
+  .taxonomy-intro {
+    top: 78px;
+    left: 18px;
+    right: 18px;
+  }
+
+  .taxonomy-intro p {
+    font-size: 13px;
+  }
+
+  .taxonomy-intro h1 {
+    max-width: 310px;
+    font-size: 30px;
+  }
+
+  .taxonomy-subjects {
+    top: 220px;
+    right: auto;
+    left: 18px;
+    grid-auto-flow: column;
+    align-items: center;
+    max-width: calc(100% - 36px);
+    overflow-x: auto;
+  }
+
+  .taxonomy-subjects > span {
+    display: none;
+  }
+
+  .taxonomy-subjects button {
+    padding: 6px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+  }
+
+  .taxonomy-keyboard-picker {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .taxonomy-keyboard-picker span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .taxonomy-keyboard-picker select {
+    width: min(220px, calc(100vw - 36px));
+  }
+
+  .taxonomy-canvas {
+    inset: 58px 0 0;
+  }
+
+  .taxonomy-age-axis {
+    display: none;
+  }
+
+  .taxonomy-controls {
+    right: 14px;
+    bottom: 46px;
+    left: 14px;
+    text-align: center;
+  }
+
+  .taxonomy-tooltip {
+    bottom: 76px;
+    max-width: calc(100% - 36px);
+  }
+
+  .taxonomy-attribution {
+    right: 14px;
+    bottom: 14px;
+    left: 14px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .taxonomy-detail {
+    top: auto;
+    width: 100%;
+    max-height: 72svh;
+    padding: 48px 22px 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    border-left: 0;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .taxonomy-detail h2 {
+    font-size: 28px;
   }
 }
 

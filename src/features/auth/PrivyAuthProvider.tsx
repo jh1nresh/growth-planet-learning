@@ -30,8 +30,7 @@ export default function PrivyAuthProvider({appId, children}: ProviderProps) {
         loginMethods: ['email', 'google'],
         appearance: {
           theme: 'dark',
-          accentColor: '#d8aa55',
-          logo: '/assets/growth-planet-orbital-atlas.png',
+          accentColor: '#f4c95d',
         },
       }}
     >

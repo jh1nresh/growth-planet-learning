@@ -1,11 +1,11 @@
 {
   "name": "成長星球",
   "short_name": "成長星球",
-  "description": "為華語孩子打造的 3D 學習世界",
+  "description": "12 歲以前的數學與英文 3D 學習關係圖",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#07111f",
-  "theme_color": "#07111f",
+  "background_color": "#08090b",
+  "theme_color": "#08090b",
   "lang": "zh-Hant-TW",
   "icons": [
     {

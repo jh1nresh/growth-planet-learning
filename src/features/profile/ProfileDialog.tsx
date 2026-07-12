@@ -26,7 +26,7 @@ export function ProfileDialog({open, auth, childAlias, onClose, onSaveAlias}: Pr
   };
 
   return (
-    <Modal open={open} title="探險家設定" onClose={onClose} className="profile-modal">
+    <Modal open={open} title="學習者設定" onClose={onClose} className="profile-modal">
       <div className="auth-status">
         <UserCircle aria-hidden="true" weight="duotone" />
         <div>
@@ -48,7 +48,7 @@ export function ProfileDialog({open, auth, childAlias, onClose, onSaveAlias}: Pr
       )}
 
       <form className="profile-form" onSubmit={submit}>
-        <label htmlFor="child-alias">孩子在星球上的暱稱</label>
+        <label htmlFor="child-alias">孩子暱稱</label>
         <input
           id="child-alias"
           value={alias}
