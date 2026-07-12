@@ -16,6 +16,15 @@ const subjectColors: Record<'Mathematics' | 'English', THREE.Color> = {
 };
 const subjectLabels = {Mathematics: '數學', English: '英文'} as const;
 
+function canCreateWebGLContext() {
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+  } catch {
+    return false;
+  }
+}
+
 function GraphControls() {
   const {camera, gl, invalidate} = useThree();
   const controls = useRef<OrbitControls | null>(null);
@@ -144,6 +153,7 @@ export function MarbleTaxonomyExplorer() {
   const [hoveredTopic, setHoveredTopic] = useState<Topic | null>(null);
   const [canvasElement, setCanvasElement] = useState<HTMLCanvasElement | null>(null);
   const [webglLost, setWebglLost] = useState(false);
+  const [webglAvailable] = useState(canCreateWebGLContext);
   const visibleNodes = useMemo(
     () => graph.nodes.filter((node) => visibleSubjects.has(node.topic.subject as LearningSubject)),
     [visibleSubjects],
@@ -217,7 +227,7 @@ export function MarbleTaxonomyExplorer() {
       </div>
 
       <div className="taxonomy-canvas" aria-label="可拖曳旋轉的 3D 技能圖">
-        {webglLost ? canvasFallback : (
+        {!webglAvailable || webglLost ? canvasFallback : (
           <Canvas
             dpr={1}
             frameloop="demand"
