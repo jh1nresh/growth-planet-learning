@@ -50,6 +50,41 @@ function GraphControls() {
   return null;
 }
 
+function GraphAtmosphere() {
+  const starPositions = useMemo(() => {
+    const positions: number[] = [];
+    for (let index = 0; index < 180; index += 1) {
+      const angle = index * 2.399963;
+      const radius = 28 + (index % 13) * 3.4;
+      positions.push(
+        Math.cos(angle) * radius,
+        ((index * 17) % 49) - 24,
+        Math.sin(angle) * radius - 16,
+      );
+    }
+    return new Float32Array(positions);
+  }, []);
+
+  return (
+    <>
+      <points frustumCulled={false}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[starPositions, 3]} />
+        </bufferGeometry>
+        <pointsMaterial color="#d7c08a" size={0.12} transparent opacity={0.42} depthWrite={false} />
+      </points>
+      <mesh rotation={[1.2, 0.2, 0.34]} position={[0, -2, -18]}>
+        <torusGeometry args={[24, 0.025, 4, 160]} />
+        <meshBasicMaterial color="#927a4d" transparent opacity={0.3} />
+      </mesh>
+      <mesh rotation={[1.02, -0.35, -0.18]} position={[0, -1, -22]}>
+        <torusGeometry args={[34, 0.018, 4, 160]} />
+        <meshBasicMaterial color="#406f72" transparent opacity={0.22} />
+      </mesh>
+    </>
+  );
+}
+
 interface TaxonomyGraphProps {
   nodes: MarbleGraphNode[];
   selectedTopicId: string | null;
@@ -92,8 +127,9 @@ function TaxonomyGraph({nodes, selectedTopicId, onHover, onSelect}: TaxonomyGrap
   return (
     <>
       <color attach="background" args={['#08090b']} />
-      <fog attach="fog" args={['#08090b', 48, 92]} />
+      <fog attach="fog" args={['#070c0d', 48, 92]} />
       <ambientLight intensity={0.8} />
+      <GraphAtmosphere />
       <lineSegments geometry={edgeGeometry} frustumCulled={false}>
         <lineBasicMaterial color="#71808c" transparent opacity={selectedTopicId ? 0.12 : 0.28} />
       </lineSegments>
@@ -191,13 +227,11 @@ export function MarbleTaxonomyExplorer() {
   return (
     <section className="taxonomy-explorer" aria-label="Marble 形式的 3D 技能圖">
       <div className="taxonomy-intro">
-        <p>Everything a child learns.</p>
-        <h1>數學與英文的學習關係圖</h1>
-        <span>{visibleNodes.length} 個概念 · 高度代表年齡 · 線代表先修關係</span>
+        <h1><em>萬象</em>學圖</h1>
+        <span className="taxonomy-intro-lede">探索數學與英文的 {visibleNodes.length} 個學習概念</span>
       </div>
 
       <div className="taxonomy-subjects" aria-label="切換顯示科目">
-        <span>科目 · 點擊切換</span>
         {(['Mathematics', 'English'] as const).map((subject) => (
           <button
             key={subject}
@@ -207,11 +241,13 @@ export function MarbleTaxonomyExplorer() {
             onClick={() => toggleSubject(subject)}
           >
             <i style={{background: `#${subjectColors[subject].getHexString()}`}} />
-            {subjectLabels[subject]}
+            <span>
+              <strong>{subject === 'Mathematics' ? '數學原野' : '英文潮港'}</strong>
+            </span>
           </button>
         ))}
         <label className="taxonomy-keyboard-picker">
-          <span>鍵盤選擇概念</span>
+          <span>搜尋學習座標</span>
           <select
             value={selectedTopic && visibleSubjects.has(selectedTopic.subject as LearningSubject) ? selectedTopic.id : ''}
             onChange={(event) => {
@@ -220,7 +256,7 @@ export function MarbleTaxonomyExplorer() {
               else setSelectedTopic(null);
             }}
           >
-            <option value="">選擇一個概念…</option>
+            <option value="">輸入或選擇一個概念…</option>
             {visibleNodes.map((node) => <option key={node.topic.id} value={node.topic.id}>{node.topic.name}</option>)}
           </select>
         </label>
@@ -248,7 +284,7 @@ export function MarbleTaxonomyExplorer() {
         <div className="taxonomy-age-axis" aria-hidden="true">
           <span>12 歲</span><span>10</span><span>8</span><span>6</span><span>4 歲</span>
         </div>
-        <p className="taxonomy-controls">拖曳旋轉 · 右鍵平移 · 滾動縮放 · 點一個概念查看關係</p>
+        <p className="taxonomy-controls">拖曳 · 縮放 · 點選概念</p>
         {hoveredTopic ? <div className="taxonomy-tooltip"><strong>{hoveredTopic.name}</strong><span>{subjectLabels[hoveredTopic.subject as LearningSubject]} · {hoveredTopic.domain}</span></div> : null}
       </div>
 
@@ -263,11 +299,11 @@ export function MarbleTaxonomyExplorer() {
           <p>{selectedTopic.description}</p>
           <div className="taxonomy-prerequisite-count"><strong>{getPrerequisiteCount(selectedTopic.id)}</strong><span>個完整先修概念</span></div>
           <section className="taxonomy-evidence">
-            <h3>學會的證據</h3>
+            <h3>掌握證據</h3>
             <ul>{selectedTopic.evidence.map((evidence) => <li key={evidence}>{evidence}</li>)}</ul>
           </section>
-          <RelationList title="直接建立在" items={prerequisites} onSelect={selectTopic} />
-          <RelationList title="接下來解鎖" items={unlocks} onSelect={selectTopic} />
+          <RelationList title="先修概念" items={prerequisites} onSelect={selectTopic} />
+          <RelationList title="後續概念" items={unlocks} onSelect={selectTopic} />
         </aside>
       ) : null}
 

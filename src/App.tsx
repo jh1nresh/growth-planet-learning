@@ -17,10 +17,18 @@ export default function App() {
       <a className="skip-link" href="#taxonomy-map">跳到技能圖</a>
       <header className="taxonomy-topbar">
         <a className="taxonomy-brand" href="/" aria-label="成長星球首頁">
-          <strong>成長星球</strong>
-          <span>Open learning map</span>
+          <span className="taxonomy-brand-mark" aria-hidden="true">學</span>
+          <span className="taxonomy-brand-copy">
+            <strong>成長星球</strong>
+            <small>STAR·INK LEARNING ATLAS</small>
+          </span>
         </a>
-        <button className="taxonomy-profile" type="button" onClick={() => setProfileOpen(true)}>
+        <button
+          className="taxonomy-profile"
+          type="button"
+          aria-label={progress.childAlias ? `開啟 ${progress.childAlias} 的學習者設定` : (auth.authenticated ? '設定孩子暱稱' : '家長登入')}
+          onClick={() => setProfileOpen(true)}
+        >
           <UserCircle aria-hidden="true" weight="regular" />
           <span>{progress.childAlias || (auth.authenticated ? '設定孩子暱稱' : '家長登入')}</span>
         </button>
