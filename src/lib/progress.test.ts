@@ -1,4 +1,5 @@
 import {describe, expect, it} from 'vitest';
+import {createEnglishWordEvidence} from '../features/english/englishWordLessonState';
 import {completeMission, emptyProgress, loadProgress, sanitizeAlias, saveProgress, setCurriculumFramework, type StorageLike} from './progress';
 
 class MemoryStorage implements StorageLike {
@@ -60,6 +61,21 @@ describe('progress store', () => {
     const replay = completeMission(first, 'mission-1', 40, [], time);
     expect(first.xp).toBe(40);
     expect(replay).toBe(first);
+  });
+
+  it('records the interactive English lesson as mastery evidence', () => {
+    const time = new Date('2026-07-13T00:00:00Z');
+    const evidence = createEnglishWordEvidence({hintCount: 0, retryCount: 0}, time.toISOString());
+    const next = completeMission(emptyProgress(), 'mission_english_first_dock', 45, [evidence], time);
+    const state = next.topicStates.find((topicState) => topicState.topicId === 'tw_eng_g1_letter_sounds');
+
+    expect(next.completedMissionIds).toContain('mission_english_first_dock');
+    expect(next.xp).toBe(45);
+    expect(state).toMatchObject({mastery: 0.72, attempts: 1, correctAttempts: 1, hintCount: 0, retryCount: 0});
+
+    const replay = completeMission(next, 'mission_english_first_dock', 45, [evidence], time);
+    expect(replay.xp).toBe(45);
+    expect(replay.topicStates.find((topicState) => topicState.topicId === 'tw_eng_g1_letter_sounds')?.attempts).toBe(2);
   });
 
   it('sanitizes the local nickname', () => {

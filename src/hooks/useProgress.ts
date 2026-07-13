@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {completeMission as addMission, loadProgress, recordProgressEvidence, sanitizeAlias, saveProgress, setCurriculumFramework as selectCurriculumFramework} from '../lib/progress';
 import type {LessonEvidenceSummary} from '../features/lessons/PlaceValueLesson';
+import {createEnglishWordEvidence, ENGLISH_WORD_MISSION_ID, type EnglishWordLessonSummary} from '../features/english/englishWordLessonState';
 import type {CurriculumFrameworkSlug, LearningEvidence, Mission, ProgressState} from '../types';
 
 export function useProgress(namespace: string) {
@@ -49,8 +50,18 @@ export function useProgress(namespace: string) {
     update(next);
   }, [progress, update]);
 
+  const completeEnglishWordLesson = useCallback((summary: EnglishWordLessonSummary) => {
+    const occurredAt = new Date().toISOString();
+    update(addMission(
+      progress,
+      ENGLISH_WORD_MISSION_ID,
+      45,
+      [createEnglishWordEvidence(summary, occurredAt)],
+    ));
+  }, [progress, update]);
+
   return useMemo(
-    () => ({progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson}),
-    [progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson],
+    () => ({progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson, completeEnglishWordLesson}),
+    [progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson, completeEnglishWordLesson],
   );
 }
