@@ -1,10 +1,12 @@
 import {useEffect, useRef, useState} from 'react';
 import {Application, Container, FederatedPointerEvent, Graphics, Text} from 'pixi.js';
+import type {PlaceValueLessonContent} from '../../lib/lessonContent';
 
 interface PlaceValueCanvasProps {
   tens: number;
   ones: number;
   onAddOne: () => void;
+  labels: PlaceValueLessonContent['canvas'];
 }
 
 interface CanvasState {
@@ -19,7 +21,7 @@ function label(text: string, x: number, y: number, size = 18, color = '#f8edcf')
     text,
     x,
     y,
-    style: {fontFamily: 'PingFang TC, sans-serif', fontSize: size, fill: color, fontWeight: '600'},
+    style: {fontFamily: 'PingFang SC, PingFang TC, sans-serif', fontSize: size, fill: color, fontWeight: '600'},
   });
 }
 
@@ -30,7 +32,7 @@ function block(x: number, y: number, size: number, color = 0xe0b65f) {
     .stroke({color: 0xffe5a3, width: 2, alpha: 0.7});
 }
 
-function renderScene(app: Application, state: CanvasState, onAddOne: () => void) {
+function renderScene(app: Application, state: CanvasState, onAddOne: () => void, labels: PlaceValueLessonContent['canvas']) {
   const width = app.renderer.width / app.renderer.resolution;
   const stage = app.stage;
   for (const child of stage.removeChildren()) child.destroy({children: true});
@@ -43,10 +45,10 @@ function renderScene(app: Application, state: CanvasState, onAddOne: () => void)
     .fill({color: 0x102a38, alpha: 0.92})
     .stroke({color: 0x5c8390, width: 1, alpha: 0.55});
   stage.addChild(panel);
-  stage.addChild(label('材料盒', 28, 25, 15, '#9fb9c0'));
-  stage.addChild(label('拖一個「一」到右邊', 28, 52, 13, '#d9e8e6'));
-  stage.addChild(label('十位', workX + 32, 22, 15, '#f3d781'));
-  stage.addChild(label('個位', workX + workWidth * 0.57, 22, 15, '#72d8e8'));
+  stage.addChild(label(labels.materials, 28, 25, 15, '#9fb9c0'));
+  stage.addChild(label(labels.dragOne, 28, 52, 13, '#d9e8e6'));
+  stage.addChild(label(labels.tens, workX + 32, 22, 15, '#f3d781'));
+  stage.addChild(label(labels.ones, workX + workWidth * 0.57, 22, 15, '#72d8e8'));
 
   const source = new Container();
   source.x = compact ? 26 : 62;
@@ -113,20 +115,22 @@ function renderScene(app: Application, state: CanvasState, onAddOne: () => void)
     stage.addChild(block(onesStartX + column * (blockSize + (compact ? 4 : 8)), 104 + row * (blockSize + (compact ? 4 : 8)), blockSize, 0x2f8e9a));
   }
 
-  stage.addChild(label(`${state.tens} 個十`, tensStartX, 319, 16, '#f8edcf'));
-  stage.addChild(label(`${state.ones} 個一`, onesStartX, 319, 16, '#d8f3f3'));
+  stage.addChild(label(`${state.tens} ${labels.tenCount}`, tensStartX, 319, 16, '#f8edcf'));
+  stage.addChild(label(`${state.ones} ${labels.oneCount}`, onesStartX, 319, 16, '#d8f3f3'));
   app.render();
 }
 
-export function PlaceValueCanvas({tens, ones, onAddOne}: PlaceValueCanvasProps) {
+export function PlaceValueCanvas({tens, ones, onAddOne, labels}: PlaceValueCanvasProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
   const stateRef = useRef({tens, ones});
   const addOneRef = useRef(onAddOne);
+  const labelsRef = useRef(labels);
   const [failed, setFailed] = useState(false);
 
   stateRef.current = {tens, ones};
   addOneRef.current = onAddOne;
+  labelsRef.current = labels;
 
   useEffect(() => {
     const host = hostRef.current;
@@ -137,7 +141,7 @@ export function PlaceValueCanvas({tens, ones, onAddOne}: PlaceValueCanvasProps) 
       if (!app.renderer || disposed) return;
       const width = Math.max(320, Math.round(host.getBoundingClientRect().width));
       app.renderer.resize(width, HEIGHT);
-      renderScene(app, stateRef.current, () => addOneRef.current());
+      renderScene(app, stateRef.current, () => addOneRef.current(), labelsRef.current);
     };
     const observer = new ResizeObserver(resize);
 
@@ -176,8 +180,8 @@ export function PlaceValueCanvas({tens, ones, onAddOne}: PlaceValueCanvasProps) 
   }, []);
 
   useEffect(() => {
-    if (appRef.current) renderScene(appRef.current, {tens, ones}, () => addOneRef.current());
-  }, [ones, tens]);
+    if (appRef.current) renderScene(appRef.current, {tens, ones}, () => addOneRef.current(), labelsRef.current);
+  }, [labels, ones, tens]);
 
   if (failed) {
     return <div className="lesson-canvas-fallback" role="status">互動畫布暫時無法顯示，仍可使用下方按鈕完成課程。</div>;

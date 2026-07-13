@@ -1,0 +1,151 @@
+{
+  "version": "1",
+  "profiles": [
+    {
+      "frameworkSlug": "tw-108-math",
+      "label": "台灣繁中",
+      "locale": "zh-TW",
+      "currency": "TWD",
+      "currencyName": "新台幣",
+      "publisherProfile": "台灣 108 課綱",
+      "sourceUrls": ["https://stv.naer.edu.tw/teaching/course_outline.jsp"],
+      "regionOverrides": [],
+      "topicOverrides": [
+        {"topicId":"tw_math_g1_coin_values","name":"認識新台幣","description":"辨認常用新台幣硬幣與紙鈔，並以不同組合湊出指定金額。","evidence":["辨認常用新台幣面額","用兩種方式湊出相同的新台幣金額"],"assessmentPrompt":"請孩子用不同的新台幣硬幣湊出15元。","placement":{"semester":"一年級","unit":"N-1-4 錢幣","sequence":14,"status":"verified","sourceLocator":"108課綱數學領域 N-1-4"}}
+      ],
+      "missionOverrides": [
+        {"missionId":"mission_measure_market","title":"完成測量與新台幣清單","questions":[{"id":"measure-1","prompt":"要公平比較兩枝鉛筆長短，第一步要怎麼做？","options":["把一端對齊","拿高一點","只看顏色"],"correctOption":"把一端對齊","hint":"想想賽跑時，大家為什麼要站在同一起跑線。","explanation":"從相同起點比較，結果才公平。"},{"id":"measure-2","prompt":"買新台幣15元的物品，哪一組硬幣剛好？","options":["10元和5元","10元和1元","5元和1元"],"correctOption":"10元和5元","hint":"把每一組的兩個數字加起來。","explanation":"新台幣10元加5元等於15元。"}]}
+      ],
+      "placeValueLesson": {
+        "subjectLine": "數學 · 十位與個位",
+        "title": "用十個一，蓋出 34",
+        "currentLabel": "目前",
+        "instructionEyebrow": "今天只做一件事",
+        "instructionTitle": "把十個一換成一個十",
+        "instructionBody": "拖曳藍色積木，或使用下方按鈕。目標是 3 個十和 4 個一。",
+        "backLabel": "回到今天",
+        "addLabel": "放入一個一",
+        "removeLabel": "拿走一個一",
+        "bundleLabel": "綁成一個十",
+        "coachLabel": "芽芽正在看你的方法",
+        "hintLabel": "給我提示",
+        "checkLabel": "檢查 34",
+        "question": "十位上的 3 代表多少？",
+        "completeTitle": "位值塔完成",
+        "completeBody": "你的操作已經記進學習路徑。",
+        "nextLabel": "看看下一站",
+        "messages": {
+          "initial": "先放入十個一，再把它們綁成一個十。",
+          "added": "很好，繼續觀察個位有幾個一。",
+          "bundled": "十個一和一個十，數量完全一樣。",
+          "thirdBundle": "三個十完成了，現在留下四個一。",
+          "built": "你蓋出了 34。最後想一想：十位上的 3 代表多少？",
+          "tooLow": "還差一點。看看需要幾個十和幾個一。",
+          "tooHigh": "超過 34 了，先拿走一些個位積木。",
+          "wrongAnswer": "再看看：每一根十位塔裡都有十個一。",
+          "correctAnswer": "答對了，3 個十就是 30。",
+          "hintBundle": "每湊滿十個一，就按一次「綁成一個十」。",
+          "hintOnes": "三個十是 30，所以個位還需要 4。"
+        },
+        "canvas": {
+          "materials": "材料盒",
+          "dragOne": "拖一個「一」到右邊",
+          "tens": "十位",
+          "ones": "個位",
+          "tenCount": "個十",
+          "oneCount": "個一"
+        }
+      }
+    },
+    {
+      "frameworkSlug": "cn-2022-math",
+      "label": "中国简体（人教）",
+      "locale": "zh-CN",
+      "currency": "CNY",
+      "currencyName": "人民币",
+      "publisherProfile": "2022 课标 · 2024 修订人教版",
+      "sourceUrls": [
+        "https://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582346895190.pdf",
+        "https://www.moe.gov.cn/jyb_xxgk/s5743/s5744/A06/202506/W020250625697282575780.pdf",
+        "https://www.pep.com.cn/xw/zt/hd/12/xjcjs/xx/202409/t20240920_1995566.html"
+      ],
+      "regionOverrides": [
+        {"regionId":"counting_harbor","name":"数数码头","shortName":"数数","description":"从数序和数量出发。","summary":"从稳定的数序出发，把数字和实际数量联系起来。"},
+        {"regionId":"bundle_bridge","name":"10个一造桥","shortName":"组成十","description":"把10个一换成1个十。","summary":"通过捆、摆和说，理解10个一与1个十的关系。"},
+        {"regionId":"place_value_tower","name":"数位塔","shortName":"数位","description":"理解十位、个位和0。","summary":"用十位和个位解释两位数，并理解0的占位作用。"},
+        {"regionId":"compare_canyon","name":"比较峡谷","shortName":"比较","description":"先看十位，再看个位。","summary":"根据数位比较两位数的大小，并说明判断理由。"},
+        {"regionId":"operations_forest","name":"运算森林","shortName":"运算","description":"用策略解决20以内加减法。","summary":"通过分与合、凑十和想加算减理解20以内的运算。"},
+        {"regionId":"shape_workshop","name":"图形工坊","shortName":"图形","description":"观察边、角、平面和曲面。","summary":"通过分类、滚动和拼搭认识平面图形与立体图形。"},
+        {"regionId":"measure_market","name":"测量集市","shortName":"测量","description":"把数学用在长度、时间和人民币中。","summary":"在生活情境中比较长度、认识时间并使用人民币。"},
+        {"regionId":"supply_station","name":"复习站","shortName":"复习","description":"完成一年级数学综合复习。","summary":"连接数、运算、图形和测量，选择方法并检查结果。"}
+      ],
+      "topicOverrides": [
+        {"topicId":"tw_math_g1_count_20","name":"认识11～20","description":"会数、读、写11到20，并把数和物品的数量对应起来。","evidence":["从任意一个数接着数到20","把11到20的数和等量物品配对"],"assessmentPrompt":"请孩子从7接着数到15，并指出哪一组有12个物品。","placement":{"semester":"上册","unit":"第四单元 11～20的认识","sequence":4,"status":"verified","sourceLocator":"教育部2024部级精品课：四 11～20的认识"}},
+        {"topicId":"tw_math_g1_count_100","name":"认识100以内的数","description":"会一个一个和十个十个地数100以内的数。","evidence":["从任意两位数向前或向后数","十个十个地数出整十数"],"assessmentPrompt":"请孩子从27接着数到35，再从30倒数到24。","placement":{"semester":"下册","unit":"100以内数的认识（候选）","sequence":9,"status":"provisional","sourceLocator":"2022课标第一学段；新版下册目录待确认"}},
+        {"topicId":"tw_math_g1_bundle_ten","name":"10的再认识","description":"理解10个一可以组成1个十，并能在实物和图示之间转换。","evidence":["把10个单个物品捆成1捆","说明1个十和10个一的数量相同"],"assessmentPrompt":"给孩子13个物品，请他摆出1个十和3个一。","placement":{"semester":"上册","unit":"第四单元 11～20的认识","sequence":4,"status":"verified","sourceLocator":"教育部2024部级精品课：10的再认识"}},
+        {"topicId":"tw_math_g1_tens_ones","name":"十位和个位","description":"理解两位数中十位表示几个十，个位表示几个一。","evidence":["把34分成3个十和4个一","根据十位和个位组成指定的两位数"],"assessmentPrompt":"请孩子说明42中的4和2各表示多少。","placement":{"semester":"上册","unit":"第四单元 11～20的认识","sequence":4,"status":"verified","sourceLocator":"教育部2024部级精品课：11～20的认识"}},
+        {"topicId":"tw_math_g1_zero_placeholder","name":"0的占位作用","description":"理解0在两位数中表示这个数位上一个单位也没有。","evidence":["说明50是5个十和0个一","比较5和50的数位含义"],"assessmentPrompt":"请孩子用十位和个位解释为什么50不是5。","placement":{"semester":"下册","unit":"100以内数的认识（候选）","sequence":9,"status":"provisional","sourceLocator":"2022课标第一学段数位要求；新版下册目录待确认"}},
+        {"topicId":"tw_math_g1_compare_two_digit","name":"比较两位数的大小","description":"先比较十位，再比较个位，判断两个两位数的大小。","evidence":["正确使用大于、小于和等于","按顺序排列3个两位数"],"assessmentPrompt":"请孩子比较47和39，并说出判断理由。","placement":{"semester":"下册","unit":"100以内数的认识（候选）","sequence":9,"status":"provisional","sourceLocator":"2022课标第一学段比较要求；新版下册目录待确认"}},
+        {"topicId":"tw_math_g1_number_bonds_10","name":"6～10的分与合","description":"熟悉组成10的数对，能用分与合说明数量关系。","evidence":["说出组成10的数对","用分与合解释凑十步骤"],"assessmentPrompt":"请孩子说出6和几合起来是10。","placement":{"semester":"上册","unit":"第二单元 6～10的认识和加、减法","sequence":2,"status":"verified","sourceLocator":"教育部2024部级精品课：6、7的组成；8、9的组成"}},
+        {"topicId":"tw_math_g1_add_20","name":"20以内的进位加法","description":"会用分解和凑十的方法计算20以内的进位加法。","evidence":["计算20以内的进位加法","说出自己使用的凑十方法"],"assessmentPrompt":"请孩子计算8加7，并用凑十法说明。","placement":{"semester":"上册","unit":"第五单元 20以内的进位加法","sequence":5,"status":"verified","sourceLocator":"教育部2024部级精品课：9加几；8、7、6加几"}},
+        {"topicId":"tw_math_g1_subtract_20","name":"20以内的退位减法","description":"会用拆分或想加算减的方法计算20以内的退位减法。","evidence":["计算20以内的退位减法","用加法检查减法结果"],"assessmentPrompt":"请孩子计算13减5，并用加法检查。","placement":{"semester":"下册","unit":"20以内的退位减法（候选）","sequence":8,"status":"provisional","sourceLocator":"旧版教育部精品课可定位；2024修订版下册待确认"}},
+        {"topicId":"tw_math_g1_shapes_2d","name":"认识平面图形","description":"能按特征辨认和分类常见的平面图形。","evidence":["按特征分类常见平面图形","在生活物品中找出平面图形"],"assessmentPrompt":"请孩子说出正方形和长方形的相同点与不同点。","placement":{"semester":"下册","unit":"认识平面图形（候选）","sequence":7,"status":"provisional","sourceLocator":"2022课标第一学段；新版下册目录待确认"}},
+        {"topicId":"tw_math_g1_shapes_3d","name":"认识立体图形","description":"能辨认球、正方体和长方体，并通过操作发现它们的特征。","evidence":["按形体特征分类物品","预测形体能不能滚动或堆放"],"assessmentPrompt":"请孩子判断球和正方体哪一个容易滚动，并说明理由。","placement":{"semester":"上册","unit":"第三单元 认识立体图形","sequence":3,"status":"verified","sourceLocator":"教育部2024部级精品课：认识立体图形；拼一拼"}},
+        {"topicId":"tw_math_g1_length_compare","name":"比较长短","description":"会把物品的一端对齐后比较长短，并尝试用相同单位测量。","evidence":["把物品一端对齐后比较长短","用相同的非标准单位测量"],"assessmentPrompt":"请孩子选择合适的方法比较两支铅笔的长度。","placement":{"semester":"补充","unit":"第一学段测量活动","sequence":12,"status":"supplemental","sourceLocator":"2022课标第一学段图形的认识与测量（2）"}},
+        {"topicId":"tw_math_g1_time_hour","name":"认识整时","description":"会读钟面上的整时，并把日常活动安排在合理时间。","evidence":["读出钟面上的整时","按时间顺序排列日常活动"],"assessmentPrompt":"请孩子读出7时，并说一件可能在这个时间做的事。","placement":{"semester":"补充","unit":"时间主题活动","sequence":13,"status":"supplemental","sourceLocator":"2022课标综合与实践；2024修订版上册未列独立时间单元"}},
+        {"topicId":"tw_math_g1_coin_values","name":"认识人民币","description":"认识常用人民币面额，并能用不同方法组成同一个钱数。","evidence":["认识常用人民币面额","用两种方法组成相同的钱数"],"assessmentPrompt":"请孩子用不同的人民币组成15元。","placement":{"semester":"下册","unit":"认识人民币（候选）","sequence":10,"status":"provisional","sourceLocator":"旧版教育部精品课可定位；2024修订版下册待确认"}},
+        {"topicId":"tw_math_g1_mixed_review","name":"复习与关联","description":"选择合适的方法解决问题，并检查结果是否合理。","evidence":["说出为什么选择这个方法","发现不合理的结果并改正"],"assessmentPrompt":"请孩子完成一道题后，说明怎样知道答案是合理的。","placement":{"semester":"上册","unit":"第六单元 复习与关联","sequence":6,"status":"verified","sourceLocator":"教育部2024部级精品课：六 复习与关联"}}
+      ],
+      "missionOverrides": [
+        {"missionId":"mission_counting_harbor","title":"找回丢失的货箱","questions":[{"id":"count-1","prompt":"码头按顺序排着27、28、29号货箱，下一箱是几号？","options":["20","30","39"],"correctOption":"30","hint":"从29再往前数一个。","explanation":"29再往前数一个就是30。"},{"id":"count-2","prompt":"船长想十个十个地数货物：20、30、40，下一个数是？","options":["41","45","50"],"correctOption":"50","hint":"看看相邻两个数之间相差多少。","explanation":"十个十个地数，每次增加10。"}]},
+        {"missionId":"mission_bundle_bridge","title":"用10个一修好桥","questions":[{"id":"bundle-1","prompt":"10根小木条捆成一捆。这一捆表示什么？","options":["1个一","1个十","10个十"],"correctOption":"1个十","hint":"把10根单独的木条换成一个新单位。","explanation":"10个一可以换成1个十。"},{"id":"bundle-2","prompt":"1个十和6个一合起来是多少？","options":["16","60","106"],"correctOption":"16","hint":"先把1个十换成10，再加上6个一。","explanation":"1个十是10，再加6个一就是16。"}]},
+        {"missionId":"mission_place_value_tower","title":"点亮数位塔","questions":[{"id":"place-1","prompt":"34里面有3个十和几个一？","options":["3","4","34"],"correctOption":"4","hint":"34最右边的数字在个位。","explanation":"十位上的3表示3个十，个位上的4表示4个一。"},{"id":"place-2","prompt":"5个十和0个一组成哪个数？","options":["5","50","500"],"correctOption":"50","hint":"十位写5，个位一个一也没有时要写0。","explanation":"个位一个一也没有，所以用0占住个位。"}]},
+        {"missionId":"mission_compare_canyon","title":"选出安全的峡谷路","questions":[{"id":"compare-1","prompt":"47和39，哪一个更大？","options":["39","47","一样大"],"correctOption":"47","hint":"先比较两个数的十位。","explanation":"4个十比3个十多，所以47更大。"},{"id":"compare-2","prompt":"把18、81、28从小到大排列。","options":["18、28、81","81、28、18","18、81、28"],"correctOption":"18、28、81","hint":"先找十位最小的数。","explanation":"先比较十位，十位相同时再比较个位。"}]},
+        {"missionId":"mission_operations_forest","title":"找到运算森林出口","questions":[{"id":"operation-1","prompt":"8＋7是多少？想一想怎样先凑成10。","options":["13","15","17"],"correctOption":"15","hint":"把7分成2和另一个数。","explanation":"把7分成2和5，8＋2＝10，再加5得到15。"},{"id":"operation-2","prompt":"13－5是多少？","options":["7","8","9"],"correctOption":"8","hint":"反过来想：几加5等于13？","explanation":"因为8＋5＝13，所以13－5＝8。"}]},
+        {"missionId":"mission_shape_workshop","title":"启动图形工坊","questions":[{"id":"shape-1","prompt":"哪一个平面图形有4条一样长的边？","options":["三角形","正方形","圆"],"correctOption":"正方形","hint":"先数一数每个图形有几条直边。","explanation":"正方形有4条一样长的直边。"},{"id":"shape-2","prompt":"哪一个立体图形最容易向各个方向滚动？","options":["球","正方体","长方体"],"correctOption":"球","hint":"找一找哪个图形的表面都是曲面。","explanation":"球的表面都是曲面，所以容易向不同方向滚动。"}]},
+        {"missionId":"mission_measure_market","title":"完成测量与人民币清单","questions":[{"id":"measure-1","prompt":"要公平比较两支铅笔的长短，第一步应该怎样做？","options":["把一端对齐","拿高一点","只看颜色"],"correctOption":"把一端对齐","hint":"想一想赛跑时为什么要站在同一起跑线。","explanation":"从相同的起点比较，结果才公平。"},{"id":"measure-2","prompt":"买15元的物品，哪组人民币正好够？","options":["10元和5元","10元和1元","5元和1元"],"correctOption":"10元和5元","hint":"把每一组的两个钱数加起来。","explanation":"10元＋5元＝15元。"}]},
+        {"missionId":"mission_supply_station","title":"一年级数学复习挑战","questions":[{"id":"review-1","prompt":"42是4个十和几个一？","options":["2","4","20"],"correctOption":"2","hint":"看42最右边的个位数字。","explanation":"个位上的2表示2个一。"},{"id":"review-2","prompt":"9＋6是多少？","options":["14","15","16"],"correctOption":"15","hint":"先从6中分出1给9，让9变成10。","explanation":"9先加1变成10，再加剩下的5。"},{"id":"review-3","prompt":"完成计算后，哪种做法最能检查结果？","options":["换一种方法再算一次","选最喜欢的数字","跳过不看"],"correctOption":"换一种方法再算一次","hint":"好的检查方法要能发现原来可能出现的错误。","explanation":"用另一种方法检查，可以发现不合理的结果。"}]}
+      ],
+      "placeValueLesson": {
+        "subjectLine": "数学 · 十位和个位",
+        "title": "用10个一，搭出34",
+        "currentLabel": "现在",
+        "instructionEyebrow": "今天只学一件事",
+        "instructionTitle": "把10个一换成1个十",
+        "instructionBody": "拖动蓝色积木，或使用下面的按钮。目标是3个十和4个一。",
+        "backLabel": "回到今天",
+        "addLabel": "放入1个一",
+        "removeLabel": "拿走1个一",
+        "bundleLabel": "捆成1个十",
+        "coachLabel": "芽芽正在看你的方法",
+        "hintLabel": "给我提示",
+        "checkLabel": "检查34",
+        "question": "十位上的3表示多少？",
+        "completeTitle": "数位塔完成",
+        "completeBody": "你的操作已经记入学习路径。",
+        "nextLabel": "看看下一站",
+        "messages": {
+          "initial": "先放入10个一，再把它们捆成1个十。",
+          "added": "很好，继续观察个位上有几个一。",
+          "bundled": "10个一和1个十，数量完全相同。",
+          "thirdBundle": "3个十完成了，现在留下4个一。",
+          "built": "你搭出了34。最后想一想：十位上的3表示多少？",
+          "tooLow": "还差一点。看看需要几个十和几个一。",
+          "tooHigh": "超过34了，先拿走一些个位积木。",
+          "wrongAnswer": "再看看：每一根十位积木里都有10个一。",
+          "correctAnswer": "答对了，3个十就是30。",
+          "hintBundle": "每凑满10个一，就按一次“捆成1个十”。",
+          "hintOnes": "3个十是30，所以个位还需要4。"
+        },
+        "canvas": {
+          "materials": "材料盒",
+          "dragOne": "拖1个“一”到右边",
+          "tens": "十位",
+          "ones": "个位",
+          "tenCount": "个十",
+          "oneCount": "个一"
+        }
+      }
+    }
+  ]
+}

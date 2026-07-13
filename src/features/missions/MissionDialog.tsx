@@ -8,11 +8,12 @@ interface MissionDialogProps {
   mission: Mission | null;
   open: boolean;
   alreadyComplete: boolean;
+  locale: 'zh-TW' | 'zh-CN';
   onClose: () => void;
   onComplete: (mission: Mission, summary: {hintCount: number; retryCount: number}) => void;
 }
 
-export function MissionDialog({mission, open, alreadyComplete, onClose, onComplete}: MissionDialogProps) {
+export function MissionDialog({mission, open, alreadyComplete, locale, onClose, onComplete}: MissionDialogProps) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
@@ -34,7 +35,7 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
   const question = mission.questions[questionIndex] ?? mission.questions[0];
   const correct = selectedOption === question.correctOption;
   const lastQuestion = questionIndex === mission.questions.length - 1;
-  const tutorMove = getTutorMove(question, events, selectedOption, checked);
+  const tutorMove = getTutorMove(question, events, selectedOption, checked, locale);
 
   const appendEvent = (event: TutorEvent) => {
     setEvents((current) => appendTutorEvent(current, event));

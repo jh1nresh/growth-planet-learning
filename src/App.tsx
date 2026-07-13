@@ -22,14 +22,12 @@ import type {PlanetControlsHandle} from './features/world/PlanetScene';
 import {useProgress} from './hooks/useProgress';
 import {clusterById, dependencies, getRegionStatus, getSubjectRegions, missionByRegionId, missions, regions, topics} from './lib/curriculum';
 import {getRecommendation, MASTERY_THRESHOLD} from './lib/mastery';
+import {getLessonContentProfile, getMissionContent, getPlaceValueLessonContent, getRegionContent, getTopicContent, localizeRecommendationReason} from './lib/lessonContent';
 import type {Subject, WorldRegion} from './types';
 
 const PlanetScene = lazy(() => import('./features/world/PlanetScene').then((module) => ({default: module.PlanetScene})));
 const MarbleTaxonomyExplorer = lazy(() => import('./features/world/MarbleTaxonomyExplorer').then((module) => ({default: module.MarbleTaxonomyExplorer})));
 const PlaceValueLesson = lazy(() => import('./features/lessons/PlaceValueLesson').then((module) => ({default: module.PlaceValueLesson})));
-const mathRegions = getSubjectRegions('Mathematics');
-const englishRegions = getSubjectRegions('English');
-
 type Screen = 'home' | 'lesson' | 'growth' | 'parent';
 
 const topicVisuals: Record<string, string> = {
@@ -44,7 +42,6 @@ const topicVisuals: Record<string, string> = {
   tw_math_g1_shapes_3d: '立體',
   tw_math_g1_length_compare: '長 ↔ 短',
   tw_math_g1_time_hour: '3:30',
-  tw_math_g1_coin_values: '$ 50',
   tw_math_g1_mixed_review: '想・做・查',
   tw_eng_g1_letter_sounds: 'A → /a/',
   tw_eng_g1_sight_words: 'I・you・the',
@@ -63,7 +60,7 @@ function PlanetLoading() {
 export default function App() {
   const auth = useAuth();
   const namespace = auth.userId ? `privy:${auth.userId}` : 'guest';
-  const {progress, setChildAlias, completeMission, completePlaceValueLesson} = useProgress(namespace);
+  const {progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson} = useProgress(namespace);
   const completedMissionIds = useMemo(() => new Set(progress.completedMissionIds), [progress.completedMissionIds]);
   const [activeSubject, setActiveSubject] = useState<Subject>('Mathematics');
   const [selectedRegionId, setSelectedRegionId] = useState('counting_harbor');
@@ -72,22 +69,38 @@ export default function App() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>('home');
   const controlsRef = useRef<PlanetControlsHandle>(null);
+  const activeContentFramework = activeSubject === 'Mathematics' ? progress.curriculumFramework : 'tw-108-math';
 
-  const selectedRegion = regions.find((region) => region.id === selectedRegionId) ?? mathRegions[0];
-  const selectedMission = missionByRegionId.get(selectedRegion.id) ?? null;
+  const localizedRegions = useMemo(
+    () => regions.map((region) => getRegionContent(progress.curriculumFramework, region)),
+    [progress.curriculumFramework],
+  );
+  const selectedRegion = localizedRegions.find((region) => region.id === selectedRegionId) ?? localizedRegions.find((region) => region.subject === 'Mathematics')!;
+  const canonicalSelectedMission = missionByRegionId.get(selectedRegion.id) ?? null;
+  const selectedMission = canonicalSelectedMission ? getMissionContent(activeContentFramework, canonicalSelectedMission) : null;
+  const lessonProfile = getLessonContentProfile(activeContentFramework);
+  const localizedTopics = useMemo(
+    () => topics.map((topic) => getTopicContent(progress.curriculumFramework, topic)),
+    [progress.curriculumFramework],
+  );
+  const localizedTopicById = useMemo(() => new Map(localizedTopics.map((topic) => [topic.id, topic])), [localizedTopics]);
   const selectedStatus = getRegionStatus(selectedRegion, completedMissionIds);
-  const activeRegions = activeSubject === 'Mathematics' ? mathRegions : englishRegions;
-  const activeTopics = topics.filter((topic) => topic.subject === activeSubject);
+  const activeRegions = localizedRegions.filter((region) => region.subject === activeSubject).sort((left, right) => left.order - right.order);
+  const activeTopics = localizedTopics.filter((topic) => topic.subject === activeSubject);
   const masteredActive = activeTopics.filter((topic) => (progress.topicStates.find((state) => state.topicId === topic.id)?.mastery ?? 0) >= MASTERY_THRESHOLD).length;
   const progressPercent = activeTopics.length ? Math.round((masteredActive / activeTopics.length) * 100) : 0;
   const recommendation = useMemo(
-    () => getRecommendation(activeSubject, progress.topicStates, topics, dependencies),
-    [activeSubject, progress.topicStates],
+    () => getRecommendation(activeSubject, progress.topicStates, localizedTopics, dependencies),
+    [activeSubject, localizedTopics, progress.topicStates],
   );
+  const recommendationReason = localizeRecommendationReason(activeContentFramework, recommendation.reason);
   const recommendedState = progress.topicStates.find((state) => state.topicId === recommendation.topic.id);
   const recommendedMission = missions.find((mission) => mission.topicIds.includes(recommendation.topic.id));
   const interactiveRecommendation = recommendation.topic.id === 'tw_math_g1_bundle_ten'
     || recommendation.topic.id === 'tw_math_g1_tens_ones';
+  const recommendationVisual = recommendation.topic.id === 'tw_math_g1_coin_values'
+    ? (lessonProfile.currency === 'CNY' ? '¥ 50' : 'NT$ 50')
+    : topicVisuals[recommendation.topic.id] ?? recommendation.topic.name;
 
   const chooseSubject = (subject: Subject) => {
     setActiveSubject(subject);
@@ -109,7 +122,7 @@ export default function App() {
       return;
     }
     if (!recommendedMission) return;
-    const region = regions.find((item) => item.id === recommendedMission.regionId);
+    const region = localizedRegions.find((item) => item.id === recommendedMission.regionId);
     if (region) chooseRegion(region);
     setMissionOpen(true);
   };
@@ -161,7 +174,7 @@ export default function App() {
           <aside className="parent-progress-overlay" aria-label="孩子掌握摘要">
             <span>孩子目前的{activeSubject === 'Mathematics' ? '數學' : '英文'}路徑</span>
             <strong>{masteredActive}／{activeTopics.length} 個能力已掌握</strong>
-            <p>{recommendation.reason}</p>
+            <p>{recommendationReason}</p>
           </aside>
           <Suspense fallback={<div className="taxonomy-loading" role="status">正在連接學習關係…</div>}>
             <MarbleTaxonomyExplorer />
@@ -171,24 +184,34 @@ export default function App() {
 
       {screen === 'home' ? (
         <main id="today-lesson" className="lesson-home">
-          <nav className="subject-switcher lesson-subject-switcher" aria-label="選擇學科">
-            <button className={activeSubject === 'Mathematics' ? 'is-active' : ''} type="button" onClick={() => chooseSubject('Mathematics')}>
-              <Calculator aria-hidden="true" weight="duotone" /> <span>數學</span>
-            </button>
-            <button className={activeSubject === 'English' ? 'is-active' : ''} type="button" onClick={() => chooseSubject('English')}>
-              <Translate aria-hidden="true" weight="duotone" /> <span>英文</span>
-            </button>
-          </nav>
+          <div className="lesson-toolbar">
+            <nav className="subject-switcher lesson-subject-switcher" aria-label="選擇學科">
+              <button className={activeSubject === 'Mathematics' ? 'is-active' : ''} type="button" onClick={() => chooseSubject('Mathematics')}>
+                <Calculator aria-hidden="true" weight="duotone" /> <span>數學</span>
+              </button>
+              <button className={activeSubject === 'English' ? 'is-active' : ''} type="button" onClick={() => chooseSubject('English')}>
+                <Translate aria-hidden="true" weight="duotone" /> <span>英文</span>
+              </button>
+            </nav>
+            {activeSubject === 'Mathematics' ? (
+              <div className="curriculum-switcher" role="group" aria-label="選擇數學教材版本">
+                <span>教材版本</span>
+                <button type="button" aria-pressed={progress.curriculumFramework === 'tw-108-math'} onClick={() => setCurriculumFramework('tw-108-math')}>台灣繁中</button>
+                <button type="button" aria-pressed={progress.curriculumFramework === 'cn-2022-math'} onClick={() => setCurriculumFramework('cn-2022-math')}>中國簡中（人教）</button>
+              </div>
+            ) : null}
+          </div>
 
-          <section className="today-lesson-card">
+          <section className="today-lesson-card" lang={lessonProfile.locale}>
             <div className="today-lesson-copy">
               <span className="lesson-eyebrow"><Sparkle aria-hidden="true" weight="fill" /> 今天的學習</span>
+              <span className="lesson-content-profile">{lessonProfile.publisherProfile}</span>
               <p className="lesson-domain">{recommendation.topic.domain}</p>
               <h1>{recommendation.topic.name}</h1>
               <p className="lesson-description">{recommendation.topic.description}</p>
               <div className="recommendation-reason">
                 <span className="tutor-avatar" aria-hidden="true">芽</span>
-                <div><strong>芽芽為什麼推薦這一課</strong><p>{recommendation.reason}</p></div>
+                <div><strong>芽芽為什麼推薦這一課</strong><p>{recommendationReason}</p></div>
               </div>
               <button className="today-primary-button" type="button" onClick={startRecommended} disabled={!recommendedMission && !interactiveRecommendation}>
                 {recommendedState && recommendedState.attempts > 0 ? '繼續學習' : '開始今天這一課'} <ArrowRight aria-hidden="true" weight="bold" />
@@ -198,7 +221,7 @@ export default function App() {
               {interactiveRecommendation ? (
                 <div className="place-value-preview"><span>10</span><span>10</span><span>10</span><i>1</i><i>1</i><i>1</i><i>1</i></div>
               ) : null}
-              <strong>{interactiveRecommendation ? '34' : topicVisuals[recommendation.topic.id] ?? recommendation.topic.name}</strong>
+              <strong>{interactiveRecommendation ? '34' : recommendationVisual}</strong>
               <span>{interactiveRecommendation ? '3 個十・4 個一' : '一次只學一件事'}</span>
             </div>
           </section>
@@ -218,7 +241,12 @@ export default function App() {
 
       {screen === 'lesson' ? (
         <Suspense fallback={<div className="lesson-loading" role="status">正在準備位值積木…</div>}>
-          <PlaceValueLesson onBack={() => setScreen('home')} onComplete={completePlaceValueLesson} />
+          <PlaceValueLesson
+            onBack={() => setScreen('home')}
+            onComplete={completePlaceValueLesson}
+            content={getPlaceValueLessonContent(activeContentFramework)}
+            locale={lessonProfile.locale}
+          />
         </Suspense>
       ) : null}
 
@@ -240,10 +268,10 @@ export default function App() {
                 ref={controlsRef}
                 activeSubject={activeSubject}
                 completedMissionIds={completedMissionIds}
-                regions={regions}
+                regions={localizedRegions}
                 selectedRegionId={selectedRegionId}
                 onSelectRegion={(regionId) => {
-                  const region = regions.find((item) => item.id === regionId);
+                  const region = localizedRegions.find((item) => item.id === regionId);
                   if (region) chooseRegion(region);
                 }}
               />
@@ -269,12 +297,22 @@ export default function App() {
             <a className="taxonomy-credit" href="https://github.com/withmarbleapp/os-taxonomy" target="_blank" rel="noreferrer">Curriculum graph informed by Marble Skill Taxonomy v1</a>
           </nav>
 
-          <RegionPanel region={selectedRegion} selectedTopicId={selectedTopicId} status={selectedStatus} onStartMission={() => setMissionOpen(true)} />
+          <RegionPanel
+            region={selectedRegion}
+            selectedTopicId={selectedTopicId}
+            status={selectedStatus}
+            mission={selectedMission}
+            topicContentById={localizedTopicById}
+            onStartMission={() => {
+              if (selectedRegion.id === 'bundle_bridge' || selectedRegion.id === 'place_value_tower') setScreen('lesson');
+              else setMissionOpen(true);
+            }}
+          />
         </main>
       ) : null}
 
-      <div className="sr-only" aria-live="polite">{recommendation.reason}</div>
-      <MissionDialog mission={selectedMission} open={missionOpen} alreadyComplete={selectedMission ? completedMissionIds.has(selectedMission.id) : false} onClose={() => setMissionOpen(false)} onComplete={completeMission} />
+      <div className="sr-only" aria-live="polite">{recommendationReason}</div>
+      <MissionDialog mission={selectedMission} open={missionOpen} alreadyComplete={selectedMission ? completedMissionIds.has(selectedMission.id) : false} locale={lessonProfile.locale} onClose={() => setMissionOpen(false)} onComplete={completeMission} />
       <ProfileDialog open={profileOpen} auth={auth} childAlias={progress.childAlias} onClose={() => setProfileOpen(false)} onSaveAlias={setChildAlias} />
     </div>
   );

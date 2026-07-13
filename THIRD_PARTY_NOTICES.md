@@ -20,5 +20,6 @@ The local standards overlay stores codes, internal source locators, and paraphra
 
 - Taiwan: [十二年國民基本教育課程綱要－數學領域](https://stv.naer.edu.tw/teaching/course_outline.jsp), National Academy for Educational Research.
 - China: [义务教育数学课程标准（2022年版）](https://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582346895190.pdf), Ministry of Education of the People’s Republic of China.
+- China textbook placement evidence: [2024 Ministry-level exemplary lessons](https://www.moe.gov.cn/jyb_xxgk/s5743/s5744/A06/202506/W020250625697282575780.pdf) and [PEP revised mathematics textbook introduction](https://www.pep.com.cn/xw/zt/hd/12/xjcjs/xx/202409/t20240920_1995566.html).
 
-The official documents remain subject to their upstream terms. The `stage1.*` identifiers in this repository are internal source locators and are not official Ministry codes.
+The official documents remain subject to their upstream terms. The `stage1.*` identifiers in this repository are internal source locators and are not official Ministry codes. Lesson-content overlays contain original paraphrases and short curriculum or unit labels, not textbook pages or reproduced lesson text.

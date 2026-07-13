@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {completeMission, emptyProgress, loadProgress, sanitizeAlias, saveProgress, type StorageLike} from './progress';
+import {completeMission, emptyProgress, loadProgress, sanitizeAlias, saveProgress, setCurriculumFramework, type StorageLike} from './progress';
 
 class MemoryStorage implements StorageLike {
   private values = new Map<string, string>();
@@ -26,12 +26,26 @@ describe('progress store', () => {
     }));
 
     const migrated = loadProgress(storage, 'guest');
-    expect(migrated.version).toBe(2);
+    expect(migrated.version).toBe(3);
+    expect(migrated.curriculumFramework).toBe('tw-108-math');
     expect(migrated.topicStates).toHaveLength(18);
     expect(migrated.topicStates.find((state) => state.topicId === 'tw_math_g1_count_20')?.mastery).toBeGreaterThanOrEqual(0.7);
   });
 
-  it('rejects malformed v2 topic state records', () => {
+  it('migrates v2 progress without changing learning evidence', () => {
+    const storage = new MemoryStorage();
+    const current = emptyProgress();
+    const version2 = {...current, version: 2};
+    delete (version2 as Partial<typeof current>).curriculumFramework;
+    storage.setItem('growth-planet:progress:v1:guest', JSON.stringify(version2));
+
+    const migrated = loadProgress(storage, 'guest');
+    expect(migrated.version).toBe(3);
+    expect(migrated.curriculumFramework).toBe('tw-108-math');
+    expect(migrated.topicStates).toEqual(current.topicStates);
+  });
+
+  it('rejects malformed v3 topic state records', () => {
     const storage = new MemoryStorage();
     const malformed = emptyProgress();
     malformed.topicStates[0] = {...malformed.topicStates[0], mastery: Number.NaN};
@@ -50,5 +64,16 @@ describe('progress store', () => {
 
   it('sanitizes the local nickname', () => {
     expect(sanitizeAlias('  <小\n星>  ')).toBe('小星');
+  });
+
+  it('switches curriculum content without resetting learner progress', () => {
+    const progress = {...emptyProgress(), completedMissionIds: ['mission_counting_harbor'], xp: 40};
+    progress.topicStates[0] = {...progress.topicStates[0], mastery: 0.72, attempts: 2};
+
+    const next = setCurriculumFramework(progress, 'cn-2022-math', new Date('2026-07-13T00:00:00Z'));
+    expect(next.curriculumFramework).toBe('cn-2022-math');
+    expect(next.completedMissionIds).toEqual(progress.completedMissionIds);
+    expect(next.topicStates).toEqual(progress.topicStates);
+    expect(next.xp).toBe(40);
   });
 });

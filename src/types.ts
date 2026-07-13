@@ -68,7 +68,8 @@ export interface WorldRegion {
 }
 
 export interface ProgressState {
-  version: 2;
+  version: 3;
+  curriculumFramework: CurriculumFrameworkSlug;
   childAlias: string;
   completedMissionIds: string[];
   topicStates: LearnerTopicState[];
@@ -96,6 +97,7 @@ export interface LearningEvidence {
 
 export type CurriculumAlignmentStatus = 'verified' | 'provisional';
 export type CurriculumCodeOrigin = 'official' | 'internal-locator';
+export type CurriculumFrameworkSlug = 'tw-108-math' | 'cn-2022-math';
 
 export interface CurriculumStandardData {
   title: string;
@@ -115,7 +117,7 @@ export interface CurriculumStandard {
 }
 
 export interface CurriculumFramework {
-  slug: string;
+  slug: CurriculumFrameworkSlug;
   country: 'TW' | 'CN';
   name: string;
   version: string;

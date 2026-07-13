@@ -44,4 +44,8 @@ describe('real-time tutor decisions', () => {
     expect(move.kind).toBe('celebrate');
     expect(move.message).toContain(question.explanation);
   });
+
+  it('uses simplified deterministic guidance for the China profile', () => {
+    expect(getTutorMove(question, [], null, false, 'zh-CN').message).toBe('我先不说答案。慢慢看题目，找出最重要的数字或线索。');
+  });
 });

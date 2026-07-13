@@ -4,7 +4,7 @@ import {topics} from './curriculum';
 import {curriculumFrameworkBySlug, curriculumStandardByKey, getCurriculumGraph, getCurriculumRecommendation} from './curriculumStandards';
 
 describe('Taiwan and China curriculum overlays', () => {
-  it.each(['tw-108-math', 'cn-2022-math'])('builds a complete grade-one math DAG for %s', (slug) => {
+  it.each(['tw-108-math', 'cn-2022-math'] as const)('builds a complete grade-one math DAG for %s', (slug) => {
     const graph = getCurriculumGraph(slug, 1);
     const topicIds = new Set(graph.topics.map((topic) => topic.id));
     expect(graph.topics).toHaveLength(15);

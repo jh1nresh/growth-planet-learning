@@ -45,7 +45,7 @@ Privy 只負責家長 email／Google 登入。v1 不建立錢包、不收集孩�
 
 主技能圖直接使用 [Marble Skill Taxonomy v1](https://github.com/withmarbleapp/os-taxonomy) 的篩選產出資料：保留 Mathematics 與 English，且 `ageRangeEnd <= 12` 的 topics，再保留兩端都存在的 dependency edges。精確 upstream commit、產生方法、歸屬與授權見 `docs/taxonomy-reference.md` 與 `THIRD_PARTY_NOTICES.md`。
 
-本地一年級數學另外以 standards overlay 對齊台灣 108 課綱與中國大陸 2022 課標；兩地共用同一棵能力 DAG，不複製技能節點。資料形狀、來源、編碼政策與尚未完成的在地化邊界見 `docs/curriculum-overlay-tw-cn.md`。
+本地一年級數學另外以 standards overlay 對齊台灣 108 課綱與中國大陸 2022 課標；兩地共用同一棵能力 DAG，不複製技能節點。孩子首頁可選台灣繁中／新台幣或中國簡中／人民幣內容，切換只載入 lesson-content overlay，不重置能力進度。資料形狀、來源、編碼政策與教研邊界見 `docs/curriculum-overlay-tw-cn.md` 與 `docs/issue-009-tw-cn-lesson-content-overlay.md`。
 
 ## v1 邊界
 

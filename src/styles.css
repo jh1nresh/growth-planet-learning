@@ -1665,12 +1665,65 @@ input:focus-visible {
   padding: 1.25rem 0 2rem;
 }
 
-.lesson-subject-switcher {
+.lesson-toolbar {
   grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.lesson-subject-switcher {
   justify-content: flex-start;
   padding: 0;
   border: 0;
   background: transparent;
+}
+
+.curriculum-switcher {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  border: 1px solid rgba(255, 233, 181, 0.18);
+  border-radius: 0.8rem;
+  background: #0d1d2a;
+}
+
+.curriculum-switcher > span {
+  padding: 0 0.55rem;
+  color: #9bb2b9;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.curriculum-switcher button {
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 0.6rem;
+  color: #b8c8cb;
+  background: transparent;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.curriculum-switcher button[aria-pressed="true"] {
+  border-color: rgba(243, 215, 129, 0.35);
+  color: #fff4d8;
+  background: #173f4b;
+}
+
+.lesson-content-profile {
+  display: block;
+  width: fit-content;
+  margin-top: 0.8rem;
+  color: #91a8ae;
+  font-size: 0.74rem;
 }
 
 .today-lesson-card,
@@ -2192,6 +2245,25 @@ input:focus-visible {
   .interactive-lesson {
     width: min(100% - 1rem, 680px);
     padding-top: 0.75rem;
+  }
+
+  .lesson-toolbar {
+    align-items: stretch;
+  }
+
+  .curriculum-switcher {
+    width: 100%;
+  }
+
+  .curriculum-switcher > span {
+    display: none;
+  }
+
+  .curriculum-switcher button {
+    min-width: 0;
+    flex: 1;
+    padding-inline: 0.35rem;
+    font-size: 0.74rem;
   }
 
   .today-lesson-card {

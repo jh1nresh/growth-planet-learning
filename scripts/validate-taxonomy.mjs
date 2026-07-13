@@ -3,13 +3,14 @@ import {readFile} from 'node:fs/promises';
 const root = new URL('../src/data/', import.meta.url);
 const readJson = async (name) => JSON.parse(await readFile(new URL(name, root), 'utf8'));
 
-const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculumStandardFile] = await Promise.all([
+const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculumStandardFile, lessonContentFile] = await Promise.all([
   readJson('topics.json'),
   readJson('dependencies.json'),
   readJson('clusters.json'),
   readJson('missions.json'),
   readJson('world.json'),
   readJson('curriculum-standards.json'),
+  readJson('lesson-content-overlays.json'),
 ]);
 const [marbleTopicFile, marbleDependencyFile] = await Promise.all([
   readJson('marble-topics.json'),
@@ -26,6 +27,7 @@ const missionIds = new Set(missions.map((mission) => mission.id));
 const regionIds = new Set(regions.map((region) => region.id));
 const curricula = curriculumStandardFile.curricula;
 const standardKeys = new Set(curricula.flatMap((curriculum) => curriculum.topics.map((standard) => standard.key)));
+const contentProfiles = lessonContentFile.profiles;
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(message);
@@ -39,6 +41,8 @@ assert(missionIds.size === missions.length, 'Mission IDs must be unique');
 assert(regionIds.size === regions.length, 'Region IDs must be unique');
 assert(curriculumStandardFile.curriculumCount === curricula.length, 'curriculumCount does not match curricula length');
 assert(standardKeys.size === curricula.reduce((count, curriculum) => count + curriculum.topics.length, 0), 'Curriculum standard keys must be unique');
+assert(contentProfiles.length === 2, 'Lesson content needs Taiwan and China profiles');
+assert(new Set(contentProfiles.map((profile) => profile.frameworkSlug)).size === contentProfiles.length, 'Lesson content profile slugs must be unique');
 
 for (const curriculum of curricula) {
   assert(curriculum.topicCount === curriculum.topics.length, `Curriculum ${curriculum.slug} topicCount mismatch`);
@@ -62,6 +66,35 @@ for (const topic of topics) {
     assert(topic.standards.some((key) => key.startsWith('cn-2022-math:')), `Math topic ${topic.id} needs a China alignment`);
   }
 }
+
+const mathTopicIds = new Set(topics.filter((topic) => topic.subject === 'Mathematics').map((topic) => topic.id));
+const mathMissionIds = new Set(missions.filter((mission) => mission.topicIds.some((topicId) => mathTopicIds.has(topicId))).map((mission) => mission.id));
+const mathRegionIds = new Set(regions.filter((region) => region.subject === 'Mathematics' && !region.comingSoon).map((region) => region.id));
+for (const profile of contentProfiles) {
+  assert(curricula.some((curriculum) => curriculum.slug === profile.frameworkSlug), `Lesson content profile ${profile.frameworkSlug} has no curriculum framework`);
+  assert(profile.sourceUrls.length > 0, `Lesson content profile ${profile.frameworkSlug} needs sources`);
+  assert(new Set(profile.regionOverrides.map((override) => override.regionId)).size === profile.regionOverrides.length, `Lesson content profile ${profile.frameworkSlug} has duplicate region overrides`);
+  assert(profile.regionOverrides.every((override) => mathRegionIds.has(override.regionId)), `Lesson content profile ${profile.frameworkSlug} references an unknown math region`);
+  assert(new Set(profile.topicOverrides.map((override) => override.topicId)).size === profile.topicOverrides.length, `Lesson content profile ${profile.frameworkSlug} has duplicate topic overrides`);
+  assert(profile.topicOverrides.every((override) => mathTopicIds.has(override.topicId)), `Lesson content profile ${profile.frameworkSlug} references an unknown math topic`);
+  assert(profile.topicOverrides.every((override) => ['verified', 'provisional', 'supplemental'].includes(override.placement.status)), `Lesson content profile ${profile.frameworkSlug} has an invalid review status`);
+  assert(profile.topicOverrides.every((override) => override.placement.sourceLocator.length > 0), `Lesson content profile ${profile.frameworkSlug} needs source locators`);
+  assert(new Set(profile.missionOverrides.map((override) => override.missionId)).size === profile.missionOverrides.length, `Lesson content profile ${profile.frameworkSlug} has duplicate mission overrides`);
+  for (const override of profile.missionOverrides) {
+    const mission = missions.find((candidate) => candidate.id === override.missionId);
+    assert(mission && mathMissionIds.has(mission.id), `Lesson content profile ${profile.frameworkSlug} references unknown math mission ${override.missionId}`);
+    assert(override.questions.length === mission.questions.length, `Lesson content mission ${override.missionId} question count mismatch`);
+    assert(override.questions.every((question, index) => question.id === mission.questions[index].id), `Lesson content mission ${override.missionId} must preserve question IDs`);
+    assert(override.questions.every((question) => question.options.includes(question.correctOption)), `Lesson content mission ${override.missionId} has an invalid answer`);
+  }
+}
+const chinaContent = contentProfiles.find((profile) => profile.frameworkSlug === 'cn-2022-math');
+assert(chinaContent, 'China lesson content profile is missing');
+assert(chinaContent.locale === 'zh-CN' && chinaContent.currency === 'CNY', 'China lesson content locale or currency is invalid');
+assert(chinaContent.topicOverrides.length === mathTopicIds.size, 'China lesson content must cover every math topic');
+assert(chinaContent.missionOverrides.length === mathMissionIds.size, 'China lesson content must cover every math mission');
+assert(chinaContent.regionOverrides.length === mathRegionIds.size, 'China lesson content must cover every math region');
+assert(!JSON.stringify(chinaContent).includes('新台幣') && !JSON.stringify(chinaContent).includes('新台币'), 'China lesson content must not contain Taiwan currency');
 
 const outgoing = new Map(topics.map((topic) => [topic.id, []]));
 for (const edge of dependencies) {
@@ -104,6 +137,7 @@ for (const region of regions.filter((region) => !region.comingSoon)) {
 
 console.log(`Taxonomy valid: ${topics.length} topics, ${dependencies.length} dependencies, ${clusters.length} clusters, ${missions.length} missions, DAG confirmed.`);
 console.log(`Curriculum overlays valid: ${curricula.length} frameworks, ${standardKeys.size} standards, Taiwan 108 + China 2022.`);
+console.log(`Lesson content overlays valid: ${contentProfiles.length} profiles, ${mathTopicIds.size} shared Math topics, ${mathMissionIds.size} localized missions.`);
 
 const marbleTopics = marbleTopicFile.topics;
 const marbleDependencies = marbleDependencyFile.dependencies;

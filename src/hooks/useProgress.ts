@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {completeMission as addMission, loadProgress, recordProgressEvidence, sanitizeAlias, saveProgress} from '../lib/progress';
+import {completeMission as addMission, loadProgress, recordProgressEvidence, sanitizeAlias, saveProgress, setCurriculumFramework as selectCurriculumFramework} from '../lib/progress';
 import type {LessonEvidenceSummary} from '../features/lessons/PlaceValueLesson';
-import type {LearningEvidence, Mission, ProgressState} from '../types';
+import type {CurriculumFrameworkSlug, LearningEvidence, Mission, ProgressState} from '../types';
 
 export function useProgress(namespace: string) {
   const [progress, setProgress] = useState<ProgressState>(() => loadProgress(window.localStorage, namespace));
@@ -17,6 +17,10 @@ export function useProgress(namespace: string) {
 
   const setChildAlias = useCallback((alias: string) => {
     update({...progress, childAlias: sanitizeAlias(alias), updatedAt: new Date().toISOString()});
+  }, [progress, update]);
+
+  const setCurriculumFramework = useCallback((curriculumFramework: CurriculumFrameworkSlug) => {
+    update(selectCurriculumFramework(progress, curriculumFramework));
   }, [progress, update]);
 
   const completeMission = useCallback((mission: Mission, summary: LessonEvidenceSummary) => {
@@ -46,7 +50,7 @@ export function useProgress(namespace: string) {
   }, [progress, update]);
 
   return useMemo(
-    () => ({progress, setChildAlias, completeMission, completePlaceValueLesson}),
-    [progress, setChildAlias, completeMission, completePlaceValueLesson],
+    () => ({progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson}),
+    [progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson],
   );
 }

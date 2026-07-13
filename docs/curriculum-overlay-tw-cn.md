@@ -46,9 +46,12 @@ canonical topics + prerequisite DAG
 - `getCurriculumGraph(frameworkSlug, grade)` 會取出對應 topics、dependency edges 與 standards，並依 DAG 排序。
 - `getCurriculumRecommendation(...)` 在選定課綱後重用相同 LearnerTopicState／hard prerequisite 引擎。
 - validator 阻止未知 standard、缺少任一地區 alignment、重複 key、topicCount 漂移與意外收錄官方全文。
+- `lesson-content-overlays.json` 以相同 topic／mission IDs 載入台灣繁中／新台幣或中國簡中／人民幣內容，LearnerTopicState 不因切換而分叉。
+- 中國內容以 2022 課標與 2024 修訂人教版為 profile，逐 topic 記錄 `verified`、`provisional` 或 `supplemental` 教研狀態。完整矩陣見 `issue-009-tw-cn-lesson-content-overlay.md`。
 
 ## 尚未宣稱完成
 
-- 中國大陸一年級的教材順序、人民幣素材與簡體中文 lesson copy 尚未完成教研審核。
-- 台灣與大陸目前共用 canonical skill；內容、例題、貨幣與語言變體必須另做 lesson-content overlay，不能只切換課綱標籤。
+- 中國新版人教一年級下冊 placement 尚未取得足夠官方目錄證據，因此 100 以內、退位減法、平面圖形與人民幣仍標示為 provisional。
+- 現有 15 topics 缺少人教上冊前兩單元需要的 5 以內、6～10 細粒度 micro-topics；內容 overlay 已完成，但不能宣稱人教一年級完整覆蓋。
+- canonical DAG 的「數到 20 → 十的分與合」不等於人教順序，需在下一個課程建模階段拆分能力後處理。
 - 國語文／英語／自然與二年級以上尚未匯入。

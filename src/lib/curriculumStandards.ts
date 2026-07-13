@@ -1,7 +1,7 @@
 import standardFile from '../data/curriculum-standards.json';
 import {dependencies, topics} from './curriculum';
 import {getRecommendation} from './mastery';
-import type {CurriculumFramework, Dependency, LearnerTopicState, Topic} from '../types';
+import type {CurriculumFramework, CurriculumFrameworkSlug, Dependency, LearnerTopicState, Topic} from '../types';
 
 export const curriculumFrameworks = standardFile.curricula as CurriculumFramework[];
 export const curriculumFrameworkBySlug = new Map(curriculumFrameworks.map((framework) => [framework.slug, framework]));
@@ -35,7 +35,7 @@ function topologicalTopics(selectedTopics: Topic[], selectedDependencies: Depend
   return result;
 }
 
-export function getCurriculumGraph(frameworkSlug: string, grade: number) {
+export function getCurriculumGraph(frameworkSlug: CurriculumFrameworkSlug, grade: number) {
   const framework = curriculumFrameworkBySlug.get(frameworkSlug);
   if (!framework) throw new Error(`Unknown curriculum framework: ${frameworkSlug}`);
   if (!framework.implementedGrades.includes(grade)) {
@@ -54,7 +54,7 @@ export function getCurriculumGraph(frameworkSlug: string, grade: number) {
   };
 }
 
-export function getCurriculumRecommendation(frameworkSlug: string, grade: number, learnerStates: LearnerTopicState[]) {
+export function getCurriculumRecommendation(frameworkSlug: CurriculumFrameworkSlug, grade: number, learnerStates: LearnerTopicState[]) {
   const graph = getCurriculumGraph(frameworkSlug, grade);
   if (!graph.topics.length) throw new Error(`No aligned topics for ${frameworkSlug} grade ${grade}`);
   return getRecommendation('Mathematics', learnerStates, graph.topics, graph.dependencies);

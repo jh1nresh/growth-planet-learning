@@ -1,19 +1,21 @@
 import {CheckCircle, Clock, LockKey, MapPin, Play, Sparkle} from '@phosphor-icons/react';
-import {clusterById, missionByRegionId, topicById} from '../../lib/curriculum';
-import type {WorldRegion} from '../../types';
+import {clusterById} from '../../lib/curriculum';
+import type {Mission, Topic} from '../../types';
+import type {LocalizedWorldRegion} from '../../lib/lessonContent';
 
 interface RegionPanelProps {
-  region: WorldRegion;
+  region: LocalizedWorldRegion;
   selectedTopicId: string | null;
   status: 'coming-soon' | 'locked' | 'complete' | 'available';
+  mission: Mission | null;
+  topicContentById: Map<string, Topic>;
   onStartMission: () => void;
 }
 
-export function RegionPanel({region, selectedTopicId, status, onStartMission}: RegionPanelProps) {
+export function RegionPanel({region, selectedTopicId, status, mission, topicContentById, onStartMission}: RegionPanelProps) {
   const cluster = region.clusterId ? clusterById.get(region.clusterId) : undefined;
-  const mission = missionByRegionId.get(region.id);
-  const topicNames = cluster?.topicIds.map((id) => topicById.get(id)?.name).filter(Boolean) ?? [];
-  const selectedTopic = selectedTopicId ? topicById.get(selectedTopicId) : undefined;
+  const topicNames = cluster?.topicIds.map((id) => topicContentById.get(id)?.name).filter(Boolean) ?? [];
+  const selectedTopic = selectedTopicId ? topicContentById.get(selectedTopicId) : undefined;
   const locked = status === 'locked' || status === 'coming-soon';
 
   return (
@@ -24,7 +26,7 @@ export function RegionPanel({region, selectedTopicId, status, onStartMission}: R
           {status === 'complete' ? '已點亮' : status === 'available' ? '可以探索' : status === 'coming-soon' ? '即將開放' : '先完成前一站'}
         </span>
         <h2 id="region-title">{region.name}</h2>
-        <p>{cluster?.summary ?? region.description}</p>
+        <p>{region.contentSummary ?? cluster?.summary ?? region.description}</p>
       </div>
 
       {selectedTopic ? (

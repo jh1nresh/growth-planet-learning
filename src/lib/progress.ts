@@ -1,7 +1,7 @@
 import missionFile from '../data/missions.json';
 import topicFile from '../data/topics.json';
 import {emptyTopicStates, recordLearningEvidence} from './mastery';
-import type {LearnerTopicState, LearningEvidence, Mission, ProgressState, Topic} from '../types';
+import type {CurriculumFrameworkSlug, LearnerTopicState, LearningEvidence, Mission, ProgressState, Topic} from '../types';
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -15,7 +15,8 @@ const allTopicIds = new Set(allTopics.map((topic) => topic.id));
 
 export function emptyProgress(): ProgressState {
   return {
-    version: 2,
+    version: 3,
+    curriculumFramework: 'tw-108-math',
     childAlias: '',
     completedMissionIds: [],
     topicStates: emptyTopicStates(allTopics),
@@ -27,7 +28,8 @@ export function emptyProgress(): ProgressState {
 function isProgress(value: unknown): value is ProgressState {
   if (!value || typeof value !== 'object') return false;
   const candidate = value as Partial<ProgressState>;
-  return candidate.version === 2
+  return candidate.version === 3
+    && (candidate.curriculumFramework === 'tw-108-math' || candidate.curriculumFramework === 'cn-2022-math')
     && typeof candidate.childAlias === 'string'
     && Array.isArray(candidate.completedMissionIds)
     && candidate.completedMissionIds.every((id) => typeof id === 'string')
@@ -89,7 +91,8 @@ function migrateV1(value: unknown): ProgressState | null {
     }
   }
   return {
-    version: 2,
+    version: 3,
+    curriculumFramework: 'tw-108-math',
     childAlias: candidate.childAlias,
     completedMissionIds,
     topicStates,
@@ -98,12 +101,20 @@ function migrateV1(value: unknown): ProgressState | null {
   };
 }
 
+function migrateV2(value: unknown): ProgressState | null {
+  if (!value || typeof value !== 'object') return null;
+  const candidate = value as Omit<ProgressState, 'version' | 'curriculumFramework'> & {version?: number};
+  if (candidate.version !== 2) return null;
+  const migrated = {...candidate, version: 3, curriculumFramework: 'tw-108-math'} as ProgressState;
+  return isProgress(migrated) ? migrated : null;
+}
+
 export function loadProgress(storage: StorageLike, namespace: string) {
   try {
     const stored = storage.getItem(`${STORAGE_PREFIX}${namespace}`);
     if (!stored) return emptyProgress();
     const parsed: unknown = JSON.parse(stored);
-    return isProgress(parsed) ? parsed : migrateV1(parsed) ?? emptyProgress();
+    return isProgress(parsed) ? parsed : migrateV2(parsed) ?? migrateV1(parsed) ?? emptyProgress();
   } catch {
     return emptyProgress();
   }
@@ -115,6 +126,10 @@ export function saveProgress(storage: StorageLike, namespace: string, progress: 
 
 export function sanitizeAlias(alias: string) {
   return alias.replace(/[<>\n\r]/g, '').trim().slice(0, 16);
+}
+
+export function setCurriculumFramework(progress: ProgressState, curriculumFramework: CurriculumFrameworkSlug, now = new Date()): ProgressState {
+  return {...progress, curriculumFramework, updatedAt: now.toISOString()};
 }
 
 export function completeMission(
