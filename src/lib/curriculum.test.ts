@@ -9,8 +9,8 @@ describe('curriculum graph', () => {
     }
   });
 
-  it('uses original Growth Planet IDs', () => {
-    expect(topics.every((topic) => /^tw_(math|eng)_g1_/.test(topic.id))).toBe(true);
+  it('uses original local curriculum IDs', () => {
+    expect(topics.every((topic) => /^tw_(math|eng|zh)_g1_/.test(topic.id))).toBe(true);
   });
 
   it('unlocks Math regions sequentially while English Port stays available', () => {

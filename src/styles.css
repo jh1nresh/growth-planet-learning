@@ -2058,6 +2058,7 @@ input:focus-visible {
 }
 
 .place-value-canvas {
+  position: relative;
   min-height: 390px;
   touch-action: none;
 }
@@ -2895,7 +2896,7 @@ input:focus-visible {
   }
 }
 
-/* Growth Planet identity: 星墨學圖 — an eastern star atlas, not generic space UI. */
+/* Oshiami identity: 星墨學圖 — an eastern star atlas, not generic space UI. */
 .taxonomy-app {
   --star-ink: #071011;
   --star-ink-soft: #101c1c;
@@ -3457,13 +3458,20 @@ dialog.profile-modal {
   top: 0;
   z-index: 20;
   min-height: 72px;
-  grid-template-columns: minmax(190px, 1fr) minmax(200px, 340px) auto;
-  gap: 1.25rem;
+  grid-template-columns: minmax(165px, 0.8fr) auto minmax(150px, 260px) auto;
+  gap: 1rem;
   padding: 0.75rem clamp(1rem, 3vw, 2.5rem);
   border-color: var(--english-line);
   color: var(--english-ink);
   background: var(--english-surface);
   backdrop-filter: none;
+}
+
+.english-focus-shell .brand-lockup .english-brand-mark {
+  color: var(--english-surface);
+  font-family: Georgia, "Songti TC", serif;
+  font-size: 1.15rem;
+  letter-spacing: 0;
 }
 
 .english-focus-shell .english-brand {
@@ -4225,7 +4233,9 @@ dialog.profile-modal {
 
 .english-growth-path > a,
 .parent-map-footer a {
-  display: inline-block;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   margin-top: 1.5rem;
   color: var(--english-blue-dark);
   font-size: 0.74rem;
@@ -4256,7 +4266,7 @@ dialog.profile-modal {
 
 .parent-map-heading h1 {
   margin-top: 0.65rem;
-  font-size: clamp(2.25rem, 4.5vw, 4.2rem);
+  font-size: clamp(2rem, 3.5vw, 2.7rem);
 }
 
 .parent-map-heading p {
@@ -4289,6 +4299,7 @@ dialog.profile-modal {
 }
 
 .parent-next-step {
+  align-items: center;
   max-width: 780px;
   margin: 1.5rem 0 2.7rem;
   padding: 0.9rem 1rem;
@@ -4328,8 +4339,8 @@ dialog.profile-modal {
 }
 
 .parent-skill-sequence article {
-  min-height: 360px;
-  padding: 1.2rem 0;
+  min-height: 0;
+  padding: 0.8rem 0;
   border-top: 3px solid #aeb7c8;
 }
 
@@ -4378,14 +4389,6 @@ dialog.profile-modal {
   color: var(--english-blue-dark);
   font-size: 0.65rem;
   font-weight: 800;
-}
-
-.parent-skill-sequence article > p {
-  min-height: 74px;
-  margin: 1rem 0;
-  color: var(--english-muted);
-  font-size: 0.88rem;
-  line-height: 1.6;
 }
 
 .parent-mastery-bar {
@@ -4460,16 +4463,6 @@ dialog.profile-modal {
 }
 
 @media (max-width: 920px) {
-  .english-focus-shell .english-topbar {
-    grid-template-columns: 1fr auto;
-  }
-
-  .english-focus-shell .topbar-progress,
-  .english-focus-shell .topbar-context {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
   .english-hero {
     grid-template-columns: 1fr;
   }
@@ -4514,13 +4507,6 @@ dialog.profile-modal {
     transform: rotate(90deg);
   }
 
-  .parent-skill-sequence article {
-    min-height: 0;
-  }
-
-  .parent-skill-sequence article > p {
-    min-height: 0;
-  }
 }
 
 @media (max-width: 680px) {
@@ -4529,26 +4515,6 @@ dialog.profile-modal {
   .english-growth-page,
   .english-parent-map {
     width: min(100% - 1.1rem, 1180px);
-  }
-
-  .english-focus-shell .english-topbar {
-    gap: 0.65rem;
-    padding: 0.6rem;
-  }
-
-  .english-focus-shell .topbar-actions {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    width: 100%;
-    justify-content: stretch;
-  }
-
-  .english-focus-shell .view-toggle-button {
-    flex: 1;
-  }
-
-  .english-focus-shell .profile-button span {
-    display: none;
   }
 
   .english-hero {
@@ -4562,10 +4528,6 @@ dialog.profile-modal {
 
   .english-hero h1 {
     font-size: clamp(2.8rem, 16vw, 4.6rem);
-  }
-
-  .english-hero-model {
-    min-height: 330px;
   }
 
   .english-home-details {
@@ -4675,5 +4637,468 @@ dialog.profile-modal {
   .english-focus-shell .letter-tiles button:hover,
   .english-focus-shell button:active {
     transform: none;
+  }
+}
+
+/* Three focused studios share one editorial system; only the subject accent changes. */
+.subject-mathematics {
+  --english-blue: #9a4b12;
+  --english-blue-dark: #74370c;
+  --english-blue-soft: #f5e8de;
+}
+
+.subject-chinese {
+  --english-blue: #2f6b4f;
+  --english-blue-dark: #1f503a;
+  --english-blue-soft: #e5efe9;
+}
+
+.studio-subject-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(56px, 1fr));
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--english-line);
+  border-radius: 10px;
+  background: var(--english-paper);
+}
+
+.studio-subject-switcher button {
+  min-width: 56px;
+  min-height: 44px;
+  padding: 0.45rem 0.75rem;
+  border: 0;
+  border-radius: 7px;
+  color: var(--english-muted);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.studio-subject-switcher button[aria-pressed="true"] {
+  color: var(--english-surface);
+  background: var(--english-blue);
+}
+
+.english-hero-model,
+.english-word-model {
+  background: var(--english-blue-soft);
+}
+
+.studio-math-model {
+  min-height: 270px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.studio-tens {
+  display: flex;
+  align-items: end;
+  gap: 0.55rem;
+}
+
+.studio-tens span {
+  width: 36px;
+  height: 210px;
+  border: 2px solid var(--english-blue-dark);
+  border-radius: 7px 7px 2px 2px;
+  background: var(--english-surface);
+  box-shadow: inset 0 -18px 0 var(--english-blue-soft), inset 0 -20px 0 var(--english-blue-dark);
+}
+
+.studio-ones {
+  width: 82px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+}
+
+.studio-ones i {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--english-blue-dark);
+  border-radius: 5px;
+  background: var(--english-surface);
+}
+
+.studio-chinese-model {
+  min-height: 270px;
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+}
+
+.studio-character {
+  width: 180px;
+  height: 180px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--english-blue);
+  border-radius: 2px 26px 2px 2px;
+  color: var(--english-ink);
+  background: var(--english-surface);
+  font-family: "Iowan Old Style", "Songti TC", serif;
+  font-size: 7rem;
+  line-height: 1;
+}
+
+.studio-chinese-model > div {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.studio-chinese-model i {
+  width: 50px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-bottom: 2px solid var(--english-blue);
+  color: var(--english-blue-dark);
+  font-family: "Songti TC", serif;
+  font-size: 1.8rem;
+  font-style: normal;
+}
+
+.chinese-character-reveal {
+  min-height: 235px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.55rem;
+}
+
+.chinese-character-reveal > span {
+  width: 150px;
+  height: 150px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--english-blue);
+  border-radius: 2px 22px 2px 2px;
+  color: var(--english-ink);
+  background: var(--english-surface);
+  font-family: "Songti TC", serif;
+  font-size: 5.6rem;
+}
+
+.chinese-character-reveal small {
+  color: var(--english-muted);
+}
+
+.zhuyin-slots span,
+.zhuyin-tiles button {
+  font-family: "Songti TC", "Noto Serif TC", serif;
+}
+
+.parent-next-step > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.parent-next-step > .english-primary-button {
+  flex: none;
+  margin-left: auto;
+  padding: 0.65rem 0.9rem;
+  white-space: nowrap;
+}
+
+.parent-lesson-coming {
+  flex: none;
+  margin-left: auto;
+  color: var(--english-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.parent-node-evidence {
+  display: block;
+  margin-top: 0.55rem;
+  overflow: hidden;
+  color: var(--english-muted);
+  line-height: 1.55;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.parent-evidence-details {
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--english-line);
+}
+
+.parent-evidence-details summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--english-blue-dark);
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.parent-evidence-details dl {
+  margin-top: 0.35rem;
+}
+
+.english-focus-shell .interactive-lesson {
+  color: var(--english-ink);
+  background: var(--english-paper);
+}
+
+.english-focus-shell .lesson-header h1 {
+  color: var(--english-ink);
+}
+
+.english-focus-shell .lesson-header span,
+.english-focus-shell .lesson-instruction p,
+.english-focus-shell .lesson-coach > div:nth-child(2) p,
+.english-focus-shell .lesson-complete p {
+  color: var(--english-muted);
+}
+
+.english-focus-shell .lesson-total strong,
+.english-focus-shell .lesson-instruction > span,
+.english-focus-shell .lesson-coach > div:nth-child(2) strong,
+.english-focus-shell .place-value-question legend {
+  color: var(--english-blue-dark);
+}
+
+.english-focus-shell .lesson-workspace,
+.english-focus-shell .lesson-coach {
+  border-color: var(--english-line);
+  background: var(--english-surface);
+}
+
+.english-focus-shell .lesson-instruction h2 {
+  color: var(--english-ink);
+}
+
+.english-focus-shell .lesson-back-button,
+.english-focus-shell .lesson-controls button,
+.english-focus-shell .place-value-question button,
+.english-focus-shell .lesson-actions button,
+.english-focus-shell .lesson-complete button {
+  border-color: var(--english-line);
+  color: var(--english-ink);
+  background: var(--english-surface);
+}
+
+.english-focus-shell .lesson-controls .bundle-button,
+.english-focus-shell .lesson-actions .primary-button,
+.english-focus-shell .lesson-complete .primary-button {
+  border-color: var(--english-blue);
+  color: var(--english-surface);
+  background: var(--english-blue);
+}
+
+.english-focus-shell .lesson-controls {
+  border-color: var(--english-line);
+}
+
+.english-focus-shell .tutor-avatar {
+  color: var(--english-surface);
+  background: var(--english-blue);
+}
+
+.place-value-canvas-host canvas {
+  position: relative;
+  z-index: 1;
+}
+
+.place-value-canvas-copy {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+}
+
+.canvas-material-copy {
+  position: absolute;
+  top: 22px;
+  left: 28px;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.canvas-material-copy strong,
+.canvas-material-copy span,
+.canvas-column-copy strong,
+.canvas-count-copy span {
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.canvas-material-copy strong {
+  color: #9fb9c0;
+}
+
+.canvas-material-copy span {
+  max-width: 9rem;
+  color: #d9e8e6;
+}
+
+.canvas-column-copy,
+.canvas-count-copy {
+  position: absolute;
+  left: 28%;
+  right: 6%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.canvas-column-copy {
+  top: 21px;
+}
+
+.canvas-column-copy strong:first-child,
+.canvas-count-copy span:first-child {
+  color: #f3d781;
+}
+
+.canvas-column-copy strong:last-child,
+.canvas-count-copy span:last-child {
+  color: #72d8e8;
+}
+
+.canvas-count-copy {
+  top: 318px;
+}
+
+@media (max-width: 1120px) {
+  .english-focus-shell .english-topbar {
+    grid-template-columns: 1fr auto;
+    gap: 0.6rem 0.8rem;
+  }
+
+  .english-focus-shell .english-brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .english-focus-shell .topbar-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .studio-subject-switcher {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .english-focus-shell .topbar-progress,
+  .english-focus-shell .topbar-context {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .english-focus-shell .english-topbar {
+    gap: 0.35rem 0.5rem;
+    padding: 0.35rem 0.55rem;
+  }
+
+  .english-focus-shell .topbar-actions {
+    width: auto;
+  }
+
+  .english-focus-shell .view-toggle-button,
+  .english-focus-shell .profile-button {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .english-focus-shell .view-toggle-button span,
+  .english-focus-shell .profile-button span,
+  .english-focus-shell .profile-button > svg:last-child {
+    display: none;
+  }
+
+  .studio-subject-switcher {
+    padding: 0.15rem;
+  }
+
+  .studio-subject-switcher button {
+    padding: 0.35rem;
+  }
+
+  .english-hero-model {
+    min-height: 300px;
+  }
+
+  .studio-math-model,
+  .studio-chinese-model {
+    min-height: 210px;
+  }
+
+  .studio-tens span {
+    width: 30px;
+    height: 170px;
+  }
+
+  .studio-ones {
+    width: 68px;
+  }
+
+  .studio-ones i {
+    width: 30px;
+    height: 30px;
+  }
+
+  .studio-character {
+    width: 145px;
+    height: 145px;
+    font-size: 5.5rem;
+  }
+
+  .parent-next-step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+
+  .parent-next-step > .english-primary-button {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .english-focus-shell .interactive-lesson {
+    width: min(100% - 1rem, 1180px);
+    grid-template-columns: 1fr;
+  }
+
+  .english-focus-shell .lesson-header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .english-focus-shell .lesson-header > div:nth-child(2) {
+    display: none;
+  }
+
+  .english-focus-shell .lesson-total {
+    grid-column: 2;
+  }
+
+  .english-focus-shell .lesson-coach {
+    grid-column: 1;
+  }
+
+  .canvas-column-copy,
+  .canvas-count-copy {
+    left: 35%;
+    right: 3%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .english-focus-shell *,
+  .english-focus-shell *::before,
+  .english-focus-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
   }
 }

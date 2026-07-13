@@ -7,6 +7,14 @@ export interface TopicRecommendation {
   reason: string;
 }
 
+const subjectLabels: Record<Subject, string> = {
+  Mathematics: '數學',
+  English: '英文',
+  Chinese: '語文',
+  Science: '科學',
+  'Life Skills': '生活能力',
+};
+
 export function emptyTopicStates(topicList: Topic[]): LearnerTopicState[] {
   return topicList.map((topic) => ({
     topicId: topic.id,
@@ -79,7 +87,7 @@ export function getRecommendationForTopic(
     return {topic, reason: `「${topic.name}」正在成形，再練一次就會更穩。`};
   }
   if (state && state.mastery >= MASTERY_THRESHOLD) {
-    return {topic, reason: `這一輪的「${target.subject === 'Mathematics' ? '數學' : '英文'}」能力都已掌握，今天用「${topic.name}」做一次短複習。`};
+    return {topic, reason: `這一輪的「${subjectLabels[target.subject]}」能力都已掌握，今天用「${topic.name}」做一次短複習。`};
   }
   const masteredPrerequisite = hardPrerequisites(topic.id, edges)
     .map((edge) => byId.get(edge.prerequisiteId))

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Oshiami</title>
+  <desc id="description">由英文藍、數學赭與語文綠三片葉子組成的成長標誌</desc>
+  <rect width="512" height="512" rx="108" fill="#f4f1e9"/>
+  <rect x="17" y="17" width="478" height="478" rx="94" fill="none" stroke="#1d2a3d" stroke-width="18"/>
+  <path d="M256 385V211" fill="none" stroke="#1d2a3d" stroke-linecap="round" stroke-width="22"/>
+  <path d="M252 266C181 272 126 226 126 154c70-6 125 39 126 112Z" fill="#315fca"/>
+  <path d="M260 220c-6-75 39-130 111-134 8 70-36 127-111 134Z" fill="#9a4b12"/>
+  <path d="M261 312c69-13 130 25 142 96-67 15-127-23-142-96Z" fill="#2f6b4f"/>
+  <path d="M186 405h140" fill="none" stroke="#1d2a3d" stroke-linecap="round" stroke-width="22"/>
+</svg>

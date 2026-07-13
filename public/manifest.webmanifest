@@ -1,16 +1,16 @@
 {
-  "name": "成長星球",
-  "short_name": "成長星球",
-  "description": "12 歲以前的數學與英文 3D 學習關係圖",
+  "name": "Oshiami",
+  "short_name": "Oshiami",
+  "description": "給華語低年級孩子的英文、數學與語文互動學習室",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#08090b",
-  "theme_color": "#08090b",
+  "background_color": "#f4f1e9",
+  "theme_color": "#f4f1e9",
   "lang": "zh-Hant-TW",
   "icons": [
     {
-      "src": "/assets/growth-planet-orbital-atlas.png",
-      "sizes": "1048x1501",
+      "src": "/assets/growth-planet-studios-icon.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]

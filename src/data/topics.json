@@ -1,6 +1,6 @@
 {
   "version": "tw-v1",
-  "topicCount": 18,
+  "topicCount": 21,
   "topics": [
     {
       "id": "tw_math_g1_count_20",
@@ -253,6 +253,48 @@
       "evidence": ["選擇符合情境的招呼語", "完成一個簡短自我介紹句型"],
       "assessmentPrompt": "請孩子選擇早上遇到朋友時可以說的話。",
       "standards": ["local-tw-eng-g1:SP-01"]
+    },
+    {
+      "id": "tw_zh_g1_zhuyin_symbols",
+      "type": "LANGUAGE",
+      "subject": "Chinese",
+      "domain": "Zhuyin",
+      "name": "聽聲音，認注音",
+      "description": "辨認常見聲符、介符、韻符與聲調，並把聲音和注音符號連起來。",
+      "ageRangeStart": 6,
+      "ageRangeEnd": 8,
+      "centrality": 0.9,
+      "evidence": ["把固定字音中的符號依序放好", "辨認字音中的聲調符號"],
+      "assessmentPrompt": "看到「米」與 ㄇ、ㄧ、ˇ，請孩子依照讀音排出正確順序。",
+      "standards": ["tw-108-guoyu:3-I-1", "tw-108-guoyu:Aa-I-1", "tw-108-guoyu:Aa-I-2"]
+    },
+    {
+      "id": "tw_zh_g1_zhuyin_blending",
+      "type": "LANGUAGE",
+      "subject": "Chinese",
+      "domain": "Zhuyin",
+      "name": "開動拼音列車",
+      "description": "把注音依序組合，拼出二拼音、三拼音與結合韻。",
+      "ageRangeStart": 6,
+      "ageRangeEnd": 8,
+      "centrality": 0.86,
+      "evidence": ["不看答案排出米的注音 ㄇㄧˇ", "依讀音排出包含結合韻的注音序列"],
+      "assessmentPrompt": "聽到「米」和「鳥」後，把打亂的注音卡排進聲音軌。",
+      "standards": ["tw-108-guoyu:3-I-1", "tw-108-guoyu:Aa-I-3", "tw-108-guoyu:Aa-I-4"]
+    },
+    {
+      "id": "tw_zh_g1_zhuyin_word_link",
+      "type": "LANGUAGE",
+      "subject": "Chinese",
+      "domain": "Reading",
+      "name": "看注音，找到字",
+      "description": "利用注音，把熟悉事物的讀音、國字和意思連起來。",
+      "ageRangeStart": 6,
+      "ageRangeEnd": 8,
+      "centrality": 0.78,
+      "evidence": ["根據注音與圖像連結常用國字", "移除注音後仍能在短句中認出同一個字"],
+      "assessmentPrompt": "看到米飯圖片與 ㄇㄧˇ，把「米」放進「我吃＿＿。」。",
+      "standards": ["tw-108-guoyu:3-I-2", "tw-108-guoyu:4-I-1", "tw-108-guoyu:Ab-I-1", "tw-108-guoyu:Ab-I-5"]
     }
   ]
 }

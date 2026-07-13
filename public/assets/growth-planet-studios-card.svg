@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Oshiami：英文、數學、語文互動學習</title>
+  <desc id="description">紙張與墨色風格的三學科學習室品牌卡</desc>
+  <rect width="1200" height="630" fill="#f4f1e9"/>
+  <path d="M0 1h1200M0 629h1200" stroke="#1d2a3d" stroke-width="2"/>
+
+  <g transform="translate(72 66)">
+    <rect width="76" height="76" rx="16" fill="#fffdf8" stroke="#1d2a3d" stroke-width="3"/>
+    <path d="M38 61V31" fill="none" stroke="#1d2a3d" stroke-linecap="round" stroke-width="4"/>
+    <path d="M37 42C25 43 16 35 16 23c12-1 21 7 21 19Z" fill="#315fca"/>
+    <path d="M39 34c-1-13 7-22 19-23 1 12-6 22-19 23Z" fill="#9a4b12"/>
+    <path d="M39 49c12-2 22 4 24 16-11 3-21-4-24-16Z" fill="#2f6b4f"/>
+  </g>
+
+  <text x="174" y="106" fill="#1d2a3d" font-family="Avenir Next, PingFang TC, Noto Sans TC, sans-serif" font-size="29" font-weight="700" letter-spacing="3">Oshiami</text>
+  <text x="72" y="223" fill="#1d2a3d" font-family="Iowan Old Style, Songti TC, Noto Serif TC, serif" font-size="60" font-weight="600">一堂課，一個能力，</text>
+  <text x="72" y="299" fill="#1d2a3d" font-family="Iowan Old Style, Songti TC, Noto Serif TC, serif" font-size="60" font-weight="600">清楚看見下一步。</text>
+  <text x="74" y="367" fill="#5f6a7e" font-family="Avenir Next, PingFang TC, Noto Sans TC, sans-serif" font-size="25">把孩子的實際操作，變成可理解的成長證據。</text>
+
+  <g transform="translate(72 456)">
+    <rect width="148" height="56" rx="10" fill="#315fca"/>
+    <text x="74" y="37" text-anchor="middle" fill="#fffdf8" font-family="Avenir Next, PingFang TC, sans-serif" font-size="23" font-weight="700">英文</text>
+    <rect x="166" width="148" height="56" rx="10" fill="#9a4b12"/>
+    <text x="240" y="37" text-anchor="middle" fill="#fffdf8" font-family="Avenir Next, PingFang TC, sans-serif" font-size="23" font-weight="700">數學</text>
+    <rect x="332" width="148" height="56" rx="10" fill="#2f6b4f"/>
+    <text x="406" y="37" text-anchor="middle" fill="#fffdf8" font-family="Avenir Next, PingFang TC, sans-serif" font-size="23" font-weight="700">語文</text>
+  </g>
+
+  <g transform="translate(740 72)">
+    <rect width="386" height="486" rx="8" fill="#fffdf8" stroke="#d6d7d4" stroke-width="2"/>
+    <rect x="34" y="36" width="318" height="112" rx="2" fill="#e7edfc"/>
+    <text x="72" y="112" fill="#315fca" font-family="Georgia, serif" font-size="58" font-weight="700">A</text>
+    <text x="146" y="103" fill="#1d2a3d" font-family="Avenir Next, sans-serif" font-size="22" font-weight="700">聽 CAT，找聲音</text>
+    <rect x="34" y="187" width="318" height="112" rx="2" fill="#f5e8de"/>
+    <text x="62" y="259" fill="#9a4b12" font-family="Georgia, serif" font-size="48" font-weight="700">34</text>
+    <text x="146" y="254" fill="#1d2a3d" font-family="Avenir Next, PingFang TC, sans-serif" font-size="22" font-weight="700">動手組成十</text>
+    <rect x="34" y="338" width="318" height="112" rx="2" fill="#e5efe9"/>
+    <text x="55" y="411" fill="#2f6b4f" font-family="Songti TC, serif" font-size="43" font-weight="700">ㄇㄧˇ</text>
+    <text x="178" y="405" fill="#1d2a3d" font-family="Avenir Next, PingFang TC, sans-serif" font-size="22" font-weight="700">排出「米」</text>
+  </g>
+</svg>

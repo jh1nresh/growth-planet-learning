@@ -1,4 +1,4 @@
-# Growth Planet repository instructions
+# Oshiami repository instructions
 
 ## Product boundary
 
@@ -6,7 +6,8 @@
 - Never request a child email, legal name, voice, location, school, or birthday.
 - Guest mode must remain fully playable when Privy is not configured.
 - Progress is device-local in v1. Do not imply cross-device sync.
-- The main learning surface is the Marble-derived Mathematics and English graph for topics whose `ageRangeEnd` is 12 or below.
+- The imported Marble graph remains Mathematics and English only for topics whose `ageRangeEnd` is 12 or below.
+- Chinese Language Arts is a first-party Oshiami curriculum extension. Keep its source locators and never attribute it to Marble.
 
 ## Curriculum boundary
 
@@ -34,4 +35,4 @@ npm run check
 npm audit --audit-level=high
 ```
 
-Browser verification must cover 3D drag/pan/zoom, Mathematics and English filters, topic details and relation navigation, the keyboard concept selector, WebGL fallback, Privy fallback state, mobile overflow, and console errors.
+Browser verification must cover all three subject switches across Today, Growth, and Parent views; each starter lesson and its evidence; recommendation-to-lesson consistency; speech-unavailable fallback; Pixi mount/unmount cleanup; Privy guest fallback; 390 x 844, 768 x 1024, and 1440 x 900 overflow; keyboard equivalents; and console errors.

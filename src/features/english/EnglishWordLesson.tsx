@@ -33,14 +33,18 @@ export function EnglishWordLesson({onBack, onComplete}: EnglishWordLessonProps) 
   const complete = state.feedback === 'complete';
 
   const listen = () => {
-    if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance('cat');
-      utterance.lang = 'en-US';
-      utterance.rate = 0.72;
-      window.speechSynthesis.speak(utterance);
-    }
     setState((current) => markEnglishWordHeard(current));
+    try {
+      if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance('cat');
+        utterance.lang = 'en-US';
+        utterance.rate = 0.72;
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch {
+      // Visible text and unlocked controls keep the lesson playable without speech.
+    }
   };
 
   const chooseLetter = (letter: EnglishWordLetter) => {

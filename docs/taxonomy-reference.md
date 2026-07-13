@@ -1,10 +1,12 @@
 # Curriculum graph reference
 
-Growth Planet includes a filtered produced work from the open [Marble Skill Taxonomy](https://github.com/withmarbleapp/os-taxonomy). The app currently keeps Mathematics and English topics whose `ageRangeEnd` is 12 or below, plus dependency edges whose two topics remain in that filtered set.
+Oshiami includes a filtered produced work from the open [Marble Skill Taxonomy](https://github.com/withmarbleapp/os-taxonomy). The app currently keeps Mathematics and English topics whose `ageRangeEnd` is 12 or below, plus dependency edges whose two topics remain in that filtered set.
+
+The app also contains a small first-party Taiwan Chinese Language Arts path. It reuses the same topic, evidence, assessment, prerequisite DAG, and learner-state schema, but it is not part of the Marble snapshot. Its official code locators are stored in `src/data/chinese-curriculum-standards.json`; its three-node split and dependency strengths are Oshiami product interpretations pending classroom review.
 
 ## Architectural mapping
 
-| Marble concept | Growth Planet implementation |
+| Marble concept | Oshiami implementation |
 | --- | --- |
 | Fine-grained topic node | Marble topic fields are preserved in `src/data/marble-topics.json` |
 | Evidence and assessment | Marble-authored evidence and assessment prompts remain attached to each imported topic |

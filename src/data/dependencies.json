@@ -1,6 +1,6 @@
 {
   "version": "tw-v1",
-  "dependencyCount": 18,
+  "dependencyCount": 20,
   "dependencies": [
     { "topicId": "tw_math_g1_count_100", "prerequisiteId": "tw_math_g1_count_20", "strength": "hard", "reason": "必須先穩定掌握較小數量的數序。" },
     { "topicId": "tw_math_g1_bundle_ten", "prerequisiteId": "tw_math_g1_count_20", "strength": "hard", "reason": "要能確認十個單位物件的總數。" },
@@ -19,6 +19,8 @@
     { "topicId": "tw_math_g1_mixed_review", "prerequisiteId": "tw_math_g1_length_compare", "strength": "soft", "reason": "綜合挑戰包含測量情境。" },
     { "topicId": "tw_eng_g1_sight_words", "prerequisiteId": "tw_eng_g1_letter_sounds", "strength": "soft", "reason": "字母音能協助辨認與記憶常見字。" },
     { "topicId": "tw_eng_g1_greetings", "prerequisiteId": "tw_eng_g1_sight_words", "strength": "soft", "reason": "常見字能支撐短句理解。" },
-    { "topicId": "tw_math_g1_time_hour", "prerequisiteId": "tw_math_g1_count_20", "strength": "soft", "reason": "讀鐘面需要數序與位置概念。" }
+    { "topicId": "tw_math_g1_time_hour", "prerequisiteId": "tw_math_g1_count_20", "strength": "soft", "reason": "讀鐘面需要數序與位置概念。" },
+    { "topicId": "tw_zh_g1_zhuyin_blending", "prerequisiteId": "tw_zh_g1_zhuyin_symbols", "strength": "hard", "reason": "先辨認基本符號與聲調，才能穩定組合字音。" },
+    { "topicId": "tw_zh_g1_zhuyin_word_link", "prerequisiteId": "tw_zh_g1_zhuyin_blending", "strength": "soft", "reason": "拼讀可協助識字，也保留孩子從圖像、口語或整字先認得國字的可能。" }
   ]
 }

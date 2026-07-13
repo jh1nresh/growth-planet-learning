@@ -1,10 +1,13 @@
 import {ArrowRight, CheckCircle, ClockCounterClockwise, Graph} from '@phosphor-icons/react';
 import type {LearnerTopicState} from '../../types';
-import {buildEnglishPath} from './englishPath';
+import {learningStudios, type LearningStudio} from '../learning/learningStudios';
+import {buildSubjectPath} from './englishPath';
 
-interface EnglishParentSkillMapProps {
+interface ParentSkillMapProps {
   states: LearnerTopicState[];
+  studio: LearningStudio;
   recommendationReason: string;
+  onStartLesson: () => void;
 }
 
 const statusCopy = {
@@ -13,9 +16,11 @@ const statusCopy = {
   upcoming: '尚未開始',
 } as const;
 
-export function EnglishParentSkillMap({states, recommendationReason}: EnglishParentSkillMapProps) {
-  const path = buildEnglishPath(states);
+export function ParentSkillMap({states, studio, recommendationReason, onStartLesson}: ParentSkillMapProps) {
+  const path = buildSubjectPath(studio.subject, states);
   const masteredCount = path.filter((node) => node.status === 'mastered').length;
+  const currentNode = path.find((node) => node.status === 'current');
+  const canStartRecommendedLesson = !currentNode || studio.lessonEvidenceTopicIds.includes(currentNode.topic.id);
 
   return (
     <main id="parent-skill-graph" className="english-parent-map">
@@ -23,26 +28,30 @@ export function EnglishParentSkillMap({states, recommendationReason}: EnglishPar
         <div>
           <span><Graph aria-hidden="true" /> 家長技能圖</span>
           <h1>三個能力，看懂孩子下一步</h1>
-          <p>不顯示完整 698 節點資料庫；只顯示目前英文課真正使用的課程子圖。</p>
+          <p>只顯示目前{studio.label}課真正使用的三個能力，讓前置關係、掌握證據與下一步保持清楚。</p>
         </div>
-        <div className="parent-mastery-summary" aria-label={`已掌握 ${masteredCount} 個，共 3 個英文能力`}>
+        <div className="parent-mastery-summary" aria-label={`已掌握 ${masteredCount} 個，共 3 個${studio.label}能力`}>
           <strong>{masteredCount}<small> / 3</small></strong>
-          <span>英文能力已掌握</span>
+          <span>{studio.label}能力已掌握</span>
         </div>
       </header>
 
       <section className="parent-next-step" aria-label="下一步推薦">
         <span className="english-coach-mark" aria-hidden="true">芽</span>
         <div><strong>下一步推薦</strong><p>{recommendationReason}</p></div>
+        {canStartRecommendedLesson ? (
+          <button className="english-primary-button" type="button" onClick={onStartLesson}>查看推薦課程 <ArrowRight aria-hidden="true" /></button>
+        ) : <span className="parent-lesson-coming">下一堂互動課正在準備</span>}
       </section>
 
-      <ol className="parent-skill-sequence" aria-label="英文能力的建議學習順序">
+      <ol className="parent-skill-sequence" aria-label={`${studio.label}能力的建議學習順序`}>
         {path.map((node, index) => {
           const masteryPercent = Math.round(node.state.mastery * 100);
+          const prerequisiteLabel = node.incoming?.strength === 'soft' ? '建議前置能力' : '必要前置能力';
           return (
             <li key={node.topic.id} className={`parent-node-${node.status}`}>
               {index > 0 ? (
-                <div className="parent-dag-connector" aria-label={`${path[index - 1].topic.name} 是 ${node.topic.name} 的建議前置能力`}>
+                <div className="parent-dag-connector" aria-label={`${path[index - 1].topic.name} 是 ${node.topic.name} 的${prerequisiteLabel}`}>
                   <ArrowRight aria-hidden="true" />
                   <span>{node.incoming?.strength === 'soft' ? '建議前置' : '必要前置'}</span>
                 </div>
@@ -53,7 +62,6 @@ export function EnglishParentSkillMap({states, recommendationReason}: EnglishPar
                   <div><small>{node.topic.domain}</small><h2>{node.topic.name}</h2></div>
                   <span className="parent-node-status">{statusCopy[node.status]}</span>
                 </div>
-                <p>{node.topic.description}</p>
                 <div
                   className="parent-mastery-bar"
                   role="progressbar"
@@ -65,14 +73,18 @@ export function EnglishParentSkillMap({states, recommendationReason}: EnglishPar
                   <span style={{width: `${masteryPercent}%`}} />
                 </div>
                 <strong className="parent-mastery-value">{masteryPercent}% 掌握</strong>
-                <dl>
-                  <div><dt>練習</dt><dd>{node.state.attempts} 次</dd></div>
-                  <div><dt>提示</dt><dd>{node.state.hintCount} 次</dd></div>
-                  <div><dt>重試</dt><dd>{node.state.retryCount} 次</dd></div>
-                </dl>
-                {node.state.lastPracticedAt ? (
-                  <span className="parent-last-practiced"><ClockCounterClockwise aria-hidden="true" /> 有近期學習紀錄</span>
-                ) : <span className="parent-last-practiced">尚無學習證據</span>}
+                <small className="parent-node-evidence">可觀察證據：{node.topic.evidence[0]}</small>
+                <details className="parent-evidence-details">
+                  <summary>查看學習紀錄</summary>
+                  <dl>
+                    <div><dt>練習</dt><dd>{node.state.attempts} 次</dd></div>
+                    <div><dt>提示</dt><dd>{node.state.hintCount} 次</dd></div>
+                    <div><dt>重試</dt><dd>{node.state.retryCount} 次</dd></div>
+                  </dl>
+                  {node.state.lastPracticedAt ? (
+                    <span className="parent-last-practiced"><ClockCounterClockwise aria-hidden="true" /> 有近期學習紀錄</span>
+                  ) : <span className="parent-last-practiced">尚無學習證據</span>}
+                </details>
               </article>
             </li>
           );
@@ -80,9 +92,13 @@ export function EnglishParentSkillMap({states, recommendationReason}: EnglishPar
       </ol>
 
       <footer className="parent-map-footer">
-        <p>實線順序代表這個產品目前採用的學習路徑；「建議前置」保留原 taxonomy 的 soft dependency 語意。</p>
-        <a href="https://github.com/withmarbleapp/os-taxonomy" target="_blank" rel="noreferrer">Marble Skill Taxonomy v1 · attribution</a>
+        <p>實線順序代表產品目前採用的學習路徑；「建議前置」保留 soft dependency 的可跨越語意。</p>
+        <a href={studio.sourceUrl} target="_blank" rel="noreferrer">{studio.sourceLabel}</a>
       </footer>
     </main>
   );
+}
+
+export function EnglishParentSkillMap({states, recommendationReason, onStartLesson}: Omit<ParentSkillMapProps, 'studio'>) {
+  return <ParentSkillMap states={states} studio={learningStudios.English} recommendationReason={recommendationReason} onStartLesson={onStartLesson} />;
 }

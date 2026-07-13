@@ -1,0 +1,19 @@
+{
+  "note": "Official codes and source locators only. Topic grouping, dependency strength, examples, and lesson pacing are Oshiami product interpretations.",
+  "version": "tw-108-guoyu-v1",
+  "sourceUrl": "https://www.naer.edu.tw/PageSyllabus?fid=177",
+  "documentUrl": "https://www.naer.edu.tw/upload/1/16/doc/806/%E5%8D%81%E4%BA%8C%E5%B9%B4%E5%9C%8B%E6%B0%91%E5%9F%BA%E6%9C%AC%E6%95%99%E8%82%B2%E8%AA%B2%E7%A8%8B%E7%B6%B1%E8%A6%81%E5%9C%8B%E6%B0%91%E4%B8%AD%E5%B0%8F%E5%AD%B8%E6%9A%A8%E6%99%AE%E9%80%9A%E5%9E%8B%E9%AB%98%E7%B4%9A%E4%B8%AD%E7%AD%89%E5%AD%B8%E6%A0%A1%28%E8%AA%9E%E6%96%87%E9%A0%98%E5%9F%9F%E2%94%80%E5%9C%8B%E8%AA%9E%E6%96%87%29.pdf",
+  "alignmentStatus": "provisional",
+  "standardCount": 9,
+  "standards": [
+    {"key": "tw-108-guoyu:3-I-1", "code": "3-I-1", "kind": "learning-performance", "sourceLocator": "課綱印刷頁 8；PDF 第 10 頁"},
+    {"key": "tw-108-guoyu:3-I-2", "code": "3-I-2", "kind": "learning-performance", "sourceLocator": "課綱印刷頁 8；PDF 第 10 頁"},
+    {"key": "tw-108-guoyu:4-I-1", "code": "4-I-1", "kind": "learning-performance", "sourceLocator": "課綱印刷頁 8；PDF 第 10 頁"},
+    {"key": "tw-108-guoyu:Aa-I-1", "code": "Aa-I-1", "kind": "learning-content", "sourceLocator": "課綱印刷頁 13；PDF 第 15 頁"},
+    {"key": "tw-108-guoyu:Aa-I-2", "code": "Aa-I-2", "kind": "learning-content", "sourceLocator": "課綱印刷頁 13；PDF 第 15 頁"},
+    {"key": "tw-108-guoyu:Aa-I-3", "code": "Aa-I-3", "kind": "learning-content", "sourceLocator": "課綱印刷頁 13；PDF 第 15 頁"},
+    {"key": "tw-108-guoyu:Aa-I-4", "code": "Aa-I-4", "kind": "learning-content", "sourceLocator": "課綱印刷頁 13；PDF 第 15 頁"},
+    {"key": "tw-108-guoyu:Ab-I-1", "code": "Ab-I-1", "kind": "learning-content", "sourceLocator": "課綱印刷頁 13；PDF 第 15 頁"},
+    {"key": "tw-108-guoyu:Ab-I-5", "code": "Ab-I-5", "kind": "learning-content", "sourceLocator": "課綱印刷頁 13；PDF 第 15 頁"}
+  ]
+}
