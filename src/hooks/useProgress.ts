@@ -1,7 +1,9 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {completeMission as addMission, loadProgress, recordProgressEvidence, sanitizeAlias, saveProgress, setCurriculumFramework as selectCurriculumFramework} from '../lib/progress';
 import type {LessonEvidenceSummary} from '../features/lessons/PlaceValueLesson';
+import {createPlaceValueEvidence} from '../features/lessons/placeValueEvidence';
 import {createEnglishWordEvidence, ENGLISH_WORD_MISSION_ID, type EnglishWordLessonSummary} from '../features/english/englishWordLessonState';
+import {createChineseZhuyinEvidence, type ChineseZhuyinLessonSummary} from '../features/chinese/chineseZhuyinLessonState';
 import type {CurriculumFrameworkSlug, LearningEvidence, Mission, ProgressState} from '../types';
 
 export function useProgress(namespace: string) {
@@ -37,16 +39,9 @@ export function useProgress(namespace: string) {
   }, [progress, update]);
 
   const completePlaceValueLesson = useCallback((summary: LessonEvidenceSummary) => {
-    const occurredAt = new Date().toISOString();
-    const evidenceFor = (topicId: string): LearningEvidence[] => [0, 1].map(() => ({
-      topicId,
-      correct: true,
-      hintCount: summary.hintCount,
-      retryCount: summary.retryCount,
-      occurredAt,
-    }));
-    let next = addMission(progress, 'mission_bundle_bridge', 40, evidenceFor('tw_math_g1_bundle_ten'));
-    next = recordProgressEvidence(next, evidenceFor('tw_math_g1_tens_ones'));
+    const evidence = createPlaceValueEvidence(summary, new Date().toISOString());
+    let next = addMission(progress, 'mission_bundle_bridge', 40, evidence.slice(0, 2));
+    next = recordProgressEvidence(next, evidence.slice(2));
     update(next);
   }, [progress, update]);
 
@@ -60,8 +55,12 @@ export function useProgress(namespace: string) {
     ));
   }, [progress, update]);
 
+  const completeChineseZhuyinLesson = useCallback((summary: ChineseZhuyinLessonSummary) => {
+    update(recordProgressEvidence(progress, [createChineseZhuyinEvidence(summary, new Date().toISOString())]));
+  }, [progress, update]);
+
   return useMemo(
-    () => ({progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson, completeEnglishWordLesson}),
-    [progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson, completeEnglishWordLesson],
+    () => ({progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson, completeEnglishWordLesson, completeChineseZhuyinLesson}),
+    [progress, setChildAlias, setCurriculumFramework, completeMission, completePlaceValueLesson, completeEnglishWordLesson, completeChineseZhuyinLesson],
   );
 }

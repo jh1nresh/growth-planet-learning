@@ -1,6 +1,6 @@
 {
   "version": "tw-v1",
-  "clusterCount": 9,
+  "clusterCount": 10,
   "clusters": [
     { "id": "cluster_math_counting_harbor", "subject": "Mathematics", "domain": "Number Sense", "ageBand": "6-8", "name": "數數碼頭", "summary": "從穩定的數序出發，把數字和真實數量連在一起。", "topicIds": ["tw_math_g1_count_20", "tw_math_g1_count_100"] },
     { "id": "cluster_math_bundle_bridge", "subject": "Mathematics", "domain": "Place Value", "ageBand": "6-8", "name": "十個一造橋", "summary": "把十個零散的單位綁成一個十，跨過位值的第一座橋。", "topicIds": ["tw_math_g1_bundle_ten"] },
@@ -10,6 +10,7 @@
     { "id": "cluster_math_shape_workshop", "subject": "Mathematics", "domain": "Geometry", "ageBand": "6-8", "name": "圖形工坊", "summary": "從邊、角、曲面和滾動特性認識平面與立體圖形。", "topicIds": ["tw_math_g1_shapes_2d", "tw_math_g1_shapes_3d"] },
     { "id": "cluster_math_measure_market", "subject": "Mathematics", "domain": "Measurement", "ageBand": "6-8", "name": "測量市集", "summary": "在生活情境中比較長度、看時間並使用新台幣。", "topicIds": ["tw_math_g1_length_compare", "tw_math_g1_time_hour", "tw_math_g1_coin_values"] },
     { "id": "cluster_math_supply_station", "subject": "Mathematics", "domain": "Learning to Learn", "ageBand": "6-8", "name": "補給站", "summary": "混合運用已學策略，檢查答案並完成數學大陸第一圈。", "topicIds": ["tw_math_g1_mixed_review"] },
-    { "id": "cluster_english_first_dock", "subject": "English", "domain": "Early English", "ageBand": "6-8", "name": "英文港口", "summary": "從字母聲音、常見字和第一句招呼開始準備出航。", "topicIds": ["tw_eng_g1_letter_sounds", "tw_eng_g1_sight_words", "tw_eng_g1_greetings"] }
+    { "id": "cluster_english_first_dock", "subject": "English", "domain": "Early English", "ageBand": "6-8", "name": "英文港口", "summary": "從字母聲音、常見字和第一句招呼開始準備出航。", "topicIds": ["tw_eng_g1_letter_sounds", "tw_eng_g1_sight_words", "tw_eng_g1_greetings"] },
+    { "id": "cluster_chinese_zhuyin_start", "subject": "Chinese", "domain": "Early Literacy", "ageBand": "6-8", "name": "語文起步", "summary": "從注音符號、拼讀到第一批熟悉國字，建立低年級閱讀入口。", "topicIds": ["tw_zh_g1_zhuyin_symbols", "tw_zh_g1_zhuyin_blending", "tw_zh_g1_zhuyin_word_link"] }
   ]
 }

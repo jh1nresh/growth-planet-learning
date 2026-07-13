@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {Application, Container, FederatedPointerEvent, Graphics, Text} from 'pixi.js';
+import {Application, Container, FederatedPointerEvent, Graphics} from 'pixi.js';
 import type {PlaceValueLessonContent} from '../../lib/lessonContent';
 
 interface PlaceValueCanvasProps {
@@ -16,15 +16,6 @@ interface CanvasState {
 
 const HEIGHT = 390;
 
-function label(text: string, x: number, y: number, size = 18, color = '#f8edcf') {
-  return new Text({
-    text,
-    x,
-    y,
-    style: {fontFamily: 'PingFang SC, PingFang TC, sans-serif', fontSize: size, fill: color, fontWeight: '600'},
-  });
-}
-
 function block(x: number, y: number, size: number, color = 0xe0b65f) {
   return new Graphics()
     .roundRect(x, y, size, size, 5)
@@ -32,7 +23,7 @@ function block(x: number, y: number, size: number, color = 0xe0b65f) {
     .stroke({color: 0xffe5a3, width: 2, alpha: 0.7});
 }
 
-function renderScene(app: Application, state: CanvasState, onAddOne: () => void, labels: PlaceValueLessonContent['canvas']) {
+function renderScene(app: Application, state: CanvasState, onAddOne: () => void) {
   const width = app.renderer.width / app.renderer.resolution;
   const stage = app.stage;
   for (const child of stage.removeChildren()) child.destroy({children: true});
@@ -45,10 +36,6 @@ function renderScene(app: Application, state: CanvasState, onAddOne: () => void,
     .fill({color: 0x102a38, alpha: 0.92})
     .stroke({color: 0x5c8390, width: 1, alpha: 0.55});
   stage.addChild(panel);
-  stage.addChild(label(labels.materials, 28, 25, 15, '#9fb9c0'));
-  stage.addChild(label(labels.dragOne, 28, 52, 13, '#d9e8e6'));
-  stage.addChild(label(labels.tens, workX + 32, 22, 15, '#f3d781'));
-  stage.addChild(label(labels.ones, workX + workWidth * 0.57, 22, 15, '#72d8e8'));
 
   const source = new Container();
   source.x = compact ? 26 : 62;
@@ -57,7 +44,7 @@ function renderScene(app: Application, state: CanvasState, onAddOne: () => void,
   source.cursor = 'grab';
   source.hitArea = {contains: (x: number, y: number) => x >= -18 && x <= 74 && y >= -18 && y <= 74};
   source.addChild(block(0, 0, 54, 0x4ab0bd));
-  source.addChild(label('1', 20, 14, 22, '#ffffff'));
+  source.addChild(new Graphics().moveTo(29, 14).lineTo(29, 40).stroke({color: 0xffffff, width: 4}));
   stage.addChild(source);
 
   let activePointer: number | null = null;
@@ -115,8 +102,6 @@ function renderScene(app: Application, state: CanvasState, onAddOne: () => void,
     stage.addChild(block(onesStartX + column * (blockSize + (compact ? 4 : 8)), 104 + row * (blockSize + (compact ? 4 : 8)), blockSize, 0x2f8e9a));
   }
 
-  stage.addChild(label(`${state.tens} ${labels.tenCount}`, tensStartX, 319, 16, '#f8edcf'));
-  stage.addChild(label(`${state.ones} ${labels.oneCount}`, onesStartX, 319, 16, '#d8f3f3'));
   app.render();
 }
 
@@ -125,12 +110,10 @@ export function PlaceValueCanvas({tens, ones, onAddOne, labels}: PlaceValueCanva
   const appRef = useRef<Application | null>(null);
   const stateRef = useRef({tens, ones});
   const addOneRef = useRef(onAddOne);
-  const labelsRef = useRef(labels);
   const [failed, setFailed] = useState(false);
 
   stateRef.current = {tens, ones};
   addOneRef.current = onAddOne;
-  labelsRef.current = labels;
 
   useEffect(() => {
     const host = hostRef.current;
@@ -141,7 +124,7 @@ export function PlaceValueCanvas({tens, ones, onAddOne, labels}: PlaceValueCanva
       if (!app.renderer || disposed) return;
       const width = Math.max(320, Math.round(host.getBoundingClientRect().width));
       app.renderer.resize(width, HEIGHT);
-      renderScene(app, stateRef.current, () => addOneRef.current(), labelsRef.current);
+      renderScene(app, stateRef.current, () => addOneRef.current());
     };
     const observer = new ResizeObserver(resize);
 
@@ -180,11 +163,20 @@ export function PlaceValueCanvas({tens, ones, onAddOne, labels}: PlaceValueCanva
   }, []);
 
   useEffect(() => {
-    if (appRef.current) renderScene(appRef.current, {tens, ones}, () => addOneRef.current(), labelsRef.current);
-  }, [labels, ones, tens]);
+    if (appRef.current) renderScene(appRef.current, {tens, ones}, () => addOneRef.current());
+  }, [ones, tens]);
 
   if (failed) {
     return <div className="lesson-canvas-fallback" role="status">互動畫布暫時無法顯示，仍可使用下方按鈕完成課程。</div>;
   }
-  return <div ref={hostRef} className="place-value-canvas" />;
+  return (
+    <div className="place-value-canvas">
+      <div ref={hostRef} className="place-value-canvas-host" />
+      <div className="place-value-canvas-copy" aria-hidden="true">
+        <div className="canvas-material-copy"><strong>{labels.materials}</strong><span>{labels.dragOne}</span></div>
+        <div className="canvas-column-copy"><strong>{labels.tens}</strong><strong>{labels.ones}</strong></div>
+        <div className="canvas-count-copy"><span>{tens} {labels.tenCount}</span><span>{ones} {labels.oneCount}</span></div>
+      </div>
+    </div>
+  );
 }

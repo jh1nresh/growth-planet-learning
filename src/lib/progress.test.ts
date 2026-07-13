@@ -27,26 +27,55 @@ describe('progress store', () => {
     }));
 
     const migrated = loadProgress(storage, 'guest');
-    expect(migrated.version).toBe(3);
+    expect(migrated.version).toBe(4);
     expect(migrated.curriculumFramework).toBe('tw-108-math');
-    expect(migrated.topicStates).toHaveLength(18);
+    expect(migrated.topicStates).toHaveLength(21);
     expect(migrated.topicStates.find((state) => state.topicId === 'tw_math_g1_count_20')?.mastery).toBeGreaterThanOrEqual(0.7);
   });
 
   it('migrates v2 progress without changing learning evidence', () => {
     const storage = new MemoryStorage();
     const current = emptyProgress();
-    const version2 = {...current, version: 2};
+    const version2 = {...current, version: 2, topicStates: current.topicStates.filter((state) => !state.topicId.startsWith('tw_zh_'))};
     delete (version2 as Partial<typeof current>).curriculumFramework;
     storage.setItem('growth-planet:progress:v1:guest', JSON.stringify(version2));
 
     const migrated = loadProgress(storage, 'guest');
-    expect(migrated.version).toBe(3);
+    expect(migrated.version).toBe(4);
     expect(migrated.curriculumFramework).toBe('tw-108-math');
     expect(migrated.topicStates).toEqual(current.topicStates);
   });
 
-  it('rejects malformed v3 topic state records', () => {
+  it('migrates v3 progress without losing English or Mathematics evidence', () => {
+    const storage = new MemoryStorage();
+    const current = emptyProgress();
+    const oldStates = current.topicStates.filter((state) => !state.topicId.startsWith('tw_zh_')).map((state) => {
+      if (state.topicId === 'tw_eng_g1_letter_sounds') return {...state, mastery: 0.72, attempts: 1, correctAttempts: 1};
+      if (state.topicId === 'tw_math_g1_tens_ones') return {...state, mastery: 0.61, attempts: 2, correctAttempts: 1, hintCount: 1};
+      return state;
+    });
+    storage.setItem('growth-planet:progress:v1:guest', JSON.stringify({
+      ...current,
+      version: 3,
+      childAlias: '小星',
+      completedMissionIds: ['mission_english_first_dock'],
+      topicStates: oldStates,
+      xp: 45,
+      updatedAt: '2026-07-13T00:00:00.000Z',
+    }));
+
+    const migrated = loadProgress(storage, 'guest');
+    expect(migrated.version).toBe(4);
+    expect(migrated.childAlias).toBe('小星');
+    expect(migrated.completedMissionIds).toEqual(['mission_english_first_dock']);
+    expect(migrated.xp).toBe(45);
+    expect(migrated.topicStates.find((state) => state.topicId === 'tw_eng_g1_letter_sounds')).toMatchObject({mastery: 0.72, attempts: 1});
+    expect(migrated.topicStates.find((state) => state.topicId === 'tw_math_g1_tens_ones')).toMatchObject({mastery: 0.61, attempts: 2, hintCount: 1});
+    expect(migrated.topicStates.filter((state) => state.topicId.startsWith('tw_zh_'))).toHaveLength(3);
+    expect(migrated.topicStates.filter((state) => state.topicId.startsWith('tw_zh_')).every((state) => state.mastery === 0)).toBe(true);
+  });
+
+  it('rejects malformed v4 topic state records', () => {
     const storage = new MemoryStorage();
     const malformed = emptyProgress();
     malformed.topicStates[0] = {...malformed.topicStates[0], mastery: Number.NaN};

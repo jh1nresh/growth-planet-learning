@@ -1,4 +1,4 @@
-export type Subject = 'Mathematics' | 'English' | 'Science' | 'Life Skills';
+export type Subject = 'Mathematics' | 'English' | 'Chinese' | 'Science' | 'Life Skills';
 
 export type TopicType = 'CONCEPTUAL' | 'PROCEDURAL' | 'REPRESENTATIONAL' | 'LANGUAGE' | 'META';
 
@@ -68,7 +68,7 @@ export interface WorldRegion {
 }
 
 export interface ProgressState {
-  version: 3;
+  version: 4;
   curriculumFramework: CurriculumFrameworkSlug;
   childAlias: string;
   completedMissionIds: string[];

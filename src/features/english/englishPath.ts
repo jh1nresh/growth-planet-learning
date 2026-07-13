@@ -1,6 +1,7 @@
 import {dependencies, topics} from '../../lib/curriculum';
 import {MASTERY_THRESHOLD} from '../../lib/mastery';
 import type {Dependency, LearnerTopicState, Topic} from '../../types';
+import {learningStudios, type LearningSubject} from '../learning/learningStudios';
 
 export const ENGLISH_PATH_TOPIC_IDS = [
   'tw_eng_g1_letter_sounds',
@@ -17,10 +18,10 @@ export interface EnglishPathNode {
   status: EnglishPathStatus;
 }
 
-export function buildEnglishPath(states: LearnerTopicState[]): EnglishPathNode[] {
+export function buildSubjectPath(subject: LearningSubject, states: LearnerTopicState[]): EnglishPathNode[] {
   const topicById = new Map(topics.map((topic) => [topic.id, topic]));
   const stateById = new Map(states.map((state) => [state.topicId, state]));
-  const pathTopics = ENGLISH_PATH_TOPIC_IDS.map((topicId) => topicById.get(topicId)!);
+  const pathTopics = learningStudios[subject].topicIds.map((topicId) => topicById.get(topicId)!);
   const currentTopic = pathTopics.find((topic) => stateById.get(topic.id)!.mastery < MASTERY_THRESHOLD);
 
   return pathTopics.map((topic, index) => {
@@ -35,4 +36,8 @@ export function buildEnglishPath(states: LearnerTopicState[]): EnglishPathNode[]
       status: mastered ? 'mastered' : topic.id === currentTopic?.id ? 'current' : 'upcoming',
     };
   });
+}
+
+export function buildEnglishPath(states: LearnerTopicState[]): EnglishPathNode[] {
+  return buildSubjectPath('English', states);
 }

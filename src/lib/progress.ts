@@ -15,7 +15,7 @@ const allTopicIds = new Set(allTopics.map((topic) => topic.id));
 
 export function emptyProgress(): ProgressState {
   return {
-    version: 3,
+    version: 4,
     curriculumFramework: 'tw-108-math',
     childAlias: '',
     completedMissionIds: [],
@@ -28,7 +28,7 @@ export function emptyProgress(): ProgressState {
 function isProgress(value: unknown): value is ProgressState {
   if (!value || typeof value !== 'object') return false;
   const candidate = value as Partial<ProgressState>;
-  return candidate.version === 3
+  return candidate.version === 4
     && (candidate.curriculumFramework === 'tw-108-math' || candidate.curriculumFramework === 'cn-2022-math')
     && typeof candidate.childAlias === 'string'
     && Array.isArray(candidate.completedMissionIds)
@@ -40,6 +40,14 @@ function isProgress(value: unknown): value is ProgressState {
     && typeof candidate.xp === 'number'
     && Number.isFinite(candidate.xp)
     && typeof candidate.updatedAt === 'string';
+}
+
+function reconcileTopicStates(value: unknown): LearnerTopicState[] | null {
+  if (!Array.isArray(value) || !value.every(isTopicState)) return null;
+  const topicIds = value.map((state) => state.topicId);
+  if (new Set(topicIds).size !== topicIds.length) return null;
+  const stateById = new Map(value.map((state) => [state.topicId, state]));
+  return emptyTopicStates(allTopics).map((emptyState) => stateById.get(emptyState.topicId) ?? emptyState);
 }
 
 function isTopicState(value: unknown): value is LearnerTopicState {
@@ -91,7 +99,7 @@ function migrateV1(value: unknown): ProgressState | null {
     }
   }
   return {
-    version: 3,
+    version: 4,
     curriculumFramework: 'tw-108-math',
     childAlias: candidate.childAlias,
     completedMissionIds,
@@ -103,10 +111,33 @@ function migrateV1(value: unknown): ProgressState | null {
 
 function migrateV2(value: unknown): ProgressState | null {
   if (!value || typeof value !== 'object') return null;
-  const candidate = value as Omit<ProgressState, 'version' | 'curriculumFramework'> & {version?: number};
+  const candidate = value as Record<string, unknown>;
   if (candidate.version !== 2) return null;
-  const migrated = {...candidate, version: 3, curriculumFramework: 'tw-108-math'} as ProgressState;
-  return isProgress(migrated) ? migrated : null;
+  return migrateV3({...candidate, version: 3, curriculumFramework: 'tw-108-math'});
+}
+
+function migrateV3(value: unknown): ProgressState | null {
+  if (!value || typeof value !== 'object') return null;
+  const candidate = value as Record<string, unknown>;
+  if (candidate.version !== 3
+    || (candidate.curriculumFramework !== 'tw-108-math' && candidate.curriculumFramework !== 'cn-2022-math')
+    || typeof candidate.childAlias !== 'string'
+    || !Array.isArray(candidate.completedMissionIds)
+    || candidate.completedMissionIds.some((id) => typeof id !== 'string')
+    || typeof candidate.xp !== 'number'
+    || !Number.isFinite(candidate.xp)
+    || typeof candidate.updatedAt !== 'string') return null;
+  const topicStates = reconcileTopicStates(candidate.topicStates);
+  if (!topicStates) return null;
+  return {
+    version: 4,
+    curriculumFramework: candidate.curriculumFramework,
+    childAlias: candidate.childAlias,
+    completedMissionIds: candidate.completedMissionIds as string[],
+    topicStates,
+    xp: candidate.xp,
+    updatedAt: candidate.updatedAt,
+  };
 }
 
 export function loadProgress(storage: StorageLike, namespace: string) {
@@ -114,7 +145,7 @@ export function loadProgress(storage: StorageLike, namespace: string) {
     const stored = storage.getItem(`${STORAGE_PREFIX}${namespace}`);
     if (!stored) return emptyProgress();
     const parsed: unknown = JSON.parse(stored);
-    return isProgress(parsed) ? parsed : migrateV2(parsed) ?? migrateV1(parsed) ?? emptyProgress();
+    return isProgress(parsed) ? parsed : migrateV3(parsed) ?? migrateV2(parsed) ?? migrateV1(parsed) ?? emptyProgress();
   } catch {
     return emptyProgress();
   }

@@ -5,8 +5,8 @@ import {dependencies, topics} from './curriculum';
 describe('mastery engine', () => {
   it('initializes one learner state for every taxonomy topic', () => {
     const states = emptyTopicStates(topics);
-    expect(states).toHaveLength(18);
-    expect(new Set(states.map((state) => state.topicId)).size).toBe(18);
+    expect(states).toHaveLength(21);
+    expect(new Set(states.map((state) => state.topicId)).size).toBe(21);
   });
 
   it('weights correct independent evidence above hinted retries', () => {
@@ -68,5 +68,20 @@ describe('mastery engine', () => {
     }));
     const recommendation = getRecommendation('Mathematics', mastered, topics, dependencies);
     expect(recommendation.reason).toContain('都已掌握');
+  });
+
+  it('uses the Chinese path and Chinese recommendation language', () => {
+    let states = emptyTopicStates(topics);
+    expect(getRecommendation('Chinese', states, topics, dependencies).topic.id).toBe('tw_zh_g1_zhuyin_symbols');
+
+    states = recordLearningEvidence(states, {
+      topicId: 'tw_zh_g1_zhuyin_symbols', correct: true, hintCount: 0, retryCount: 0, occurredAt: '2026-07-13T00:00:00.000Z',
+    });
+    expect(getRecommendation('Chinese', states, topics, dependencies).topic.id).toBe('tw_zh_g1_zhuyin_blending');
+
+    const mastered = states.map((state) => topics.find((topic) => topic.id === state.topicId)?.subject === 'Chinese'
+      ? {...state, mastery: 1, attempts: 1}
+      : state);
+    expect(getRecommendation('Chinese', mastered, topics, dependencies).reason).toContain('語文');
   });
 });

@@ -3,13 +3,14 @@ import {readFile} from 'node:fs/promises';
 const root = new URL('../src/data/', import.meta.url);
 const readJson = async (name) => JSON.parse(await readFile(new URL(name, root), 'utf8'));
 
-const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculumStandardFile, lessonContentFile] = await Promise.all([
+const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculumStandardFile, chineseStandardFile, lessonContentFile] = await Promise.all([
   readJson('topics.json'),
   readJson('dependencies.json'),
   readJson('clusters.json'),
   readJson('missions.json'),
   readJson('world.json'),
   readJson('curriculum-standards.json'),
+  readJson('chinese-curriculum-standards.json'),
   readJson('lesson-content-overlays.json'),
 ]);
 const [marbleTopicFile, marbleDependencyFile] = await Promise.all([
@@ -28,6 +29,7 @@ const regionIds = new Set(regions.map((region) => region.id));
 const curricula = curriculumStandardFile.curricula;
 const standardKeys = new Set(curricula.flatMap((curriculum) => curriculum.topics.map((standard) => standard.key)));
 const contentProfiles = lessonContentFile.profiles;
+const chineseStandardKeys = new Set(chineseStandardFile.standards.map((standard) => standard.key));
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(message);
@@ -42,6 +44,9 @@ assert(regionIds.size === regions.length, 'Region IDs must be unique');
 assert(curriculumStandardFile.curriculumCount === curricula.length, 'curriculumCount does not match curricula length');
 assert(standardKeys.size === curricula.reduce((count, curriculum) => count + curriculum.topics.length, 0), 'Curriculum standard keys must be unique');
 assert(contentProfiles.length === 2, 'Lesson content needs Taiwan and China profiles');
+assert(chineseStandardFile.standardCount === chineseStandardFile.standards.length, 'Chinese curriculum standardCount mismatch');
+assert(chineseStandardKeys.size === chineseStandardFile.standards.length, 'Chinese curriculum standard keys must be unique');
+assert(chineseStandardFile.alignmentStatus === 'provisional', 'Chinese curriculum alignment must remain provisional until classroom review');
 assert(new Set(contentProfiles.map((profile) => profile.frameworkSlug)).size === contentProfiles.length, 'Lesson content profile slugs must be unique');
 
 for (const curriculum of curricula) {
@@ -56,7 +61,7 @@ for (const curriculum of curricula) {
 }
 
 for (const topic of topics) {
-  assert(/^tw_(math|eng)_g1_/.test(topic.id), `Topic ${topic.id} must use a Growth Planet ID`);
+  assert(/^tw_(math|eng|zh)_g1_/.test(topic.id), `Topic ${topic.id} must use a local curriculum ID`);
   assert(Array.isArray(topic.evidence) && topic.evidence.length > 0, `Topic ${topic.id} needs evidence`);
   assert(Array.isArray(topic.standards) && topic.standards.length > 0, `Topic ${topic.id} needs standards`);
   assert(typeof topic.assessmentPrompt === 'string' && topic.assessmentPrompt.length > 0, `Topic ${topic.id} needs an assessment prompt`);
@@ -65,7 +70,18 @@ for (const topic of topics) {
     assert(topic.standards.some((key) => key.startsWith('tw-108-math:')), `Math topic ${topic.id} needs a Taiwan alignment`);
     assert(topic.standards.some((key) => key.startsWith('cn-2022-math:')), `Math topic ${topic.id} needs a China alignment`);
   }
+  if (topic.subject === 'Chinese') {
+    assert(topic.standards.every((key) => chineseStandardKeys.has(key)), `Chinese topic ${topic.id} references an unknown curriculum locator`);
+    assert(topic.standards.every((key) => key.startsWith('tw-108-guoyu:')), `Chinese topic ${topic.id} needs a Taiwan Chinese Language Arts alignment`);
+  }
 }
+
+const chineseTopics = topics.filter((topic) => topic.subject === 'Chinese');
+const chineseTopicIds = new Set(chineseTopics.map((topic) => topic.id));
+const chineseDependencies = dependencies.filter((edge) => chineseTopicIds.has(edge.topicId) || chineseTopicIds.has(edge.prerequisiteId));
+assert(chineseTopics.length === 3, 'The first Chinese Language Arts path must contain exactly three topics');
+assert(chineseDependencies.length === 2, 'The first Chinese Language Arts path must contain exactly two dependencies');
+assert(chineseDependencies.every((edge) => chineseTopicIds.has(edge.topicId) && chineseTopicIds.has(edge.prerequisiteId)), 'Chinese dependencies must stay inside the first-party Chinese path');
 
 const mathTopicIds = new Set(topics.filter((topic) => topic.subject === 'Mathematics').map((topic) => topic.id));
 const mathMissionIds = new Set(missions.filter((mission) => mission.topicIds.some((topicId) => mathTopicIds.has(topicId))).map((mission) => mission.id));
@@ -138,6 +154,7 @@ for (const region of regions.filter((region) => !region.comingSoon)) {
 console.log(`Taxonomy valid: ${topics.length} topics, ${dependencies.length} dependencies, ${clusters.length} clusters, ${missions.length} missions, DAG confirmed.`);
 console.log(`Curriculum overlays valid: ${curricula.length} frameworks, ${standardKeys.size} standards, Taiwan 108 + China 2022.`);
 console.log(`Lesson content overlays valid: ${contentProfiles.length} profiles, ${mathTopicIds.size} shared Math topics, ${mathMissionIds.size} localized missions.`);
+console.log(`Chinese Language Arts extension valid: ${chineseTopics.length} topics, ${chineseDependencies.length} dependencies, official locators + provisional product alignment.`);
 
 const marbleTopics = marbleTopicFile.topics;
 const marbleDependencies = marbleDependencyFile.dependencies;
