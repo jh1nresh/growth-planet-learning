@@ -14,7 +14,7 @@
       "centrality": 0.92,
       "evidence": ["從任意一個數接著數到 20", "把 0 到 20 的數字和等量物品配對"],
       "assessmentPrompt": "請孩子從 7 接著數到 15，並指出哪一組有 12 個物品。",
-      "standards": ["local-tw-g1:NS-01"]
+      "standards": ["tw-108-math:N-1-1", "cn-2022-math:stage1.NU.1"]
     },
     {
       "id": "tw_math_g1_count_100",
@@ -28,7 +28,7 @@
       "centrality": 0.88,
       "evidence": ["從任意兩位數向前或向後數", "以十為單位數出整十數"],
       "assessmentPrompt": "請孩子從 27 接著數到 35，再從 30 倒數到 24。",
-      "standards": ["local-tw-g1:NS-02"]
+      "standards": ["tw-108-math:N-1-1", "cn-2022-math:stage1.NU.1"]
     },
     {
       "id": "tw_math_g1_bundle_ten",
@@ -42,7 +42,7 @@
       "centrality": 0.95,
       "evidence": ["把十個單位物件綁成一束", "說明一束十和十個一數量相同"],
       "assessmentPrompt": "給孩子 13 個物件，請他做出一個十和三個一。",
-      "standards": ["local-tw-g1:PV-01"]
+      "standards": ["tw-108-math:N-1-1", "cn-2022-math:stage1.NU.1"]
     },
     {
       "id": "tw_math_g1_tens_ones",
@@ -56,7 +56,7 @@
       "centrality": 1,
       "evidence": ["把 34 分解成三個十和四個一", "依照十位與個位組成指定兩位數"],
       "assessmentPrompt": "請孩子說明 42 中的 4 和 2 各代表多少。",
-      "standards": ["local-tw-g1:PV-02"]
+      "standards": ["tw-108-math:N-1-1", "cn-2022-math:stage1.NU.1"]
     },
     {
       "id": "tw_math_g1_zero_placeholder",
@@ -70,7 +70,7 @@
       "centrality": 0.73,
       "evidence": ["說明 50 是五個十和零個一", "比較 5、50 與 05 的表示"],
       "assessmentPrompt": "請孩子用十位和個位解釋為什麼 50 不是 5。",
-      "standards": ["local-tw-g1:PV-03"]
+      "standards": ["tw-108-math:N-1-1", "cn-2022-math:stage1.NU.1"]
     },
     {
       "id": "tw_math_g1_compare_two_digit",
@@ -84,7 +84,7 @@
       "centrality": 0.82,
       "evidence": ["正確使用大於、小於與等於", "依序排列三個兩位數"],
       "assessmentPrompt": "請孩子比較 47 和 39，並說出判斷理由。",
-      "standards": ["local-tw-g1:NS-03"]
+      "standards": ["tw-108-math:N-1-1", "cn-2022-math:stage1.NU.2"]
     },
     {
       "id": "tw_math_g1_number_bonds_10",
@@ -98,7 +98,7 @@
       "centrality": 0.86,
       "evidence": ["說出所有組成 10 的數對", "利用湊十解釋加法步驟"],
       "assessmentPrompt": "請孩子補出 6 和多少合起來是 10。",
-      "standards": ["local-tw-g1:OP-01"]
+      "standards": ["tw-108-math:N-1-3", "cn-2022-math:stage1.NU.4"]
     },
     {
       "id": "tw_math_g1_add_20",
@@ -112,7 +112,7 @@
       "centrality": 0.9,
       "evidence": ["計算 20 以內加法", "用一句話說明所選策略"],
       "assessmentPrompt": "請孩子算 8 加 7，並用湊十說明。",
-      "standards": ["local-tw-g1:OP-02"]
+      "standards": ["tw-108-math:N-1-2", "tw-108-math:N-1-3", "cn-2022-math:stage1.NU.3", "cn-2022-math:stage1.NU.4"]
     },
     {
       "id": "tw_math_g1_subtract_20",
@@ -126,7 +126,7 @@
       "centrality": 0.84,
       "evidence": ["計算 20 以內減法", "用加法檢查減法答案"],
       "assessmentPrompt": "請孩子算 13 減 5，並用加法檢查。",
-      "standards": ["local-tw-g1:OP-03"]
+      "standards": ["tw-108-math:N-1-2", "tw-108-math:N-1-3", "cn-2022-math:stage1.NU.3", "cn-2022-math:stage1.NU.4"]
     },
     {
       "id": "tw_math_g1_shapes_2d",
@@ -140,7 +140,7 @@
       "centrality": 0.58,
       "evidence": ["依特徵分類常見平面圖形", "在生活物件中找出平面圖形"],
       "assessmentPrompt": "請孩子說出正方形和長方形相同與不同的地方。",
-      "standards": ["local-tw-g1:GE-01"]
+      "standards": ["tw-108-math:S-1-2", "cn-2022-math:stage1.GM.1"]
     },
     {
       "id": "tw_math_g1_shapes_3d",
@@ -154,7 +154,7 @@
       "centrality": 0.52,
       "evidence": ["依形體特徵分類物件", "預測形體能否滾動或堆疊"],
       "assessmentPrompt": "請孩子判斷球和正方體哪一個容易滾動，並說明。",
-      "standards": ["local-tw-g1:GE-02"]
+      "standards": ["tw-108-math:S-1-2", "cn-2022-math:stage1.GM.1"]
     },
     {
       "id": "tw_math_g1_length_compare",
@@ -168,7 +168,7 @@
       "centrality": 0.55,
       "evidence": ["將物件對齊後比較長短", "用相同非標準單位測量"],
       "assessmentPrompt": "請孩子選擇合適方式比較兩枝鉛筆長度。",
-      "standards": ["local-tw-g1:ME-01"]
+      "standards": ["tw-108-math:N-1-5", "cn-2022-math:stage1.GM.2"]
     },
     {
       "id": "tw_math_g1_time_hour",
@@ -182,7 +182,7 @@
       "centrality": 0.48,
       "evidence": ["讀出整點與半點", "把日常活動放入合理時間順序"],
       "assessmentPrompt": "請孩子讀出 7 點半，並說一件可能在這時間做的事。",
-      "standards": ["local-tw-g1:ME-02"]
+      "standards": ["tw-108-math:N-1-6", "cn-2022-math:stage1.CP.3"]
     },
     {
       "id": "tw_math_g1_coin_values",
@@ -196,7 +196,7 @@
       "centrality": 0.5,
       "evidence": ["辨認常見新台幣面額", "用兩種方式湊出相同金額"],
       "assessmentPrompt": "請孩子用不同硬幣湊出 15 元。",
-      "standards": ["local-tw-g1:ME-03"]
+      "standards": ["tw-108-math:N-1-4", "cn-2022-math:stage1.CP.2"]
     },
     {
       "id": "tw_math_g1_mixed_review",
@@ -210,7 +210,7 @@
       "centrality": 0.7,
       "evidence": ["說出為何選擇某個策略", "發現不合理答案並修正"],
       "assessmentPrompt": "請孩子完成一題後說明如何知道答案合理。",
-      "standards": ["local-tw-g1:META-01"]
+      "standards": ["tw-108-math:R-1-1", "cn-2022-math:stage1.NU.6"]
     },
     {
       "id": "tw_eng_g1_letter_sounds",

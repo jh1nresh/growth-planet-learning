@@ -1,0 +1,50 @@
+{
+  "note": "Codes and source locators only. Official standard text is not redistributed; upstream terms apply.",
+  "codesOnlySources": ["tw-108-math", "cn-2022-math"],
+  "curriculumCount": 2,
+  "curricula": [
+    {
+      "slug": "tw-108-math",
+      "country": "TW",
+      "name": "十二年國民基本教育課程綱要－數學領域",
+      "version": "108 課綱；課程手冊 2024-03 更新版",
+      "implementedGrades": [1],
+      "sourceUrl": "https://stv.naer.edu.tw/data/course_outline/%E6%95%B8%E5%AD%B8%E9%A0%98%E5%9F%9F%E8%AA%B2%E7%A8%8B%E6%89%8B%E5%86%8A%EF%BC%88113%E5%B9%B43%E6%9C%88%E6%9B%B4%E6%96%B0%E7%89%88%EF%BC%89_0326.pdf",
+      "textIncluded": false,
+      "license": "Official codes and source locators only; consult the upstream source and terms before redistributing text.",
+      "topicCount": 8,
+      "topics": [
+        {"key": "tw-108-math:N-1-1", "code": "N-1-1", "data": {"title": "一百以內的數與位值", "subject": "Mathematics", "domain": "Number Sense", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 N-1-1", "alignmentStatus": "verified", "codeOrigin": "official"}},
+        {"key": "tw-108-math:N-1-2", "code": "N-1-2", "data": {"title": "加法和減法的意義與應用", "subject": "Mathematics", "domain": "Operations", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 N-1-2", "alignmentStatus": "verified", "codeOrigin": "official"}},
+        {"key": "tw-108-math:N-1-3", "code": "N-1-3", "data": {"title": "基本加減法", "subject": "Mathematics", "domain": "Operations", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 N-1-3", "alignmentStatus": "verified", "codeOrigin": "official"}},
+        {"key": "tw-108-math:N-1-4", "code": "N-1-4", "data": {"title": "錢幣情境解題", "subject": "Mathematics", "domain": "Measurement", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 N-1-4", "alignmentStatus": "verified", "codeOrigin": "official"}},
+        {"key": "tw-108-math:N-1-5", "code": "N-1-5", "data": {"title": "長度的認識與比較", "subject": "Mathematics", "domain": "Measurement", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 N-1-5", "alignmentStatus": "verified", "codeOrigin": "official"}},
+        {"key": "tw-108-math:N-1-6", "code": "N-1-6", "data": {"title": "日常時間用語與簡單時刻", "subject": "Mathematics", "domain": "Measurement", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 N-1-6", "alignmentStatus": "verified", "codeOrigin": "official"}},
+        {"key": "tw-108-math:S-1-2", "code": "S-1-2", "data": {"title": "平面與立體形體操作", "subject": "Mathematics", "domain": "Geometry", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 S-1-2", "alignmentStatus": "verified", "codeOrigin": "official"}},
+        {"key": "tw-108-math:R-1-1", "code": "R-1-1", "data": {"title": "算式與數學符號", "subject": "Mathematics", "domain": "Learning to Learn", "gradeBand": "Grade 1", "grades": [1], "sourceLocator": "1 年級學習內容解析 R-1-1", "alignmentStatus": "verified", "codeOrigin": "official"}}
+      ]
+    },
+    {
+      "slug": "cn-2022-math",
+      "country": "CN",
+      "name": "義務教育數學課程標準",
+      "version": "2022 年版",
+      "implementedGrades": [1],
+      "sourceUrl": "https://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582346895190.pdf",
+      "textIncluded": false,
+      "license": "Internal locator codes and paraphrased titles only; official text is not redistributed.",
+      "topicCount": 9,
+      "topics": [
+        {"key": "cn-2022-math:stage1.NU.1", "code": "stage1.NU.1", "data": {"title": "第一學段：數的意義與數位", "subject": "Mathematics", "domain": "Number Sense", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／數與運算／內容要求（1）", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.NU.2", "code": "stage1.NU.2", "data": {"title": "第一學段：數的大小與關係符號", "subject": "Mathematics", "domain": "Number Sense", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／數與運算／內容要求（2）", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.NU.3", "code": "stage1.NU.3", "data": {"title": "第一學段：四則運算的意義", "subject": "Mathematics", "domain": "Operations", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／數與運算／內容要求（3）", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.NU.4", "code": "stage1.NU.4", "data": {"title": "第一學段：整數加減法", "subject": "Mathematics", "domain": "Operations", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／數與運算／內容要求（4）", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.NU.6", "code": "stage1.NU.6", "data": {"title": "第一學段：生活情境中的數與運算", "subject": "Mathematics", "domain": "Learning to Learn", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／數與運算／內容要求（6）", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.GM.1", "code": "stage1.GM.1", "data": {"title": "第一學段：辨認與操作平面、立體圖形", "subject": "Mathematics", "domain": "Geometry", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／圖形的認識與測量／內容要求（1）", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.GM.2", "code": "stage1.GM.2", "data": {"title": "第一學段：長度單位、估測與測量", "subject": "Mathematics", "domain": "Measurement", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／圖形的認識與測量／內容要求（2）", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.CP.2", "code": "stage1.CP.2", "data": {"title": "第一學段綜合實踐：購物與人民幣", "subject": "Mathematics", "domain": "Measurement", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／綜合與實踐／主題活動 2", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}},
+        {"key": "cn-2022-math:stage1.CP.3", "code": "stage1.CP.3", "data": {"title": "第一學段綜合實踐：時、分、秒", "subject": "Mathematics", "domain": "Measurement", "gradeBand": "Grades 1–2", "grades": [1, 2], "sourceLocator": "四、課程內容／第一學段／綜合與實踐／主題活動 3", "alignmentStatus": "provisional", "codeOrigin": "internal-locator"}}
+      ]
+    }
+  ]
+}

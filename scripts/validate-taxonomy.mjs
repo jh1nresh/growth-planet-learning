@@ -3,12 +3,13 @@ import {readFile} from 'node:fs/promises';
 const root = new URL('../src/data/', import.meta.url);
 const readJson = async (name) => JSON.parse(await readFile(new URL(name, root), 'utf8'));
 
-const [topicFile, dependencyFile, clusterFile, missionFile, worldFile] = await Promise.all([
+const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculumStandardFile] = await Promise.all([
   readJson('topics.json'),
   readJson('dependencies.json'),
   readJson('clusters.json'),
   readJson('missions.json'),
   readJson('world.json'),
+  readJson('curriculum-standards.json'),
 ]);
 const [marbleTopicFile, marbleDependencyFile] = await Promise.all([
   readJson('marble-topics.json'),
@@ -23,6 +24,8 @@ const regions = worldFile.regions;
 const topicIds = new Set(topics.map((topic) => topic.id));
 const missionIds = new Set(missions.map((mission) => mission.id));
 const regionIds = new Set(regions.map((region) => region.id));
+const curricula = curriculumStandardFile.curricula;
+const standardKeys = new Set(curricula.flatMap((curriculum) => curriculum.topics.map((standard) => standard.key)));
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(message);
@@ -34,12 +37,30 @@ assert(clusterFile.clusterCount === clusters.length, 'clusterCount does not matc
 assert(topicIds.size === topics.length, 'Topic IDs must be unique');
 assert(missionIds.size === missions.length, 'Mission IDs must be unique');
 assert(regionIds.size === regions.length, 'Region IDs must be unique');
+assert(curriculumStandardFile.curriculumCount === curricula.length, 'curriculumCount does not match curricula length');
+assert(standardKeys.size === curricula.reduce((count, curriculum) => count + curriculum.topics.length, 0), 'Curriculum standard keys must be unique');
+
+for (const curriculum of curricula) {
+  assert(curriculum.topicCount === curriculum.topics.length, `Curriculum ${curriculum.slug} topicCount mismatch`);
+  assert(curriculum.textIncluded === false, `Curriculum ${curriculum.slug} must remain codes-only until upstream text rights are reviewed`);
+  assert(Array.isArray(curriculum.implementedGrades) && curriculum.implementedGrades.length > 0, `Curriculum ${curriculum.slug} needs implemented grades`);
+  for (const standard of curriculum.topics) {
+    assert(standard.key.startsWith(`${curriculum.slug}:`), `Standard ${standard.key} must use the curriculum slug`);
+    assert(Array.isArray(standard.data.grades) && standard.data.grades.length > 0, `Standard ${standard.key} needs grades`);
+    assert(['verified', 'provisional'].includes(standard.data.alignmentStatus), `Standard ${standard.key} needs alignment status`);
+  }
+}
 
 for (const topic of topics) {
   assert(/^tw_(math|eng)_g1_/.test(topic.id), `Topic ${topic.id} must use a Growth Planet ID`);
   assert(Array.isArray(topic.evidence) && topic.evidence.length > 0, `Topic ${topic.id} needs evidence`);
   assert(Array.isArray(topic.standards) && topic.standards.length > 0, `Topic ${topic.id} needs standards`);
   assert(typeof topic.assessmentPrompt === 'string' && topic.assessmentPrompt.length > 0, `Topic ${topic.id} needs an assessment prompt`);
+  if (topic.subject === 'Mathematics') {
+    assert(topic.standards.every((key) => standardKeys.has(key)), `Math topic ${topic.id} references an unknown curriculum standard`);
+    assert(topic.standards.some((key) => key.startsWith('tw-108-math:')), `Math topic ${topic.id} needs a Taiwan alignment`);
+    assert(topic.standards.some((key) => key.startsWith('cn-2022-math:')), `Math topic ${topic.id} needs a China alignment`);
+  }
 }
 
 const outgoing = new Map(topics.map((topic) => [topic.id, []]));
@@ -82,6 +103,7 @@ for (const region of regions.filter((region) => !region.comingSoon)) {
 }
 
 console.log(`Taxonomy valid: ${topics.length} topics, ${dependencies.length} dependencies, ${clusters.length} clusters, ${missions.length} missions, DAG confirmed.`);
+console.log(`Curriculum overlays valid: ${curricula.length} frameworks, ${standardKeys.size} standards, Taiwan 108 + China 2022.`);
 
 const marbleTopics = marbleTopicFile.topics;
 const marbleDependencies = marbleDependencyFile.dependencies;

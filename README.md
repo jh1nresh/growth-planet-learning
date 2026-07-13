@@ -45,6 +45,8 @@ Privy 只負責家長 email／Google 登入。v1 不建立錢包、不收集孩�
 
 主技能圖直接使用 [Marble Skill Taxonomy v1](https://github.com/withmarbleapp/os-taxonomy) 的篩選產出資料：保留 Mathematics 與 English，且 `ageRangeEnd <= 12` 的 topics，再保留兩端都存在的 dependency edges。精確 upstream commit、產生方法、歸屬與授權見 `docs/taxonomy-reference.md` 與 `THIRD_PARTY_NOTICES.md`。
 
+本地一年級數學另外以 standards overlay 對齊台灣 108 課綱與中國大陸 2022 課標；兩地共用同一棵能力 DAG，不複製技能節點。資料形狀、來源、編碼政策與尚未完成的在地化邊界見 `docs/curriculum-overlay-tw-cn.md`。
+
 ## v1 邊界
 
 目前只有「位值塔」完成互動教材化，不代表所有 4–12 歲課程都已變成可操作課程。芽芽目前是確定性提示與推薦，不會自由生成題目。雲端跨裝置同步、生成式 AI 導師、付款與社交功能都留待真實孩子測試後再決定。

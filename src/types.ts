@@ -93,3 +93,36 @@ export interface LearningEvidence {
   retryCount: number;
   occurredAt: string;
 }
+
+export type CurriculumAlignmentStatus = 'verified' | 'provisional';
+export type CurriculumCodeOrigin = 'official' | 'internal-locator';
+
+export interface CurriculumStandardData {
+  title: string;
+  subject: Subject;
+  domain: string;
+  gradeBand: string;
+  grades: number[];
+  sourceLocator: string;
+  alignmentStatus: CurriculumAlignmentStatus;
+  codeOrigin: CurriculumCodeOrigin;
+}
+
+export interface CurriculumStandard {
+  key: string;
+  code: string;
+  data: CurriculumStandardData;
+}
+
+export interface CurriculumFramework {
+  slug: string;
+  country: 'TW' | 'CN';
+  name: string;
+  version: string;
+  implementedGrades: number[];
+  sourceUrl: string;
+  textIncluded: boolean;
+  license: string;
+  topicCount: number;
+  topics: CurriculumStandard[];
+}
