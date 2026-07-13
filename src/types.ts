@@ -68,9 +68,28 @@ export interface WorldRegion {
 }
 
 export interface ProgressState {
-  version: 1;
+  version: 2;
   childAlias: string;
   completedMissionIds: string[];
+  topicStates: LearnerTopicState[];
   xp: number;
   updatedAt: string;
+}
+
+export interface LearnerTopicState {
+  topicId: string;
+  mastery: number;
+  attempts: number;
+  correctAttempts: number;
+  hintCount: number;
+  retryCount: number;
+  lastPracticedAt: string | null;
+}
+
+export interface LearningEvidence {
+  topicId: string;
+  correct: boolean;
+  hintCount: number;
+  retryCount: number;
+  occurredAt: string;
 }

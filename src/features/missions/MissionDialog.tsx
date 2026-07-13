@@ -9,7 +9,7 @@ interface MissionDialogProps {
   open: boolean;
   alreadyComplete: boolean;
   onClose: () => void;
-  onComplete: (mission: Mission) => void;
+  onComplete: (mission: Mission, summary: {hintCount: number; retryCount: number}) => void;
 }
 
 export function MissionDialog({mission, open, alreadyComplete, onClose, onComplete}: MissionDialogProps) {
@@ -18,6 +18,7 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
   const [checked, setChecked] = useState(false);
   const [finished, setFinished] = useState(false);
   const [events, setEvents] = useState<TutorEvent[]>([]);
+  const [wasAlreadyComplete, setWasAlreadyComplete] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -26,6 +27,7 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
     setChecked(false);
     setFinished(false);
     setEvents([]);
+    setWasAlreadyComplete(alreadyComplete);
   }, [mission?.id, open]);
 
   if (!mission) return null;
@@ -56,7 +58,10 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
       return;
     }
     if (lastQuestion) {
-      onComplete(mission);
+      onComplete(mission, {
+        hintCount: events.filter((event) => event.type === 'hint-requested').length,
+        retryCount: events.filter((event) => event.type === 'answer-checked' && !event.correct).length,
+      });
       setFinished(true);
       return;
     }
@@ -70,9 +75,9 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
       {finished ? (
         <section className="mission-success" aria-live="polite">
           <CheckCircle aria-hidden="true" weight="fill" />
-          <h3>{alreadyComplete ? '再次完成探索' : '地標已點亮'}</h3>
-          <p>{alreadyComplete ? '複習也會讓能力更穩固。' : `獲得 ${mission.xp} 點成長能量，下一個地標已準備好。`}</p>
-          <button className="primary-button" type="button" onClick={onClose}>回到星球</button>
+          <h3>{wasAlreadyComplete ? '再次完成探索' : '這一課完成了'}</h3>
+          <p>{wasAlreadyComplete ? '複習也會讓能力更穩固。' : `獲得 ${mission.xp} 點成長能量，芽芽正在計算下一課。`}</p>
+          <button className="primary-button" type="button" onClick={onClose}>回到今天</button>
         </section>
       ) : (
         <>

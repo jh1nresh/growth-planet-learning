@@ -1653,6 +1653,627 @@ input:focus-visible {
   }
 }
 
+/* Lesson-first child experience. The planet remains a secondary progress view. */
+.lesson-home {
+  width: min(1180px, calc(100% - 2rem));
+  min-height: calc(100dvh - 78px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  grid-template-rows: auto 1fr;
+  gap: 1.25rem;
+  margin: 0 auto;
+  padding: 1.25rem 0 2rem;
+}
+
+.lesson-subject-switcher {
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.today-lesson-card,
+.learning-snapshot,
+.lesson-workspace,
+.lesson-coach {
+  border: 1px solid var(--border);
+  border-radius: 1.4rem;
+  background: #0d1d2a;
+}
+
+.today-lesson-card {
+  min-height: 560px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 36%);
+  overflow: hidden;
+}
+
+.today-lesson-copy {
+  align-self: center;
+  padding: clamp(1.5rem, 4vw, 3.2rem);
+}
+
+.lesson-eyebrow,
+.lesson-domain,
+.lesson-instruction > span {
+  color: var(--gold-bright);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.lesson-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.lesson-domain {
+  margin: 1.6rem 0 0.45rem;
+  color: #9bb2b9;
+}
+
+.today-lesson-copy h1 {
+  max-width: 13ch;
+  margin: 0;
+  color: #fff4d8;
+  font-family: "Songti TC", "Noto Serif TC", serif;
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.lesson-description {
+  max-width: 40rem;
+  margin: 1.1rem 0 0;
+  color: #c2d0d2;
+  font-size: 1rem;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.recommendation-reason {
+  max-width: 42rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid var(--teal);
+  color: #d9e6e5;
+  background: #102936;
+}
+
+.recommendation-reason > div {
+  min-width: 0;
+}
+
+.recommendation-reason strong {
+  color: #8fd5d8;
+  font-size: 0.76rem;
+}
+
+.recommendation-reason p {
+  margin: 0.22rem 0 0;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.today-primary-button,
+.lesson-back-button,
+.lesson-controls button,
+.learning-snapshot button,
+.place-value-question button {
+  min-height: 44px;
+  border: 1px solid rgba(243, 215, 129, 0.36);
+  color: #fff5dc;
+  background: #173f4b;
+  cursor: pointer;
+  font-weight: 900;
+  transition: transform 140ms var(--ease-out), background-color 160ms ease, border-color 160ms ease;
+}
+
+.today-primary-button {
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.9rem;
+  color: #21303a;
+  background: var(--gold-bright);
+}
+
+.today-primary-button:disabled,
+.lesson-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.today-primary-button:active,
+.lesson-back-button:active,
+.lesson-controls button:not(:disabled):active,
+.learning-snapshot button:active,
+.place-value-question button:active {
+  transform: scale(0.97);
+}
+
+.today-lesson-visual {
+  min-width: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  padding: 2rem 1.2rem;
+  border-left: 1px solid rgba(115, 167, 176, 0.2);
+  background: #102b38;
+}
+
+.today-lesson-visual > strong {
+  color: #fff0c6;
+  font-family: "Songti TC", "Noto Serif TC", serif;
+  font-size: clamp(3.8rem, 8vw, 7rem);
+  line-height: 1;
+}
+
+.today-lesson-visual > span {
+  color: #b8cdd0;
+  font-weight: 800;
+}
+
+.place-value-preview {
+  height: 158px;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.place-value-preview span {
+  width: 28px;
+  height: 150px;
+  display: grid;
+  place-items: end center;
+  padding-bottom: 0.55rem;
+  border: 2px solid #f5d98c;
+  border-radius: 0.45rem;
+  color: #64491f;
+  background: #d9ad52;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.place-value-preview i {
+  width: 26px;
+  height: 26px;
+  border: 2px solid #8be2e5;
+  border-radius: 0.35rem;
+  background: #2f8e9a;
+}
+
+.lesson-loading {
+  min-height: calc(100dvh - 78px);
+  display: grid;
+  place-items: center;
+  color: var(--gold-bright);
+  font-weight: 800;
+}
+
+.learning-snapshot {
+  align-self: stretch;
+  padding: 1.35rem;
+}
+
+.snapshot-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9fc3c8;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.learning-snapshot > strong {
+  display: block;
+  margin-top: 1.2rem;
+  color: var(--gold-bright);
+  font-size: 3.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.learning-snapshot > p {
+  margin: 0.3rem 0 1.4rem;
+  color: #b8c8ca;
+  line-height: 1.55;
+}
+
+.learning-snapshot dl,
+.learning-snapshot dl div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.learning-snapshot dl {
+  gap: 1rem;
+  margin: 0;
+}
+
+.learning-snapshot dt {
+  color: #829ba2;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.learning-snapshot dd {
+  margin: 0;
+  color: #e5ece9;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.learning-snapshot button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.65rem;
+  border-radius: 0.8rem;
+  background: transparent;
+}
+
+.interactive-lesson {
+  width: min(1180px, calc(100% - 2rem));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 1.25rem;
+  margin: 0 auto;
+  padding: 1.25rem 0 2rem;
+}
+
+.lesson-header {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 180px 1fr 90px;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lesson-header > div:nth-child(2) {
+  text-align: center;
+}
+
+.lesson-header span {
+  color: #91aeb5;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.lesson-header h1 {
+  margin: 0.25rem 0 0;
+  color: #fff1ce;
+  font-family: "Songti TC", "Noto Serif TC", serif;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  text-wrap: balance;
+}
+
+.lesson-back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.8rem;
+  background: transparent;
+}
+
+.lesson-total {
+  display: grid;
+  justify-items: center;
+}
+
+.lesson-total strong {
+  color: var(--gold-bright);
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.lesson-workspace {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.lesson-instruction {
+  padding: 1.2rem 1.35rem 0.8rem;
+}
+
+.lesson-instruction h2 {
+  margin: 0.25rem 0 0;
+  color: #fff2d3;
+  font-family: "Songti TC", "Noto Serif TC", serif;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  text-wrap: balance;
+}
+
+.lesson-instruction p {
+  margin: 0.45rem 0 0;
+  color: #b9cbce;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.place-value-canvas {
+  min-height: 390px;
+  touch-action: none;
+}
+
+.place-value-canvas canvas {
+  display: block;
+}
+
+.lesson-canvas-fallback {
+  min-height: 230px;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  color: #d3dfdf;
+  text-align: center;
+}
+
+.lesson-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  padding: 0.9rem 1rem 1.1rem;
+  border-top: 1px solid rgba(115, 167, 176, 0.18);
+}
+
+.lesson-controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem;
+  border-radius: 0.75rem;
+  background: #123241;
+}
+
+.lesson-controls .bundle-button {
+  color: #26343b;
+  background: var(--gold-bright);
+}
+
+.lesson-coach {
+  align-self: start;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  padding: 1.2rem;
+}
+
+.lesson-coach > div:nth-child(2) {
+  min-width: 0;
+}
+
+.lesson-coach > div:nth-child(2) strong {
+  color: #88ced2;
+  font-size: 0.75rem;
+}
+
+.lesson-coach > div:nth-child(2) p {
+  margin: 0.25rem 0 0;
+  color: #e0e9e7;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.lesson-actions,
+.place-value-question,
+.lesson-complete {
+  grid-column: 1 / -1;
+}
+
+.lesson-actions {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.lesson-actions .hint-button,
+.lesson-actions .primary-button,
+.lesson-complete .primary-button {
+  width: 100%;
+  justify-content: center;
+  margin: 0;
+}
+
+.place-value-question {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.55rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.place-value-question legend {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-bottom: 0.65rem;
+  color: #fff0c9;
+  font-weight: 900;
+}
+
+.place-value-question button {
+  border-radius: 0.7rem;
+}
+
+.lesson-complete {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  text-align: center;
+}
+
+.lesson-complete > svg {
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--success);
+}
+
+.lesson-complete p {
+  margin: 0.25rem 0 0.65rem;
+  color: #b7c8c9;
+}
+
+.parent-progress-overlay {
+  position: absolute;
+  z-index: 6;
+  top: 1rem;
+  left: 1rem;
+  width: min(330px, calc(100% - 2rem));
+  padding: 1rem;
+  border: 1px solid rgba(243, 215, 129, 0.35);
+  border-radius: 1rem;
+  color: #f3efe5;
+  background: #141719;
+}
+
+.parent-progress-overlay span,
+.parent-progress-overlay strong {
+  display: block;
+}
+
+.parent-progress-overlay span {
+  color: #a5aaad;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.parent-progress-overlay strong {
+  margin-top: 0.3rem;
+  color: #f3d781;
+}
+
+.parent-progress-overlay p {
+  margin: 0.55rem 0 0;
+  color: #c7cbcc;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .lesson-home,
+  .interactive-lesson {
+    grid-template-columns: 1fr;
+  }
+
+  .today-lesson-card {
+    grid-template-columns: minmax(0, 1fr) 250px;
+  }
+
+  .lesson-coach {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .lesson-first-topbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .lesson-first-topbar .topbar-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .lesson-home,
+  .interactive-lesson {
+    width: min(100% - 1rem, 680px);
+    padding-top: 0.75rem;
+  }
+
+  .today-lesson-card {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .today-lesson-copy {
+    padding: 1.35rem;
+  }
+
+  .today-lesson-copy h1 {
+    font-size: clamp(2.2rem, 14vw, 3.4rem);
+  }
+
+  .today-lesson-visual {
+    min-height: 230px;
+    border-top: 1px solid rgba(115, 167, 176, 0.2);
+    border-left: 0;
+  }
+
+  .place-value-preview {
+    height: 108px;
+  }
+
+  .place-value-preview span {
+    height: 100px;
+  }
+
+  .today-lesson-visual > strong {
+    font-size: 4rem;
+  }
+
+  .lesson-header {
+    grid-template-columns: 44px 1fr 58px;
+  }
+
+  .lesson-back-button {
+    width: 44px;
+    overflow: hidden;
+    color: transparent;
+    padding: 0;
+  }
+
+  .lesson-back-button svg {
+    flex: none;
+    color: #fff5dc;
+  }
+
+  .lesson-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lesson-controls .bundle-button {
+    grid-column: 1 / -1;
+  }
+
+  .place-value-canvas {
+    min-height: 390px;
+    overflow-x: hidden;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .today-primary-button:hover:not(:disabled),
+  .lesson-controls button:hover:not(:disabled),
+  .learning-snapshot button:hover,
+  .place-value-question button:hover {
+    transform: translateY(-2px);
+    border-color: rgba(243, 215, 129, 0.72);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .today-primary-button:hover,
+  .lesson-controls button:hover,
+  .learning-snapshot button:hover,
+  .place-value-question button:hover {
+    transform: none;
+  }
+}
+
 /* Marble taxonomy explorer: graph first, with no world-map metaphor. */
 .taxonomy-app {
   min-height: 100dvh;

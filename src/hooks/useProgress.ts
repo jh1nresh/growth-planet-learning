@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {completeMission as addMission, loadProgress, sanitizeAlias, saveProgress} from '../lib/progress';
-import type {Mission, ProgressState} from '../types';
+import {completeMission as addMission, loadProgress, recordProgressEvidence, sanitizeAlias, saveProgress} from '../lib/progress';
+import type {LessonEvidenceSummary} from '../features/lessons/PlaceValueLesson';
+import type {LearningEvidence, Mission, ProgressState} from '../types';
 
 export function useProgress(namespace: string) {
   const [progress, setProgress] = useState<ProgressState>(() => loadProgress(window.localStorage, namespace));
@@ -18,9 +19,34 @@ export function useProgress(namespace: string) {
     update({...progress, childAlias: sanitizeAlias(alias), updatedAt: new Date().toISOString()});
   }, [progress, update]);
 
-  const completeMission = useCallback((mission: Mission) => {
-    update(addMission(progress, mission.id, mission.xp));
+  const completeMission = useCallback((mission: Mission, summary: LessonEvidenceSummary) => {
+    const occurredAt = new Date().toISOString();
+    const evidence: LearningEvidence[] = mission.topicIds.map((topicId) => ({
+      topicId,
+      correct: true,
+      hintCount: summary.hintCount,
+      retryCount: summary.retryCount,
+      occurredAt,
+    }));
+    update(addMission(progress, mission.id, mission.xp, evidence));
   }, [progress, update]);
 
-  return useMemo(() => ({progress, setChildAlias, completeMission}), [progress, setChildAlias, completeMission]);
+  const completePlaceValueLesson = useCallback((summary: LessonEvidenceSummary) => {
+    const occurredAt = new Date().toISOString();
+    const evidenceFor = (topicId: string): LearningEvidence[] => [0, 1].map(() => ({
+      topicId,
+      correct: true,
+      hintCount: summary.hintCount,
+      retryCount: summary.retryCount,
+      occurredAt,
+    }));
+    let next = addMission(progress, 'mission_bundle_bridge', 40, evidenceFor('tw_math_g1_bundle_ten'));
+    next = recordProgressEvidence(next, evidenceFor('tw_math_g1_tens_ones'));
+    update(next);
+  }, [progress, update]);
+
+  return useMemo(
+    () => ({progress, setChildAlias, completeMission, completePlaceValueLesson}),
+    [progress, setChildAlias, completeMission, completePlaceValueLesson],
+  );
 }
