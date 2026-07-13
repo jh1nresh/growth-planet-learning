@@ -39,6 +39,7 @@ export interface MissionQuestion {
   prompt: string;
   options: string[];
   correctOption: string;
+  hint: string;
   explanation: string;
 }
 

@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
-import {ArrowRight, CheckCircle, Compass, Sparkle} from '@phosphor-icons/react';
+import {ArrowRight, CheckCircle, Compass, Lightbulb, Sparkle} from '@phosphor-icons/react';
 import {Modal} from '../../components/Modal';
+import {appendTutorEvent, getTutorMove, type TutorEvent} from '../../lib/tutor';
 import type {Mission} from '../../types';
 
 interface MissionDialogProps {
@@ -16,6 +17,7 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [events, setEvents] = useState<TutorEvent[]>([]);
 
   useEffect(() => {
     if (!open) return;
@@ -23,12 +25,29 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
     setSelectedOption(null);
     setChecked(false);
     setFinished(false);
+    setEvents([]);
   }, [mission?.id, open]);
 
   if (!mission) return null;
   const question = mission.questions[questionIndex] ?? mission.questions[0];
   const correct = selectedOption === question.correctOption;
   const lastQuestion = questionIndex === mission.questions.length - 1;
+  const tutorMove = getTutorMove(question, events, selectedOption, checked);
+
+  const appendEvent = (event: TutorEvent) => {
+    setEvents((current) => appendTutorEvent(current, event));
+  };
+
+  const checkAnswer = () => {
+    if (!selectedOption) return;
+    appendEvent({
+      type: 'answer-checked',
+      questionId: question.id,
+      correct,
+      occurredAt: new Date().toISOString(),
+    });
+    setChecked(true);
+  };
 
   const continueMission = () => {
     if (!correct) {
@@ -80,6 +99,12 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
                     onClick={() => {
                       setSelectedOption(option);
                       setChecked(false);
+                      appendEvent({
+                        type: 'option-selected',
+                        questionId: question.id,
+                        option,
+                        occurredAt: new Date().toISOString(),
+                      });
                     }}
                   >
                     {option}
@@ -88,16 +113,29 @@ export function MissionDialog({mission, open, alreadyComplete, onClose, onComple
               })}
             </div>
           </fieldset>
-          <div className={`answer-feedback${checked ? ' is-visible' : ''}`} role="status" aria-live="polite">
-            {checked ? (correct ? `答對了！${question.explanation}` : `再試一次。${question.explanation}`) : '選一個答案，再檢查看看。'}
-          </div>
+          <section className={`tutor-guidance tutor-guidance-${tutorMove.kind}`} aria-label="AI 導航員提示">
+            <span className="tutor-avatar" aria-hidden="true">芽</span>
+            <div>
+              <strong>芽芽導航員</strong>
+              <p role="status" aria-live="polite">{tutorMove.message}</p>
+            </div>
+          </section>
+          {!checked ? (
+            <button
+              className="hint-button"
+              type="button"
+              onClick={() => appendEvent({type: 'hint-requested', questionId: question.id, occurredAt: new Date().toISOString()})}
+            >
+              <Lightbulb aria-hidden="true" /> 給我一點提示
+            </button>
+          ) : null}
           {checked ? (
             <button className="primary-button" type="button" onClick={continueMission}>
               {correct ? (lastQuestion ? '完成任務' : '下一題') : '再試一次'}
               <ArrowRight aria-hidden="true" weight="bold" />
             </button>
           ) : (
-            <button className="primary-button" type="button" disabled={!selectedOption} onClick={() => setChecked(true)}>
+            <button className="primary-button" type="button" disabled={!selectedOption} onClick={checkAnswer}>
               檢查答案
             </button>
           )}

@@ -73,6 +73,7 @@ for (const mission of missions) {
   for (const topicId of mission.topicIds) assert(topicIds.has(topicId), `Mission ${mission.id} references ${topicId}`);
   for (const question of mission.questions) {
     assert(question.options.includes(question.correctOption), `Question ${question.id} has an invalid answer`);
+    assert(typeof question.hint === 'string' && question.hint.length > 0, `Question ${question.id} needs a non-answer hint`);
   }
 }
 
