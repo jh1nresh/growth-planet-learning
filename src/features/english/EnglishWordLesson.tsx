@@ -1,5 +1,5 @@
 import {ArrowCounterClockwise, ArrowLeft, ArrowRight, Lightbulb, SealCheck, SpeakerHigh} from '@phosphor-icons/react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {CatIllustration} from './CatIllustration';
 import {
   ENGLISH_WORD,
@@ -31,6 +31,8 @@ const feedbackCopy: Record<EnglishWordFeedback, string> = {
 export function EnglishWordLesson({onBack, onComplete}: EnglishWordLessonProps) {
   const [state, setState] = useState(initialEnglishWordLessonState);
   const complete = state.feedback === 'complete';
+
+  useEffect(() => () => window.speechSynthesis?.cancel(), []);
 
   const listen = () => {
     setState((current) => markEnglishWordHeard(current));
@@ -65,7 +67,7 @@ export function EnglishWordLesson({onBack, onComplete}: EnglishWordLessonProps) 
           <span>英文互動課 · Phonics</span>
           <strong>聽聲音，拼單字</strong>
         </div>
-        <span className="english-step-count">1 / 1</span>
+        <span className="english-step-count">1 / 10</span>
       </header>
 
       <section className="english-lesson-workspace" aria-labelledby="english-lesson-title">

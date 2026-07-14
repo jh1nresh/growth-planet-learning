@@ -1,4 +1,11 @@
-import type {Subject} from '../../types';
+import type {LearnerTopicState, Subject} from '../../types';
+import {
+  ENGLISH_COURSE_TOPIC_IDS,
+  englishCourseScenarios,
+  getEnglishCourseSelection,
+  type EnglishCourseScenario,
+  type EnglishLessonKind,
+} from '../english/englishCourse';
 
 export type LearningSubject = Extract<Subject, 'English' | 'Mathematics' | 'Chinese'>;
 
@@ -7,9 +14,10 @@ export interface LearningStudio {
   label: string;
   studioLabel: string;
   mark: string;
-  topicIds: readonly [string, string, string];
+  topicIds: readonly string[];
   lessonTopicId: string;
   lessonEvidenceTopicIds: readonly string[];
+  lessonKind: EnglishLessonKind | null;
   duration: string;
   domain: string;
   headlineLead: string;
@@ -23,6 +31,9 @@ export interface LearningStudio {
   masteryLabel: string;
   previewLabel: string;
   previewCaption: string;
+  previewScene: string;
+  previewModelText: string;
+  previewTranslation: string;
   pathEyebrow: string;
   pathTitle: string;
   pathDescription: string;
@@ -33,35 +44,53 @@ export interface LearningStudio {
 
 export const LEARNING_SUBJECTS: LearningSubject[] = ['English', 'Mathematics', 'Chinese'];
 
-export const learningStudios: Record<LearningSubject, LearningStudio> = {
-  English: {
+export function getEnglishStudioForScenario(scenario: EnglishCourseScenario): LearningStudio {
+  const wordLesson = scenario.kind === 'word';
+  const speakingLesson = scenario.kind === 'speaking';
+  return {
     subject: 'English',
     label: '英文',
     studioLabel: 'English Studio',
     mark: 'A',
-    topicIds: ['tw_eng_g1_letter_sounds', 'tw_eng_g1_sight_words', 'tw_eng_g1_greetings'],
-    lessonTopicId: 'tw_eng_g1_letter_sounds',
-    lessonEvidenceTopicIds: ['tw_eng_g1_letter_sounds'],
+    topicIds: ENGLISH_COURSE_TOPIC_IDS,
+    lessonTopicId: scenario.primaryTopicId,
+    lessonEvidenceTopicIds: scenario.evidenceTopicIds,
+    lessonKind: scenario.kind,
     duration: '約 4 分鐘',
-    domain: 'PHONICS · 字母與起始音',
-    headlineLead: '聽一聽，',
-    headlineFocus: 'CAT',
-    headlineTail: '拼出',
-    description: '先聽單字，再把三個字母放到正確位置。每一次操作，都會留下孩子真正理解的學習證據。',
-    masteredReason: '你已經把 C、A、T 和聲音接起來了；今天用一輪短複習，讓它變得更穩。',
-    lessonAction: '開始這一課',
-    replayAction: '再練一次',
-    steps: ['聽完整單字 CAT', '依聲音選 C、A、T', '看見字母組成真正的單字'],
-    masteryLabel: '字母與起始音掌握度',
-    previewLabel: '單字 CAT 由 C、A、T 三個字母組成',
-    previewCaption: '聽 /kæt/ · 找字母 · 拼成單字',
+    domain: wordLesson ? 'PHONICS · 字母與起始音' : speakingLesson ? 'SPEAKING · 認識新朋友' : `LIFE ENGLISH · ${scenario.scene}`,
+    headlineLead: wordLesson ? '聽一聽，' : speakingLesson ? '等你說完，' : `${scenario.scene}，`,
+    headlineFocus: wordLesson ? 'CAT' : scenario.modelText.replace(/[.?]$/, ''),
+    headlineTail: wordLesson ? '拼出' : speakingLesson ? '練第一句' : '說出',
+    description: wordLesson
+      ? '先聽單字，再把三個字母放到正確位置。每一次操作，都會留下孩子真正理解的學習證據。'
+      : speakingLesson
+        ? '先辨認 MY、IS，再在一個具體情境中把整句說完。Oshiami 不錄音，也不會在中途打斷。'
+        : `先理解「${scenario.translation}」，再把字詞排成完整句子，最後自己說兩次。Oshiami 不錄音，也不評分發音。`,
+    masteredReason: `你已經完成「${scenario.title}」；今天用一輪短複習，讓這個生活句型更穩。`,
+    lessonAction: wordLesson ? '開始這一課' : '開始情境練習',
+    replayAction: wordLesson ? '再練一次' : '再說一次',
+    steps: wordLesson
+      ? ['聽完整單字 CAT', '依聲音選 C、A、T', '看見字母組成真正的單字']
+      : speakingLesson
+        ? ['聽新朋友的問題', '辨認 MY、IS 並完成句子', '說完、看一個重點、再說一次']
+        : ['聽並理解生活情境', '依序排出完整句子', '自己說完、看重點、再說一次'],
+    masteryLabel: wordLesson ? '字母與起始音掌握度' : '這個英文能力的掌握度',
+    previewLabel: `${scenario.scene}：${scenario.modelText}，意思是${scenario.translation}`,
+    previewCaption: wordLesson ? '聽 /kæt/ · 找字母 · 拼成單字' : '看情境 · 排句子 · 自己說兩次',
+    previewScene: scenario.scene,
+    previewModelText: scenario.modelText,
+    previewTranslation: scenario.translation,
     pathEyebrow: '我的英文成長',
-    pathTitle: '從聲音，走到第一句話',
-    pathDescription: '先把聲音和字母接起來，再辨認常見字並使用第一句招呼。',
-    lessonName: 'CAT 互動課',
-    sourceLabel: '底層架構參考 Marble；三節點路徑由 Oshiami 編排',
+    pathTitle: '十個生活情境，長出十二個英文能力',
+    pathDescription: '從聲音、常見字和第一句話出發，再學會問位置、描述物品與說明喜歡的理由。',
+    lessonName: scenario.title,
+    sourceLabel: 'Marble 能力對應；生活情境與課程序列由 Oshiami 編排',
     sourceUrl: 'https://github.com/withmarbleapp/os-taxonomy',
-  },
+  };
+}
+
+export const learningStudios: Record<LearningSubject, LearningStudio> = {
+  English: getEnglishStudioForScenario(englishCourseScenarios[0]),
   Mathematics: {
     subject: 'Mathematics',
     label: '數學',
@@ -70,6 +99,7 @@ export const learningStudios: Record<LearningSubject, LearningStudio> = {
     topicIds: ['tw_math_g1_count_20', 'tw_math_g1_bundle_ten', 'tw_math_g1_tens_ones'],
     lessonTopicId: 'tw_math_g1_bundle_ten',
     lessonEvidenceTopicIds: ['tw_math_g1_count_20', 'tw_math_g1_bundle_ten', 'tw_math_g1_tens_ones'],
+    lessonKind: null,
     duration: '約 6 分鐘',
     domain: 'PLACE VALUE · 數量與位值',
     headlineLead: '動手操作，',
@@ -83,6 +113,9 @@ export const learningStudios: Record<LearningSubject, LearningStudio> = {
     masteryLabel: '數量與位值掌握度',
     previewLabel: '34 由三個十和四個一組成',
     previewCaption: '數一數 · 綁成十 · 看懂位值',
+    previewScene: '位值塔',
+    previewModelText: '34',
+    previewTranslation: '三個十和四個一',
     pathEyebrow: '我的數學成長',
     pathTitle: '從數量，走到十位與個位',
     pathDescription: '先穩定數量，再親手組成十，最後看懂數字所在位置代表多少。',
@@ -98,6 +131,7 @@ export const learningStudios: Record<LearningSubject, LearningStudio> = {
     topicIds: ['tw_zh_g1_zhuyin_symbols', 'tw_zh_g1_zhuyin_blending', 'tw_zh_g1_zhuyin_word_link'],
     lessonTopicId: 'tw_zh_g1_zhuyin_symbols',
     lessonEvidenceTopicIds: ['tw_zh_g1_zhuyin_symbols'],
+    lessonKind: null,
     duration: '約 4 分鐘',
     domain: 'ZHUYIN · 注音符號與聲調',
     headlineLead: '聽讀音，',
@@ -111,6 +145,9 @@ export const learningStudios: Record<LearningSubject, LearningStudio> = {
     masteryLabel: '注音符號掌握度',
     previewLabel: '米的注音由 ㄇ、ㄧ、ˇ 依序組成',
     previewCaption: '聽讀音 · 排注音 · 找到國字',
+    previewScene: '注音學習室',
+    previewModelText: 'ㄇㄧˇ',
+    previewTranslation: '米',
     pathEyebrow: '我的語文成長',
     pathTitle: '從注音，走到第一個短句',
     pathDescription: '先辨認注音符號，再練習拼讀，最後把讀音、國字和意思連起來。',
@@ -119,3 +156,12 @@ export const learningStudios: Record<LearningSubject, LearningStudio> = {
     sourceUrl: 'https://www.naer.edu.tw/PageSyllabus?fid=177',
   },
 };
+
+export function getLearningStudio(subject: LearningSubject, states: LearnerTopicState[]): LearningStudio {
+  if (subject !== 'English') return learningStudios[subject];
+  const selection = getEnglishCourseSelection(states);
+  return {
+    ...getEnglishStudioForScenario(selection.scenario),
+    lessonTopicId: selection.topic.id,
+  };
+}

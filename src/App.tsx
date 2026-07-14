@@ -3,8 +3,9 @@ import {CheckCircle, Graph, Path, SignIn, UserCircle} from '@phosphor-icons/reac
 import {useAuth} from './features/auth/auth-context';
 import {SubjectLearningPath} from './features/english/EnglishLearningPath';
 import {ParentSkillMap} from './features/english/EnglishParentSkillMap';
+import {getEnglishCourseSelection, getEnglishScenarioForTopic} from './features/english/englishCourse';
 import {LearningStudioHome} from './features/learning/LearningStudioHome';
-import {LEARNING_SUBJECTS, learningStudios, type LearningSubject} from './features/learning/learningStudios';
+import {getLearningStudio, LEARNING_SUBJECTS, learningStudios, type LearningSubject} from './features/learning/learningStudios';
 import {ProfileDialog} from './features/profile/ProfileDialog';
 import {useProgress} from './hooks/useProgress';
 import {dependencies, topics} from './lib/curriculum';
@@ -12,6 +13,8 @@ import {getPlaceValueLessonContent} from './lib/lessonContent';
 import {getRecommendationForTopic, MASTERY_THRESHOLD} from './lib/mastery';
 
 const EnglishWordLesson = lazy(() => import('./features/english/EnglishWordLesson').then((module) => ({default: module.EnglishWordLesson})));
+const EnglishSpeakingLesson = lazy(() => import('./features/english/EnglishSpeakingLesson').then((module) => ({default: module.EnglishSpeakingLesson})));
+const EnglishCardLesson = lazy(() => import('./features/english/EnglishCardLesson').then((module) => ({default: module.EnglishCardLesson})));
 const PlaceValueLesson = lazy(() => import('./features/lessons/PlaceValueLesson').then((module) => ({default: module.PlaceValueLesson})));
 const ChineseZhuyinLesson = lazy(() => import('./features/chinese/ChineseZhuyinLesson').then((module) => ({default: module.ChineseZhuyinLesson})));
 
@@ -20,22 +23,35 @@ type Screen = 'home' | 'lesson' | 'growth' | 'parent';
 export default function App() {
   const auth = useAuth();
   const namespace = auth.userId ? `privy:${auth.userId}` : 'guest';
-  const {progress, setChildAlias, completeEnglishWordLesson, completePlaceValueLesson, completeChineseZhuyinLesson} = useProgress(namespace);
+  const {progress, setChildAlias, completeEnglishWordLesson, completeEnglishSpeakingLesson, completeEnglishCardLesson, completePlaceValueLesson, completeChineseZhuyinLesson} = useProgress(namespace);
   const [profileOpen, setProfileOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>('home');
   const [activeSubject, setActiveSubject] = useState<LearningSubject>('English');
-  const studio = learningStudios[activeSubject];
+  const [lessonTopicId, setLessonTopicId] = useState<string | null>(null);
+  const studio = getLearningStudio(activeSubject, progress.topicStates);
+  const englishSelection = activeSubject === 'English' ? getEnglishCourseSelection(progress.topicStates) : null;
   const stateById = new Map(progress.topicStates.map((state) => [state.topicId, state]));
   const lessonState = stateById.get(studio.lessonTopicId)!;
   const masteredCount = studio.topicIds.filter((topicId) => (stateById.get(topicId)?.mastery ?? 0) >= MASTERY_THRESHOLD).length;
   const progressPercent = Math.round((masteredCount / studio.topicIds.length) * 100);
   const nextTopicId = studio.topicIds.find((topicId) => (stateById.get(topicId)?.mastery ?? 0) < MASTERY_THRESHOLD);
-  const lessonReason = lessonState.mastery >= MASTERY_THRESHOLD
+  const lessonReason = englishSelection?.reason ?? (lessonState.mastery >= MASTERY_THRESHOLD
     ? studio.masteredReason
-    : getRecommendationForTopic(studio.lessonTopicId, progress.topicStates, topics, dependencies).reason;
-  const parentRecommendationReason = nextTopicId
+    : getRecommendationForTopic(studio.lessonTopicId, progress.topicStates, topics, dependencies).reason);
+  const parentRecommendationReason = englishSelection?.reason ?? (nextTopicId
     ? getRecommendationForTopic(nextTopicId, progress.topicStates, topics, dependencies).reason
-    : studio.masteredReason;
+    : studio.masteredReason);
+  const activeLessonScenario = activeSubject === 'English' && lessonTopicId
+    ? getEnglishScenarioForTopic(lessonTopicId)
+    : null;
+  const startLesson = () => {
+    setLessonTopicId(studio.lessonTopicId);
+    setScreen('lesson');
+  };
+  const leaveLesson = () => {
+    setLessonTopicId(null);
+    setScreen('home');
+  };
 
   const skipTarget = screen === 'parent' ? '#parent-skill-graph'
     : screen === 'growth' ? '#growth-path'
@@ -86,32 +102,40 @@ export default function App() {
       ) : null}
 
       {screen === 'home' ? (
-        <LearningStudioHome studio={studio} lessonState={lessonState} recommendationReason={lessonReason} onStartLesson={() => setScreen('lesson')} onShowGrowth={() => setScreen('growth')} />
+        <LearningStudioHome studio={studio} lessonState={lessonState} recommendationReason={lessonReason} onStartLesson={startLesson} onShowGrowth={() => setScreen('growth')} />
       ) : null}
 
       {screen === 'lesson' ? (
         <Suspense fallback={<div className="english-lesson-loading" role="status">正在準備{studio.label}互動課…</div>}>
-          {activeSubject === 'English' ? <EnglishWordLesson onBack={() => setScreen('home')} onComplete={completeEnglishWordLesson} /> : null}
+          {activeSubject === 'English' && activeLessonScenario?.kind === 'word'
+            ? <EnglishWordLesson onBack={leaveLesson} onComplete={completeEnglishWordLesson} />
+            : null}
+          {activeSubject === 'English' && activeLessonScenario?.kind === 'speaking'
+            ? <EnglishSpeakingLesson onBack={leaveLesson} onComplete={completeEnglishSpeakingLesson} />
+            : null}
+          {activeSubject === 'English' && activeLessonScenario?.kind === 'card'
+            ? <EnglishCardLesson scenario={activeLessonScenario} onBack={leaveLesson} onComplete={(summary) => completeEnglishCardLesson(activeLessonScenario, summary)} />
+            : null}
           {activeSubject === 'Mathematics' ? (
             <PlaceValueLesson
-              onBack={() => setScreen('home')}
+              onBack={leaveLesson}
               onComplete={completePlaceValueLesson}
               content={getPlaceValueLessonContent(progress.curriculumFramework)}
               locale={progress.curriculumFramework === 'cn-2022-math' ? 'zh-CN' : 'zh-TW'}
             />
           ) : null}
-          {activeSubject === 'Chinese' ? <ChineseZhuyinLesson onBack={() => setScreen('home')} onComplete={completeChineseZhuyinLesson} /> : null}
+          {activeSubject === 'Chinese' ? <ChineseZhuyinLesson onBack={leaveLesson} onComplete={completeChineseZhuyinLesson} /> : null}
         </Suspense>
       ) : null}
 
       {screen === 'growth' ? (
         <main id="growth-path" className="english-growth-page">
-          <SubjectLearningPath states={progress.topicStates} studio={studio} onStartLesson={() => setScreen('lesson')} />
+          <SubjectLearningPath states={progress.topicStates} studio={studio} onStartLesson={startLesson} />
         </main>
       ) : null}
 
       {screen === 'parent' ? (
-        <ParentSkillMap states={progress.topicStates} studio={studio} recommendationReason={parentRecommendationReason} onStartLesson={() => setScreen('lesson')} />
+        <ParentSkillMap states={progress.topicStates} studio={studio} recommendationReason={parentRecommendationReason} onStartLesson={startLesson} />
       ) : null}
 
       <div className="sr-only" aria-live="polite">{lessonReason}</div>

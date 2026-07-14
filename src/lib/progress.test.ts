@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
+import {createEnglishSpeakingEvidence} from '../features/english/englishSpeakingLessonState';
 import {createEnglishWordEvidence} from '../features/english/englishWordLessonState';
-import {completeMission, emptyProgress, loadProgress, sanitizeAlias, saveProgress, setCurriculumFramework, type StorageLike} from './progress';
+import {completeMission, emptyProgress, loadProgress, recordProgressEvidence, sanitizeAlias, saveProgress, setCurriculumFramework, type StorageLike} from './progress';
 
 class MemoryStorage implements StorageLike {
   private values = new Map<string, string>();
@@ -27,9 +28,9 @@ describe('progress store', () => {
     }));
 
     const migrated = loadProgress(storage, 'guest');
-    expect(migrated.version).toBe(4);
+    expect(migrated.version).toBe(5);
     expect(migrated.curriculumFramework).toBe('tw-108-math');
-    expect(migrated.topicStates).toHaveLength(21);
+    expect(migrated.topicStates).toHaveLength(30);
     expect(migrated.topicStates.find((state) => state.topicId === 'tw_math_g1_count_20')?.mastery).toBeGreaterThanOrEqual(0.7);
   });
 
@@ -41,7 +42,7 @@ describe('progress store', () => {
     storage.setItem('growth-planet:progress:v1:guest', JSON.stringify(version2));
 
     const migrated = loadProgress(storage, 'guest');
-    expect(migrated.version).toBe(4);
+    expect(migrated.version).toBe(5);
     expect(migrated.curriculumFramework).toBe('tw-108-math');
     expect(migrated.topicStates).toEqual(current.topicStates);
   });
@@ -65,7 +66,7 @@ describe('progress store', () => {
     }));
 
     const migrated = loadProgress(storage, 'guest');
-    expect(migrated.version).toBe(4);
+    expect(migrated.version).toBe(5);
     expect(migrated.childAlias).toBe('小星');
     expect(migrated.completedMissionIds).toEqual(['mission_english_first_dock']);
     expect(migrated.xp).toBe(45);
@@ -75,7 +76,30 @@ describe('progress store', () => {
     expect(migrated.topicStates.filter((state) => state.topicId.startsWith('tw_zh_')).every((state) => state.mastery === 0)).toBe(true);
   });
 
-  it('rejects malformed v4 topic state records', () => {
+  it('migrates the three-node v4 English path without losing evidence', () => {
+    const storage = new MemoryStorage();
+    const oldProgress = emptyProgress();
+    oldProgress.topicStates = oldProgress.topicStates
+      .filter((state) => !state.topicId.startsWith('tw_eng_') || [
+        'tw_eng_g1_letter_sounds',
+        'tw_eng_g1_sight_words',
+        'tw_eng_g1_greetings',
+      ].includes(state.topicId))
+      .map((state) => state.topicId === 'tw_eng_g1_sight_words'
+      ? {...state, mastery: 0.72, attempts: 1, correctAttempts: 1, hintCount: 1}
+      : state);
+    storage.setItem('growth-planet:progress:v1:guest', JSON.stringify({...oldProgress, version: 4}));
+
+    const migrated = loadProgress(storage, 'guest');
+    expect(migrated.version).toBe(5);
+    expect(migrated.topicStates).toHaveLength(30);
+    expect(migrated.topicStates.find((state) => state.topicId === 'tw_eng_g1_sight_words'))
+      .toMatchObject({mastery: 0.72, attempts: 1, hintCount: 1});
+    expect(migrated.topicStates.find((state) => state.topicId === 'tw_eng_g1_express_opinion'))
+      .toMatchObject({mastery: 0, attempts: 0});
+  });
+
+  it('rejects malformed v5 topic state records', () => {
     const storage = new MemoryStorage();
     const malformed = emptyProgress();
     malformed.topicStates[0] = {...malformed.topicStates[0], mastery: Number.NaN};
@@ -105,6 +129,21 @@ describe('progress store', () => {
     const replay = completeMission(next, 'mission_english_first_dock', 45, [evidence], time);
     expect(replay.xp).toBe(45);
     expect(replay.topicStates.find((topicState) => topicState.topicId === 'tw_eng_g1_letter_sounds')?.attempts).toBe(2);
+  });
+
+  it('records separate sight-word and greeting evidence for the speaking lesson', () => {
+    const evidence = createEnglishSpeakingEvidence(
+      {hintCount: 0, retryCount: 0},
+      '2026-07-13T00:00:00.000Z',
+    );
+    const next = recordProgressEvidence(emptyProgress(), evidence, new Date('2026-07-13T00:00:00Z'));
+
+    expect(next.topicStates.find((state) => state.topicId === 'tw_eng_g1_sight_words'))
+      .toMatchObject({mastery: 0.72, attempts: 1, correctAttempts: 1});
+    expect(next.topicStates.find((state) => state.topicId === 'tw_eng_g1_greetings'))
+      .toMatchObject({mastery: 0.72, attempts: 1, correctAttempts: 1});
+    expect(next.xp).toBe(0);
+    expect(next.completedMissionIds).toEqual([]);
   });
 
   it('sanitizes the local nickname', () => {

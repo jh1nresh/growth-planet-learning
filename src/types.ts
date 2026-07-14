@@ -68,7 +68,7 @@ export interface WorldRegion {
 }
 
 export interface ProgressState {
-  version: 4;
+  version: 5;
   curriculumFramework: CurriculumFrameworkSlug;
   childAlias: string;
   completedMissionIds: string[];

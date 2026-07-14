@@ -11,7 +11,7 @@ describe('skill constellation layout', () => {
     const english = buildConstellationLayout('English', topics, dependencies, regionIdByTopicId);
 
     expect(math.nodes).toHaveLength(15);
-    expect(english.nodes).toHaveLength(3);
+    expect(english.nodes).toHaveLength(12);
     expect(math.nodes.every((node) => node.topic.subject === 'Mathematics')).toBe(true);
     expect(english.nodes.every((node) => node.topic.subject === 'English')).toBe(true);
   });
@@ -30,6 +30,6 @@ describe('skill constellation layout', () => {
 
   it('maps every visible topic to a mission region', () => {
     const graph = buildConstellationLayout('English', topics, dependencies, regionIdByTopicId);
-    expect(graph.nodes.map((node) => node.regionId)).toEqual(['english_first_dock', 'english_first_dock', 'english_first_dock']);
+    expect(graph.nodes.map((node) => node.regionId)).toEqual(Array(12).fill('english_first_dock'));
   });
 });

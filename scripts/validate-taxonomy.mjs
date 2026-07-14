@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 const root = new URL('../src/data/', import.meta.url);
 const readJson = async (name) => JSON.parse(await readFile(new URL(name, root), 'utf8'));
 
-const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculumStandardFile, chineseStandardFile, lessonContentFile] = await Promise.all([
+const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculumStandardFile, chineseStandardFile, lessonContentFile, englishCourseFile] = await Promise.all([
   readJson('topics.json'),
   readJson('dependencies.json'),
   readJson('clusters.json'),
@@ -12,6 +12,7 @@ const [topicFile, dependencyFile, clusterFile, missionFile, worldFile, curriculu
   readJson('curriculum-standards.json'),
   readJson('chinese-curriculum-standards.json'),
   readJson('lesson-content-overlays.json'),
+  readJson('english-course-overlays.json'),
 ]);
 const [marbleTopicFile, marbleDependencyFile] = await Promise.all([
   readJson('marble-topics.json'),
@@ -190,3 +191,46 @@ function visitMarble(topicId) {
 for (const topicId of marbleTopicIds) visitMarble(topicId);
 
 console.log(`Marble subset valid: ${marbleTopics.length} topics, ${marbleDependencies.length} dependencies, Mathematics + English through age 12, DAG confirmed.`);
+
+const englishTopics = topics.filter((topic) => topic.subject === 'English');
+const englishTopicIds = new Set(englishTopics.map((topic) => topic.id));
+const englishOverlays = englishCourseFile.topicOverlays;
+const englishScenarios = englishCourseFile.scenarios;
+const overlayTopicIds = new Set(englishOverlays.map((overlay) => overlay.topicId));
+const overlayMarbleIds = new Set(englishOverlays.map((overlay) => overlay.marbleTopicId));
+const coveredEnglishTopicIds = new Set(englishScenarios.flatMap((scenario) => scenario.evidenceTopicIds));
+
+assert(englishCourseFile.mappingKind === 'narrowed-local-adaptation', 'English course must remain a narrowed local adaptation');
+assert(englishCourseFile.dependencyModel === 'oshiami-local-course-order', 'English dependencies must be labelled as Oshiami course order');
+assert(englishCourseFile.upstreamCommit === marbleTopicFile.upstreamCommit, 'English course Marble mapping commit drifted from the imported snapshot');
+assert(englishOverlays.length === 12 && englishTopics.length === 12, 'English course needs exactly twelve active topics');
+assert(overlayTopicIds.size === englishOverlays.length, 'English course has duplicate local topic mappings');
+assert(overlayMarbleIds.size === englishOverlays.length, 'English course has duplicate Marble topic mappings');
+assert(englishTopicIds.size === overlayTopicIds.size && [...englishTopicIds].every((topicId) => overlayTopicIds.has(topicId)), 'English course mapping must cover every local English topic');
+for (const overlay of englishOverlays) {
+  const marbleTopic = marbleTopics.find((topic) => topic.id === overlay.marbleTopicId);
+  assert(marbleTopic?.subject === 'English', `English overlay ${overlay.topicId} references a non-English Marble topic`);
+  assert(marbleTopic.name === overlay.marbleTopicName, `English overlay ${overlay.topicId} source name drifted`);
+}
+assert(englishScenarios.length === 10, 'English course needs exactly ten playable scenarios');
+assert(new Set(englishScenarios.map((scenario) => scenario.id)).size === englishScenarios.length, 'English scenario IDs must be unique');
+assert(new Set(englishScenarios.map((scenario) => scenario.primaryTopicId)).size === englishScenarios.length, 'English scenarios need unique primary topics');
+for (const scenario of englishScenarios) {
+  assert(['word', 'speaking', 'card'].includes(scenario.kind), `English scenario ${scenario.id} has an invalid kind`);
+  assert(overlayTopicIds.has(scenario.primaryTopicId), `English scenario ${scenario.id} has an unknown primary topic`);
+  assert(scenario.evidenceTopicIds.includes(scenario.primaryTopicId), `English scenario ${scenario.id} must record its primary topic`);
+  assert(scenario.evidenceTopicIds.every((topicId) => overlayTopicIds.has(topicId)), `English scenario ${scenario.id} has unknown evidence topics`);
+  assert(scenario.intentChoices.includes(scenario.correctIntent), `English scenario ${scenario.id} has an invalid intent answer`);
+  assert(scenario.tokens.length > 0 && new Set(scenario.tokens).size === scenario.tokens.length, `English scenario ${scenario.id} needs unique ordered tokens`);
+  const expectedTiles = [...scenario.tokens, ...scenario.distractors].sort();
+  assert(scenario.tileChoices.length === expectedTiles.length, `English scenario ${scenario.id} tile count drifted`);
+  assert(JSON.stringify([...scenario.tileChoices].sort()) === JSON.stringify(expectedTiles), `English scenario ${scenario.id} tiles must match its tokens and distractors`);
+  assert(JSON.stringify(scenario.tileChoices.slice(0, scenario.tokens.length)) !== JSON.stringify(scenario.tokens), `English scenario ${scenario.id} must not display its answer in order`);
+  if (scenario.kind === 'card') {
+    assert(scenario.intentChoices[0] !== scenario.correctIntent, `English scenario ${scenario.id} must not put the correct intent first`);
+  }
+  assert(scenario.modelText.length > 0 && scenario.reviewPoint.length > 0, `English scenario ${scenario.id} needs visible fallback content`);
+}
+assert([...overlayTopicIds].every((topicId) => coveredEnglishTopicIds.has(topicId)), 'Every English topic needs playable evidence coverage');
+
+console.log(`English course overlay valid: ${englishOverlays.length} Marble-aligned topics, ${englishScenarios.length} playable scenarios, full evidence coverage.`);

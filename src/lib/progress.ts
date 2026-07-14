@@ -15,7 +15,7 @@ const allTopicIds = new Set(allTopics.map((topic) => topic.id));
 
 export function emptyProgress(): ProgressState {
   return {
-    version: 4,
+    version: 5,
     curriculumFramework: 'tw-108-math',
     childAlias: '',
     completedMissionIds: [],
@@ -28,7 +28,7 @@ export function emptyProgress(): ProgressState {
 function isProgress(value: unknown): value is ProgressState {
   if (!value || typeof value !== 'object') return false;
   const candidate = value as Partial<ProgressState>;
-  return candidate.version === 4
+  return candidate.version === 5
     && (candidate.curriculumFramework === 'tw-108-math' || candidate.curriculumFramework === 'cn-2022-math')
     && typeof candidate.childAlias === 'string'
     && Array.isArray(candidate.completedMissionIds)
@@ -99,7 +99,7 @@ function migrateV1(value: unknown): ProgressState | null {
     }
   }
   return {
-    version: 4,
+    version: 5,
     curriculumFramework: 'tw-108-math',
     childAlias: candidate.childAlias,
     completedMissionIds,
@@ -119,7 +119,14 @@ function migrateV2(value: unknown): ProgressState | null {
 function migrateV3(value: unknown): ProgressState | null {
   if (!value || typeof value !== 'object') return null;
   const candidate = value as Record<string, unknown>;
-  if (candidate.version !== 3
+  if (candidate.version !== 3) return null;
+  return migrateV4({...candidate, version: 4});
+}
+
+function migrateV4(value: unknown): ProgressState | null {
+  if (!value || typeof value !== 'object') return null;
+  const candidate = value as Record<string, unknown>;
+  if (candidate.version !== 4
     || (candidate.curriculumFramework !== 'tw-108-math' && candidate.curriculumFramework !== 'cn-2022-math')
     || typeof candidate.childAlias !== 'string'
     || !Array.isArray(candidate.completedMissionIds)
@@ -130,7 +137,7 @@ function migrateV3(value: unknown): ProgressState | null {
   const topicStates = reconcileTopicStates(candidate.topicStates);
   if (!topicStates) return null;
   return {
-    version: 4,
+    version: 5,
     curriculumFramework: candidate.curriculumFramework,
     childAlias: candidate.childAlias,
     completedMissionIds: candidate.completedMissionIds as string[],
@@ -145,7 +152,7 @@ export function loadProgress(storage: StorageLike, namespace: string) {
     const stored = storage.getItem(`${STORAGE_PREFIX}${namespace}`);
     if (!stored) return emptyProgress();
     const parsed: unknown = JSON.parse(stored);
-    return isProgress(parsed) ? parsed : migrateV3(parsed) ?? migrateV2(parsed) ?? migrateV1(parsed) ?? emptyProgress();
+    return isProgress(parsed) ? parsed : migrateV4(parsed) ?? migrateV3(parsed) ?? migrateV2(parsed) ?? migrateV1(parsed) ?? emptyProgress();
   } catch {
     return emptyProgress();
   }

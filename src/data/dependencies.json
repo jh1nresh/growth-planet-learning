@@ -1,6 +1,6 @@
 {
   "version": "tw-v1",
-  "dependencyCount": 20,
+  "dependencyCount": 34,
   "dependencies": [
     { "topicId": "tw_math_g1_count_100", "prerequisiteId": "tw_math_g1_count_20", "strength": "hard", "reason": "必須先穩定掌握較小數量的數序。" },
     { "topicId": "tw_math_g1_bundle_ten", "prerequisiteId": "tw_math_g1_count_20", "strength": "hard", "reason": "要能確認十個單位物件的總數。" },
@@ -19,6 +19,20 @@
     { "topicId": "tw_math_g1_mixed_review", "prerequisiteId": "tw_math_g1_length_compare", "strength": "soft", "reason": "綜合挑戰包含測量情境。" },
     { "topicId": "tw_eng_g1_sight_words", "prerequisiteId": "tw_eng_g1_letter_sounds", "strength": "soft", "reason": "字母音能協助辨認與記憶常見字。" },
     { "topicId": "tw_eng_g1_greetings", "prerequisiteId": "tw_eng_g1_sight_words", "strength": "soft", "reason": "常見字能支撐短句理解。" },
+    { "topicId": "tw_eng_g1_nouns_verbs", "prerequisiteId": "tw_eng_g1_sight_words", "strength": "hard", "reason": "先辨認少量常見字，才能穩定看出短句中的人物、物品與動作。" },
+    { "topicId": "tw_eng_g1_build_sentences", "prerequisiteId": "tw_eng_g1_nouns_verbs", "strength": "hard", "reason": "完整短句需要至少一個人物或物品與一個動作或狀態。" },
+    { "topicId": "tw_eng_g1_pronouns", "prerequisiteId": "tw_eng_g1_nouns_verbs", "strength": "hard", "reason": "先分辨人物與物品，才能理解 I 和 my 在句子中的角色。" },
+    { "topicId": "tw_eng_g1_pronouns", "prerequisiteId": "tw_eng_g1_build_sentences", "strength": "soft", "reason": "完整短句能幫助孩子看見代名詞所在的位置。" },
+    { "topicId": "tw_eng_g1_determiners", "prerequisiteId": "tw_eng_g1_nouns_verbs", "strength": "hard", "reason": "this 和 a 都需要連接一個熟悉的物品字。" },
+    { "topicId": "tw_eng_g1_question_words", "prerequisiteId": "tw_eng_g1_greetings", "strength": "hard", "reason": "先能理解一來一往的短句，才進入主動提問。" },
+    { "topicId": "tw_eng_g1_ask_questions", "prerequisiteId": "tw_eng_g1_question_words", "strength": "hard", "reason": "要先知道 where 詢問位置，才能組成完整位置問題。" },
+    { "topicId": "tw_eng_g1_ask_questions", "prerequisiteId": "tw_eng_g1_greetings", "strength": "soft", "reason": "招呼情境提供輪流說話與等待回答的經驗。" },
+    { "topicId": "tw_eng_g1_prepositions", "prerequisiteId": "tw_eng_g1_question_words", "strength": "hard", "reason": "先理解位置問題，再練習用 under 回答位置。" },
+    { "topicId": "tw_eng_g1_describe", "prerequisiteId": "tw_eng_g1_build_sentences", "strength": "hard", "reason": "加入顏色或大小前，要先能組成一個完整短句。" },
+    { "topicId": "tw_eng_g1_describe", "prerequisiteId": "tw_eng_g1_determiners", "strength": "soft", "reason": "this、a 和 my 能讓物品描述更完整。" },
+    { "topicId": "tw_eng_g1_describe", "prerequisiteId": "tw_eng_g1_prepositions", "strength": "soft", "reason": "位置字能延伸孩子描述物品所在之處。" },
+    { "topicId": "tw_eng_g1_express_opinion", "prerequisiteId": "tw_eng_g1_describe", "strength": "hard", "reason": "先能描述熟悉事物，再加入自己的喜好與理由。" },
+    { "topicId": "tw_eng_g1_express_opinion", "prerequisiteId": "tw_eng_g1_build_sentences", "strength": "soft", "reason": "完整短句是使用 because 連接理由的基礎。" },
     { "topicId": "tw_math_g1_time_hour", "prerequisiteId": "tw_math_g1_count_20", "strength": "soft", "reason": "讀鐘面需要數序與位置概念。" },
     { "topicId": "tw_zh_g1_zhuyin_blending", "prerequisiteId": "tw_zh_g1_zhuyin_symbols", "strength": "hard", "reason": "先辨認基本符號與聲調，才能穩定組合字音。" },
     { "topicId": "tw_zh_g1_zhuyin_word_link", "prerequisiteId": "tw_zh_g1_zhuyin_blending", "strength": "soft", "reason": "拼讀可協助識字，也保留孩子從圖像、口語或整字先認得國字的可能。" }

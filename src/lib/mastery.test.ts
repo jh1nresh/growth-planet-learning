@@ -5,8 +5,8 @@ import {dependencies, topics} from './curriculum';
 describe('mastery engine', () => {
   it('initializes one learner state for every taxonomy topic', () => {
     const states = emptyTopicStates(topics);
-    expect(states).toHaveLength(21);
-    expect(new Set(states.map((state) => state.topicId)).size).toBe(21);
+    expect(states).toHaveLength(30);
+    expect(new Set(states.map((state) => state.topicId)).size).toBe(30);
   });
 
   it('weights correct independent evidence above hinted retries', () => {

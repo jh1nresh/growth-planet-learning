@@ -13,12 +13,32 @@ interface LearningStudioHomeProps {
 
 function StudioPreview({studio}: {studio: LearningStudio}) {
   if (studio.subject === 'English') {
+    if (studio.lessonKind === 'speaking') {
+      return (
+        <div className="english-speaking-preview">
+          <span>{studio.previewScene}</span>
+          <p lang="en">Hello! What&apos;s your name?</p>
+          <strong lang="en">{studio.previewModelText}</strong>
+          <small>不錄音 · 等你說完</small>
+        </div>
+      );
+    }
+    if (studio.lessonKind === 'word') {
+      return (
+        <>
+          <div className="english-home-cat"><CatIllustration /></div>
+          <div className="english-preview-letters" aria-hidden="true"><span>C</span><span>A</span><span>T</span></div>
+          <strong>CAT</strong>
+        </>
+      );
+    }
     return (
-      <>
-        <div className="english-home-cat"><CatIllustration /></div>
-        <div className="english-preview-letters" aria-hidden="true"><span>C</span><span>A</span><span>T</span></div>
-        <strong>CAT</strong>
-      </>
+      <div className="english-scenario-preview">
+        <span>{studio.previewScene}</span>
+        <strong lang="en">{studio.previewModelText}</strong>
+        <p>{studio.previewTranslation}</p>
+        <small>不錄音 · 不做發音評分</small>
+      </div>
     );
   }
 
