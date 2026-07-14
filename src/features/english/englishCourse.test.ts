@@ -53,8 +53,10 @@ describe('English course overlay', () => {
       expect(getEnglishScenarioForTopic(scenario.primaryTopicId)).toBe(scenario);
       expect([...scenario.tileChoices].sort()).toEqual([...scenario.tokens, ...scenario.distractors].sort());
       expect(scenario.tileChoices.slice(0, scenario.tokens.length)).not.toEqual(scenario.tokens);
-      if (scenario.kind === 'card') expect(scenario.intentChoices[0]).not.toBe(scenario.correctIntent);
+      if (scenario.kind === 'card' || scenario.kind === 'room') expect(scenario.intentChoices[0]).not.toBe(scenario.correctIntent);
     }
+
+    expect(getEnglishScenarioForTopic('tw_eng_g1_prepositions')?.kind).toBe('room');
   });
 
   it('uses one prerequisite-aware selection for the next playable situation', () => {

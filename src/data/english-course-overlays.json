@@ -140,7 +140,7 @@
     },
     {
       "id": "english_life_08_under",
-      "kind": "card",
+      "kind": "room",
       "primaryTopicId": "tw_eng_g1_prepositions",
       "evidenceTopicIds": ["tw_eng_g1_prepositions"],
       "scene": "回答位置",

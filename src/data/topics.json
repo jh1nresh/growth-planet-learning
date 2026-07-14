@@ -348,8 +348,8 @@
       "ageRangeStart": 6,
       "ageRangeEnd": 8,
       "centrality": 0.59,
-      "evidence": ["依照圖片選出 under", "把 It is under the chair 排成正確順序"],
-      "assessmentPrompt": "把球放在椅子下面，請孩子選出 on、in 或 under。",
+      "evidence": ["依指令把書包移到椅子的 under 與 on 位置", "把 It is under the chair 排成正確順序"],
+      "assessmentPrompt": "請孩子把書包移到椅子下面與上面做對照，再看著場景排出 It is under the chair。",
       "standards": ["local-tw-eng-g1:GR-05"]
     },
     {

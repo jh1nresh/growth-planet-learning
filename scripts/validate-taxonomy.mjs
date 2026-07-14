@@ -216,7 +216,7 @@ assert(englishScenarios.length === 10, 'English course needs exactly ten playabl
 assert(new Set(englishScenarios.map((scenario) => scenario.id)).size === englishScenarios.length, 'English scenario IDs must be unique');
 assert(new Set(englishScenarios.map((scenario) => scenario.primaryTopicId)).size === englishScenarios.length, 'English scenarios need unique primary topics');
 for (const scenario of englishScenarios) {
-  assert(['word', 'speaking', 'card'].includes(scenario.kind), `English scenario ${scenario.id} has an invalid kind`);
+  assert(['word', 'speaking', 'card', 'room'].includes(scenario.kind), `English scenario ${scenario.id} has an invalid kind`);
   assert(overlayTopicIds.has(scenario.primaryTopicId), `English scenario ${scenario.id} has an unknown primary topic`);
   assert(scenario.evidenceTopicIds.includes(scenario.primaryTopicId), `English scenario ${scenario.id} must record its primary topic`);
   assert(scenario.evidenceTopicIds.every((topicId) => overlayTopicIds.has(topicId)), `English scenario ${scenario.id} has unknown evidence topics`);
@@ -226,11 +226,12 @@ for (const scenario of englishScenarios) {
   assert(scenario.tileChoices.length === expectedTiles.length, `English scenario ${scenario.id} tile count drifted`);
   assert(JSON.stringify([...scenario.tileChoices].sort()) === JSON.stringify(expectedTiles), `English scenario ${scenario.id} tiles must match its tokens and distractors`);
   assert(JSON.stringify(scenario.tileChoices.slice(0, scenario.tokens.length)) !== JSON.stringify(scenario.tokens), `English scenario ${scenario.id} must not display its answer in order`);
-  if (scenario.kind === 'card') {
+  if (scenario.kind === 'card' || scenario.kind === 'room') {
     assert(scenario.intentChoices[0] !== scenario.correctIntent, `English scenario ${scenario.id} must not put the correct intent first`);
   }
   assert(scenario.modelText.length > 0 && scenario.reviewPoint.length > 0, `English scenario ${scenario.id} needs visible fallback content`);
 }
+assert(englishScenarios.filter((scenario) => scenario.kind === 'room').length === 1, 'English course needs exactly one room simulator scenario');
 assert([...overlayTopicIds].every((topicId) => coveredEnglishTopicIds.has(topicId)), 'Every English topic needs playable evidence coverage');
 
 console.log(`English course overlay valid: ${englishOverlays.length} Marble-aligned topics, ${englishScenarios.length} playable scenarios, full evidence coverage.`);

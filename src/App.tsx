@@ -15,6 +15,7 @@ import {getRecommendationForTopic, MASTERY_THRESHOLD} from './lib/mastery';
 const EnglishWordLesson = lazy(() => import('./features/english/EnglishWordLesson').then((module) => ({default: module.EnglishWordLesson})));
 const EnglishSpeakingLesson = lazy(() => import('./features/english/EnglishSpeakingLesson').then((module) => ({default: module.EnglishSpeakingLesson})));
 const EnglishCardLesson = lazy(() => import('./features/english/EnglishCardLesson').then((module) => ({default: module.EnglishCardLesson})));
+const EnglishRoomLesson = lazy(() => import('./features/english/EnglishRoomLesson').then((module) => ({default: module.EnglishRoomLesson})));
 const PlaceValueLesson = lazy(() => import('./features/lessons/PlaceValueLesson').then((module) => ({default: module.PlaceValueLesson})));
 const ChineseZhuyinLesson = lazy(() => import('./features/chinese/ChineseZhuyinLesson').then((module) => ({default: module.ChineseZhuyinLesson})));
 
@@ -115,6 +116,9 @@ export default function App() {
             : null}
           {activeSubject === 'English' && activeLessonScenario?.kind === 'card'
             ? <EnglishCardLesson scenario={activeLessonScenario} onBack={leaveLesson} onComplete={(summary) => completeEnglishCardLesson(activeLessonScenario, summary)} />
+            : null}
+          {activeSubject === 'English' && activeLessonScenario?.kind === 'room'
+            ? <EnglishRoomLesson scenario={activeLessonScenario} onBack={leaveLesson} onComplete={(summary) => completeEnglishCardLesson(activeLessonScenario, summary)} />
             : null}
           {activeSubject === 'Mathematics' ? (
             <PlaceValueLesson

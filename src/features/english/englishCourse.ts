@@ -3,7 +3,7 @@ import {dependencies, topics} from '../../lib/curriculum';
 import {getRecommendation, MASTERY_THRESHOLD} from '../../lib/mastery';
 import type {LearnerTopicState, Topic} from '../../types';
 
-export type EnglishLessonKind = 'word' | 'speaking' | 'card';
+export type EnglishLessonKind = 'word' | 'speaking' | 'card' | 'room';
 
 export interface EnglishTopicOverlay {
   topicId: string;

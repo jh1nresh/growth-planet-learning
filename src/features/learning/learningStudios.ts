@@ -47,6 +47,7 @@ export const LEARNING_SUBJECTS: LearningSubject[] = ['English', 'Mathematics', '
 export function getEnglishStudioForScenario(scenario: EnglishCourseScenario): LearningStudio {
   const wordLesson = scenario.kind === 'word';
   const speakingLesson = scenario.kind === 'speaking';
+  const roomLesson = scenario.kind === 'room';
   return {
     subject: 'English',
     label: '英文',
@@ -57,26 +58,36 @@ export function getEnglishStudioForScenario(scenario: EnglishCourseScenario): Le
     lessonEvidenceTopicIds: scenario.evidenceTopicIds,
     lessonKind: scenario.kind,
     duration: '約 4 分鐘',
-    domain: wordLesson ? 'PHONICS · 字母與起始音' : speakingLesson ? 'SPEAKING · 認識新朋友' : `LIFE ENGLISH · ${scenario.scene}`,
-    headlineLead: wordLesson ? '聽一聽，' : speakingLesson ? '等你說完，' : `${scenario.scene}，`,
-    headlineFocus: wordLesson ? 'CAT' : scenario.modelText.replace(/[.?]$/, ''),
-    headlineTail: wordLesson ? '拼出' : speakingLesson ? '練第一句' : '說出',
+    domain: wordLesson
+      ? 'PHONICS · 字母與起始音'
+      : speakingLesson
+        ? 'SPEAKING · 認識新朋友'
+        : roomLesson ? 'ROOM LAB · 位置介系詞' : `LIFE ENGLISH · ${scenario.scene}`,
+    headlineLead: wordLesson ? '聽一聽，' : speakingLesson ? '等你說完，' : roomLesson ? '移動書包，' : `${scenario.scene}，`,
+    headlineFocus: wordLesson ? 'CAT' : roomLesson ? 'UNDER' : scenario.modelText.replace(/[.?]$/, ''),
+    headlineTail: wordLesson ? '拼出' : speakingLesson ? '練第一句' : roomLesson ? '看懂' : '說出',
     description: wordLesson
       ? '先聽單字，再把三個字母放到正確位置。每一次操作，都會留下孩子真正理解的學習證據。'
       : speakingLesson
         ? '先辨認 MY、IS，再在一個具體情境中把整句說完。Oshiami 不錄音，也不會在中途打斷。'
+        : roomLesson
+          ? '先改變書包的位置，比較 on 與 under，再看著房間排出完整句子。操作結果與英文表達都完成，才留下學習證據。'
         : `先理解「${scenario.translation}」，再把字詞排成完整句子，最後自己說兩次。Oshiami 不錄音，也不評分發音。`,
     masteredReason: `你已經完成「${scenario.title}」；今天用一輪短複習，讓這個生活句型更穩。`,
-    lessonAction: wordLesson ? '開始這一課' : '開始情境練習',
-    replayAction: wordLesson ? '再練一次' : '再說一次',
+    lessonAction: wordLesson ? '開始這一課' : roomLesson ? '開始房間實驗' : '開始情境練習',
+    replayAction: wordLesson ? '再練一次' : roomLesson ? '再做一次實驗' : '再說一次',
     steps: wordLesson
       ? ['聽完整單字 CAT', '依聲音選 C、A、T', '看見字母組成真正的單字']
       : speakingLesson
         ? ['聽新朋友的問題', '辨認 MY、IS 並完成句子', '說完、看一個重點、再說一次']
+        : roomLesson
+          ? ['移動書包，比較 on 與 under', '看著房間排出完整句子', '自己說完、看重點、再說一次']
         : ['聽並理解生活情境', '依序排出完整句子', '自己說完、看重點、再說一次'],
     masteryLabel: wordLesson ? '字母與起始音掌握度' : '這個英文能力的掌握度',
-    previewLabel: `${scenario.scene}：${scenario.modelText}，意思是${scenario.translation}`,
-    previewCaption: wordLesson ? '聽 /kæt/ · 找字母 · 拼成單字' : '看情境 · 排句子 · 自己說兩次',
+    previewLabel: roomLesson ? '移動書包，讓房間與英文一起改變' : `${scenario.scene}：${scenario.modelText}，意思是${scenario.translation}`,
+    previewCaption: wordLesson
+      ? '聽 /kæt/ · 找字母 · 拼成單字'
+      : roomLesson ? '移動位置 · 比較關係 · 說出結果' : '看情境 · 排句子 · 自己說兩次',
     previewScene: scenario.scene,
     previewModelText: scenario.modelText,
     previewTranslation: scenario.translation,
