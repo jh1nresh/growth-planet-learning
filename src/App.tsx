@@ -22,7 +22,7 @@ type Screen = 'home' | 'lesson' | 'growth' | 'parent';
 
 export default function App() {
   const auth = useAuth();
-  const namespace = auth.userId ? `privy:${auth.userId}` : 'guest';
+  const namespace = auth.authenticated && auth.userId ? `privy:${auth.userId}` : 'guest';
   const {progress, setChildAlias, completeEnglishWordLesson, completeEnglishSpeakingLesson, completeEnglishCardLesson, completePlaceValueLesson, completeChineseZhuyinLesson} = useProgress(namespace);
   const [profileOpen, setProfileOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>('home');

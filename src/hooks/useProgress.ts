@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {completeMission as addMission, loadProgress, recordProgressEvidence, sanitizeAlias, saveProgress, setCurriculumFramework as selectCurriculumFramework, type StorageLike} from '../lib/progress';
 import type {LessonEvidenceSummary} from '../features/lessons/PlaceValueLesson';
 import {createPlaceValueEvidence} from '../features/lessons/placeValueEvidence';
@@ -43,15 +43,20 @@ export function useProgress(namespace: string) {
     () => resolveProgressSnapshot(window.localStorage, namespace, storedSnapshot),
     [namespace, storedSnapshot],
   );
+  const snapshotRef = useRef(snapshot);
   const progress = snapshot.progress;
 
   useEffect(() => {
-    setStoredSnapshot((current) => resolveProgressSnapshot(window.localStorage, namespace, current));
+    const current = resolveProgressSnapshot(window.localStorage, namespace, snapshotRef.current);
+    snapshotRef.current = current;
+    setStoredSnapshot(current);
   }, [namespace]);
 
   const update = useCallback((createNext: ProgressUpdate) => {
-    setStoredSnapshot(updateProgressSnapshot(window.localStorage, namespace, storedSnapshot, createNext));
-  }, [namespace, storedSnapshot]);
+    const next = updateProgressSnapshot(window.localStorage, namespace, snapshotRef.current, createNext);
+    snapshotRef.current = next;
+    setStoredSnapshot(next);
+  }, [namespace]);
 
   const setChildAlias = useCallback((alias: string) => {
     update((current) => ({...current, childAlias: sanitizeAlias(alias), updatedAt: new Date().toISOString()}));

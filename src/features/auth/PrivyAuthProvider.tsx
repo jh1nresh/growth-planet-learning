@@ -27,7 +27,7 @@ export default function PrivyAuthProvider({appId, children}: ProviderProps) {
     <PrivyProvider
       appId={appId}
       config={{
-        loginMethods: ['email', 'google'],
+        loginMethods: ['email'],
         appearance: {
           theme: 'dark',
           accentColor: '#f4c95d',
