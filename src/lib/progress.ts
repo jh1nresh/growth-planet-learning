@@ -25,7 +25,7 @@ export function emptyProgress(): ProgressState {
   };
 }
 
-function isProgress(value: unknown): value is ProgressState {
+export function isProgressState(value: unknown): value is ProgressState {
   if (!value || typeof value !== 'object') return false;
   const candidate = value as Partial<ProgressState>;
   return candidate.version === 4
@@ -145,7 +145,7 @@ export function loadProgress(storage: StorageLike, namespace: string) {
     const stored = storage.getItem(`${STORAGE_PREFIX}${namespace}`);
     if (!stored) return emptyProgress();
     const parsed: unknown = JSON.parse(stored);
-    return isProgress(parsed) ? parsed : migrateV3(parsed) ?? migrateV2(parsed) ?? migrateV1(parsed) ?? emptyProgress();
+    return parseProgressState(parsed) ?? emptyProgress();
   } catch {
     return emptyProgress();
   }
@@ -156,7 +156,11 @@ export function saveProgress(storage: StorageLike, namespace: string, progress: 
 }
 
 export function sanitizeAlias(alias: string) {
-  return alias.replace(/[<>\n\r]/g, '').trim().slice(0, 16);
+  return alias.normalize('NFC').replace(/[<>\u0000-\u001f\u007f]/g, '').trim().slice(0, 16);
+}
+
+export function parseProgressState(value: unknown): ProgressState | null {
+  return isProgressState(value) ? value : migrateV3(value) ?? migrateV2(value) ?? migrateV1(value);
 }
 
 export function setCurriculumFramework(progress: ProgressState, curriculumFramework: CurriculumFrameworkSlug, now = new Date()): ProgressState {

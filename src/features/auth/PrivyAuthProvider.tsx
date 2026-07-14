@@ -7,7 +7,7 @@ interface ProviderProps extends PropsWithChildren {
 }
 
 function PrivyBridge({children}: PropsWithChildren) {
-  const {ready, authenticated, user, logout} = usePrivy();
+  const {ready, authenticated, user, logout, getAccessToken} = usePrivy();
   const {login} = useLogin();
   const value = useMemo(() => ({
     ready,
@@ -15,9 +15,10 @@ function PrivyBridge({children}: PropsWithChildren) {
     canLogin: true,
     userId: user?.id ?? null,
     parentEmail: user?.email?.address ?? null,
+    getAccessToken,
     login,
     logout,
-  }), [authenticated, login, logout, ready, user?.email?.address, user?.id]);
+  }), [authenticated, getAccessToken, login, logout, ready, user?.email?.address, user?.id]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

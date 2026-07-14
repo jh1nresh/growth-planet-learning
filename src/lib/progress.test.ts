@@ -109,6 +109,7 @@ describe('progress store', () => {
 
   it('sanitizes the local nickname', () => {
     expect(sanitizeAlias('  <小\n星>  ')).toBe('小星');
+    expect(sanitizeAlias(' e\u0301 ')).toBe('é');
   });
 
   it('switches curriculum content without resetting learner progress', () => {

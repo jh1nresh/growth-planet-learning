@@ -2,10 +2,12 @@
 
 ## Product boundary
 
-- Parents authenticate; children use a nickname-only local profile.
+- Parents authenticate with Privy; children use first-party subprofiles with an alias, allow-listed avatar, and 4-digit PIN. Children never need their own email.
 - Never request a child email, legal name, voice, location, school, or birthday.
 - Guest mode must remain fully playable when Privy is not configured.
-- Progress is device-local in v1. Do not imply cross-device sync.
+- Guest progress remains device-local and must never be uploaded without an explicit import flow.
+- Authenticated child progress may sync through same-origin server APIs. Never expose a Supabase secret to the browser or trust a client-supplied parent ID.
+- A child PIN is only valid on a device previously approved by a verified parent; store only salted hashes and rate-limit attempts.
 - The imported Marble graph remains Mathematics and English only for topics whose `ageRangeEnd` is 12 or below.
 - Chinese Language Arts is a first-party Oshiami curriculum extension. Keep its source locators and never attribute it to Marble.
 

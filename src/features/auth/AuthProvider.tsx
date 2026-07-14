@@ -10,6 +10,7 @@ const guestAuth: AuthState = {
   canLogin: false,
   userId: null,
   parentEmail: null,
+  getAccessToken: async () => null,
   login: () => undefined,
   logout: async () => undefined,
 };

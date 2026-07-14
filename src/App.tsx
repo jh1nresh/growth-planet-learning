@@ -1,4 +1,4 @@
-import {lazy, Suspense, useState} from 'react';
+import {lazy, Suspense, useEffect, useState} from 'react';
 import {CheckCircle, Graph, Path, SignIn, UserCircle} from '@phosphor-icons/react';
 import {useAuth} from './features/auth/auth-context';
 import {SubjectLearningPath} from './features/english/EnglishLearningPath';
@@ -7,6 +7,7 @@ import {LearningStudioHome} from './features/learning/LearningStudioHome';
 import {LEARNING_SUBJECTS, learningStudios, type LearningSubject} from './features/learning/learningStudios';
 import {ProfileDialog} from './features/profile/ProfileDialog';
 import {useProgress} from './hooks/useProgress';
+import {useFamily} from './hooks/useFamily';
 import {dependencies, topics} from './lib/curriculum';
 import {getPlaceValueLessonContent} from './lib/lessonContent';
 import {getRecommendationForTopic, MASTERY_THRESHOLD} from './lib/mastery';
@@ -19,12 +20,17 @@ type Screen = 'home' | 'lesson' | 'growth' | 'parent';
 
 export default function App() {
   const auth = useAuth();
-  const namespace = auth.userId ? `privy:${auth.userId}` : 'guest';
-  const {progress, setChildAlias, completeEnglishWordLesson, completePlaceValueLesson, completeChineseZhuyinLesson} = useProgress(namespace);
+  const family = useFamily(auth);
+  const namespace = family.activeChild ? `child:${family.activeChild.id}` : 'guest';
+  const {progress, syncStatus, retrySync, resolveSyncConflict, setChildAlias, completeEnglishWordLesson, completePlaceValueLesson, completeChineseZhuyinLesson} = useProgress(namespace, family.progressSync);
   const [profileOpen, setProfileOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>('home');
   const [activeSubject, setActiveSubject] = useState<LearningSubject>('English');
   const studio = learningStudios[activeSubject];
+  const profileLabel = family.activeChild?.alias
+    ?? (auth.authenticated ? (family.profiles.length ? '管理孩子' : '建立孩子帳號')
+      : family.profiles.length ? '孩子登入'
+        : auth.canLogin ? '家長登入' : '小小學習者');
   const stateById = new Map(progress.topicStates.map((state) => [state.topicId, state]));
   const lessonState = stateById.get(studio.lessonTopicId)!;
   const masteredCount = studio.topicIds.filter((topicId) => (stateById.get(topicId)?.mastery ?? 0) >= MASTERY_THRESHOLD).length;
@@ -41,6 +47,10 @@ export default function App() {
     : screen === 'growth' ? '#growth-path'
       : screen === 'lesson' ? '#interactive-lesson'
         : '#today-lesson';
+
+  useEffect(() => {
+    setScreen('home');
+  }, [family.activeChild?.id]);
 
   return (
     <div className={`app-shell english-focus-shell subject-${activeSubject.toLowerCase()}`}>
@@ -76,10 +86,16 @@ export default function App() {
             <button className="view-toggle-button" type="button" aria-label={screen === 'parent' ? '孩子首頁' : '家長技能圖'} aria-pressed={screen === 'parent'} onClick={() => setScreen(screen === 'parent' ? 'home' : 'parent')}>
               <Graph aria-hidden="true" /> <span>{screen === 'parent' ? '孩子首頁' : '家長技能圖'}</span>
             </button>
-            <button className="profile-button" type="button" aria-label={progress.childAlias ? `孩子資料：${progress.childAlias}` : '孩子資料與家長登入'} onClick={() => setProfileOpen(true)}>
-              <UserCircle aria-hidden="true" weight="duotone" />
-              <span>{progress.childAlias || (auth.authenticated ? '建立孩子暱稱' : '小小學習者')}</span>
-              {auth.authenticated ? <CheckCircle aria-label="家長已登入" weight="fill" /> : <SignIn aria-label="訪客模式" />}
+            <button
+              className="profile-button"
+              type="button"
+              data-sync-status={family.activeChild ? syncStatus : undefined}
+              aria-label={family.activeChild ? `孩子帳號：${family.activeChild.alias}，${syncStatus}` : profileLabel}
+              onClick={() => setProfileOpen(true)}
+            >
+              {family.activeChild || auth.authenticated ? <UserCircle aria-hidden="true" weight="duotone" /> : <SignIn aria-hidden="true" />}
+              <span>{profileLabel}</span>
+              {family.activeChild ? <CheckCircle aria-label="孩子已登入" weight="fill" /> : auth.authenticated ? <CheckCircle aria-label="家長已登入" weight="fill" /> : null}
             </button>
           </div>
         </header>
@@ -115,7 +131,18 @@ export default function App() {
       ) : null}
 
       <div className="sr-only" aria-live="polite">{lessonReason}</div>
-      <ProfileDialog open={profileOpen} auth={auth} childAlias={progress.childAlias} onClose={() => setProfileOpen(false)} onSaveAlias={setChildAlias} />
+      <ProfileDialog
+        open={profileOpen}
+        auth={auth}
+        family={family}
+        guestAlias={progress.childAlias}
+        syncStatus={syncStatus}
+        onRetrySync={retrySync}
+        onResolveSyncConflict={resolveSyncConflict}
+        onClose={() => setProfileOpen(false)}
+        onSaveGuestAlias={setChildAlias}
+        onChildActivated={() => setScreen('home')}
+      />
     </div>
   );
 }

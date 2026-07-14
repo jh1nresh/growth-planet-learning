@@ -6,6 +6,7 @@ export interface AuthState {
   canLogin: boolean;
   userId: string | null;
   parentEmail: string | null;
+  getAccessToken: () => Promise<string | null>;
   login: () => void;
   logout: () => Promise<void>;
 }

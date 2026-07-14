@@ -13,8 +13,9 @@
 - 「我的成長」只顯示目前學科的三節點 2D 能力路徑
 - 家長技能圖顯示前置關係、掌握度、可觀察證據與下一堂推薦
 - 698 個 12 歲以前數學與英文概念的 Marble 篩選快照仍保留在資料層與進階探索元件
-- 家長登入介面已接好 Privy；未設定 App ID 時維持完整可玩的訪客模式
-- 孩子只需要暱稱，不要求真實姓名或 email
+- 家長透過 Privy 登入；每位孩子使用獨立暱稱、內建頭像與 4 位數 PIN，不要求孩子 email
+- 家長登入過的瀏覽器會成為家庭授權裝置，孩子可直接選帳號並輸入 PIN
+- 家庭後端啟用後，孩子進度依帳號跨授權裝置同步；訪客進度仍只留在本機
 
 ## 本機啟動
 
@@ -27,17 +28,20 @@ npm run dev
 
 ```bash
 npm run check
+npm run test:family-db
 npm audit --audit-level=high
 ```
 
-## 啟用 Privy
+## 啟用家庭帳號
 
 1. 在 Privy 建立 Web App。
 2. 複製 `.env.example` 為 `.env.local`。
-3. 設定 `VITE_PRIVY_APP_ID`，並把正式網域加入 Privy allowed origins。
-4. 重新建置或部署。
+3. 設定 `VITE_PRIVY_APP_ID` 與同值的伺服器端 `PRIVY_APP_ID`，並把正式網域加入 Privy allowed origins。
+4. 建立 Supabase 專案並套用 `supabase/migrations/20260713083000_family_accounts.sql`。
+5. 設定 `SUPABASE_URL`、伺服器專用的 `SUPABASE_SECRET_KEY`，以及至少 32 字元的 `OSHIAMI_SESSION_PEPPER`。
+6. 重新建置或部署。
 
-Privy 只負責家長 email／Google 登入。v1 不建立錢包、不收集孩子 email，學習進度仍只保存在裝置上。
+Privy 只負責家長 email／Google 登入。Oshiami 不替孩子建立 Privy 帳號、不建立錢包，也不收集孩子 email。瀏覽器不會收到 Supabase secret、PIN 雜湊或工作階段雜湊；未設定家庭後端時會安全退回訪客模式。
 
 ## 課程圖
 
@@ -49,4 +53,4 @@ Privy 只負責家長 email／Google 登入。v1 不建立錢包、不收集孩�
 
 ## v1 邊界
 
-目前每科只有一堂起步互動課，不代表全部能力都已完成教材化。芽芽目前是確定性提示與推薦，不會自由生成題目。雲端跨裝置同步、生成式 AI 導師、付款與社交功能都留待真實孩子測試後再決定。
+目前每科只有一堂起步互動課，不代表全部能力都已完成教材化。芽芽目前是確定性提示與推薦，不會自由生成題目。家庭帳號第一版採單一家長、最多 8 位孩子與授權裝置模式；共同家長、教師帳號、生成式 AI 導師、付款與社交功能仍留待真實家庭測試後再決定。
