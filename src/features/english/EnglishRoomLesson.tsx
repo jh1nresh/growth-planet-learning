@@ -10,6 +10,7 @@ import {
   SpeakerHigh,
 } from '@phosphor-icons/react';
 import {useEffect, useRef, useState} from 'react';
+import roomDioramaUrl from '../../assets/english-room-diorama.svg';
 import type {EnglishCourseScenario} from './englishCourse';
 import {
   beginEnglishRoomRepeat,
@@ -169,9 +170,7 @@ export function EnglishRoomLesson({scenario, onBack, onComplete}: EnglishRoomLes
           </div>
 
           <div className="room-simulator-stage" data-position={state.bagPosition} aria-hidden="true">
-            <div className="room-window"><span /></div>
-            <div className="room-shelf"><i /><i /><i /></div>
-            <div className="room-rug" />
+            <img className="room-diorama-art" src={roomDioramaUrl} alt="" />
             <div className="room-chair-anchor">
               <span className="room-zone-label room-zone-on">ON</span>
               <span className="room-zone-label room-zone-under">UNDER</span>
@@ -208,6 +207,18 @@ export function EnglishRoomLesson({scenario, onBack, onComplete}: EnglishRoomLes
                   </button>
                 );
               })}
+              <div className="room-position-coach">
+                <span className="english-coach-mark" aria-hidden="true">芽</span>
+                <p role="status" aria-live="polite" aria-atomic="true">{feedback}</p>
+                <div className="english-feedback-actions room-position-actions">
+                  <button type="button" onClick={() => setState((current) => requestEnglishRoomHint(current, scenario))}>
+                    <Lightbulb aria-hidden="true" /> 給我提示
+                  </button>
+                  <button type="button" className="english-primary-button" onClick={() => setState((current) => checkEnglishRoomPosition(current))}>
+                    檢查位置 <ArrowRight aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
             </fieldset>
           ) : null}
 
@@ -254,20 +265,17 @@ export function EnglishRoomLesson({scenario, onBack, onComplete}: EnglishRoomLes
         </div>
       </section>
 
-      <aside className="english-lesson-feedback" aria-label="芽芽的提示">
-        <span className="english-coach-mark" aria-hidden="true">芽</span>
-        <div><strong>{state.step === 'complete' ? '完成' : '芽芽提示'}</strong><p role="status" aria-live="polite" aria-atomic="true">{feedback}</p></div>
-        <div className="english-feedback-actions">
-          {state.step === 'position' || state.step === 'assemble' ? (
-            <button type="button" onClick={() => setState((current) => requestEnglishRoomHint(current, scenario))}>
-              <Lightbulb aria-hidden="true" /> 給我提示
-            </button>
-          ) : null}
-          {state.step === 'position' ? (
-            <button type="button" className="english-primary-button" onClick={() => setState((current) => checkEnglishRoomPosition(current))}>
-              檢查位置 <ArrowRight aria-hidden="true" />
-            </button>
-          ) : state.step === 'speak' ? (
+      {state.step !== 'position' ? (
+        <aside className="english-lesson-feedback" aria-label="芽芽的提示">
+          <span className="english-coach-mark" aria-hidden="true">芽</span>
+          <div><strong>{state.step === 'complete' ? '完成' : '芽芽提示'}</strong><p role="status" aria-live="polite" aria-atomic="true">{feedback}</p></div>
+          <div className="english-feedback-actions">
+            {state.step === 'assemble' ? (
+              <button type="button" onClick={() => setState((current) => requestEnglishRoomHint(current, scenario))}>
+                <Lightbulb aria-hidden="true" /> 給我提示
+              </button>
+            ) : null}
+            {state.step === 'speak' ? (
             <button type="button" className="english-primary-button" onClick={() => setState((current) => finishEnglishRoomTurn(current))}>
               我說完了 <ArrowRight aria-hidden="true" />
             </button>
@@ -286,9 +294,10 @@ export function EnglishRoomLesson({scenario, onBack, onComplete}: EnglishRoomLes
             <button type="button" className="english-primary-button" onClick={onBack}>
               <SealCheck aria-hidden="true" weight="fill" /> 完成這一課 <ArrowRight aria-hidden="true" />
             </button>
-          ) : null}
-        </div>
-      </aside>
+            ) : null}
+          </div>
+        </aside>
+      ) : null}
     </main>
   );
 }

@@ -46,6 +46,7 @@ describe('EnglishRoomLesson', () => {
 
     const controls = [...document.querySelectorAll<HTMLButtonElement>('button')];
     expect(controls.every((button) => Boolean(button.getAttribute('aria-label') || button.textContent?.trim()))).toBe(true);
+    expect(document.querySelector<HTMLImageElement>('.room-diorama-art')?.alt).toBe('');
     expect(document.querySelector('.room-simulator-stage')?.getAttribute('data-position')).toBe('next-to');
     expect(document.querySelector('.room-position-status strong')?.textContent).toBe('The bag is next to the chair.');
 
@@ -68,7 +69,7 @@ describe('EnglishRoomLesson', () => {
     ));
 
     await click('檢查位置');
-    const feedback = document.querySelector('.english-lesson-feedback [role="status"]');
+    const feedback = document.querySelector('.room-position-coach [role="status"]');
     expect(feedback?.getAttribute('aria-live')).toBe('polite');
     expect(feedback?.getAttribute('aria-atomic')).toBe('true');
     expect(feedback?.textContent).toContain('UNDER 是椅子下面');
