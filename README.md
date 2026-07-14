@@ -37,7 +37,7 @@ npm audit --audit-level=high
 3. 設定 `VITE_PRIVY_APP_ID`，並把正式網域加入 Privy allowed origins。
 4. 重新建置或部署。
 
-Privy 目前只負責家長 email 登入；Google 尚未在 Privy Dashboard 啟用，因此不出現在登入選項。v1 不建立錢包、不收集孩子 email，登入後的學習進度也仍只保存在這台裝置，並以 Privy user ID 分隔。瀏覽器資料不作為證書、付費權益或其他伺服器授權依據；跨裝置與家庭子帳號由 [Issue #15](https://github.com/JhiNResH/growth-planet-learning/issues/15) 獨立追蹤。
+Privy 目前只負責家長 email 登入；Google 尚未在 Privy Dashboard 啟用，因此不出現在登入選項。v1 不建立錢包、不收集孩子 email，登入後的學習進度也仍只保存在這台裝置，並以 Privy user ID 分隔。瀏覽器資料不作為證書、付費權益或其他伺服器授權依據；跨裝置與家庭子帳號仍不在目前 v1 範圍。
 
 ## 課程圖
 
