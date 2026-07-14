@@ -11,25 +11,28 @@ import {useProgress} from './useProgress';
 let root: Root | null = null;
 let renderedProgress: ProgressState | null = null;
 
-function ProgressProbe({namespace, completeOnLayout}: {namespace: string; completeOnLayout: boolean}) {
+function ProgressProbe({namespace, completionCount}: {namespace: string; completionCount: number}) {
   const {progress, completeEnglishSpeakingLesson} = useProgress(namespace);
-  const completedNamespaces = useRef(new Set<string>());
+  const completedNamespaces = useRef(new Map<string, number>());
   renderedProgress = progress;
 
   useLayoutEffect(() => {
-    if (!completeOnLayout || completedNamespaces.current.has(namespace)) return;
-    completedNamespaces.current.add(namespace);
-    completeEnglishSpeakingLesson({hintCount: 0, retryCount: 0});
-  }, [completeEnglishSpeakingLesson, completeOnLayout, namespace]);
+    const completedCount = completedNamespaces.current.get(namespace) ?? 0;
+    if (completedCount >= completionCount) return;
+    completedNamespaces.current.set(namespace, completionCount);
+    for (let index = completedCount; index < completionCount; index += 1) {
+      completeEnglishSpeakingLesson({hintCount: 0, retryCount: 0});
+    }
+  }, [completeEnglishSpeakingLesson, completionCount, namespace]);
 
   return null;
 }
 
-async function renderProbe(namespace: string, completeOnLayout: boolean) {
+async function renderProbe(namespace: string, completionCount: number) {
   await act(async () => {
     root?.render(
       <StrictMode>
-        <ProgressProbe namespace={namespace} completeOnLayout={completeOnLayout} />
+        <ProgressProbe namespace={namespace} completionCount={completionCount} />
       </StrictMode>,
     );
     await Promise.resolve();
@@ -53,22 +56,40 @@ afterEach(async () => {
 });
 
 describe('useProgress namespace transitions', () => {
-  it('uses the destination Privy account when completion runs before passive reconciliation', async () => {
+  it('keeps A, B, and guest progress isolated through account switches', async () => {
     const accountA = {...emptyProgress(), childAlias: '孩子 A', xp: 10};
     const accountB = {...emptyProgress(), childAlias: '孩子 B', xp: 40};
     saveProgress(window.localStorage, 'privy:user-a', accountA);
     saveProgress(window.localStorage, 'privy:user-b', accountB);
     const accountABeforeSwitch = window.localStorage.getItem('growth-planet:progress:v1:privy:user-a');
 
-    await renderProbe('privy:user-a', false);
-    await renderProbe('privy:user-b', true);
+    await renderProbe('privy:user-a', 0);
+    await renderProbe('privy:user-b', 1);
 
-    const finalProgress = renderedProgress as ProgressState | null;
     const storedB = loadProgress(window.localStorage, 'privy:user-b');
-    expect(finalProgress).toMatchObject({childAlias: '孩子 B', xp: 40});
-    expect(finalProgress?.topicStates.find((state) => state.topicId === 'tw_eng_g1_greetings')?.attempts).toBe(1);
     expect(storedB).toMatchObject({childAlias: '孩子 B', xp: 40});
     expect(storedB.topicStates.find((state) => state.topicId === 'tw_eng_g1_greetings')?.attempts).toBe(1);
+
+    await renderProbe('privy:user-a', 0);
+    expect(renderedProgress).toMatchObject({childAlias: '孩子 A', xp: 10});
+    expect((renderedProgress as ProgressState).topicStates.find((state) => state.topicId === 'tw_eng_g1_greetings')?.attempts).toBe(0);
+
+    await renderProbe('guest', 1);
+    const storedGuest = loadProgress(window.localStorage, 'guest');
+    expect(storedGuest).toMatchObject({childAlias: '', xp: 0});
+    expect(storedGuest.topicStates.find((state) => state.topicId === 'tw_eng_g1_greetings')?.attempts).toBe(1);
+
+    await renderProbe('privy:user-b', 1);
+    expect(renderedProgress).toMatchObject({childAlias: '孩子 B', xp: 40});
+    expect((renderedProgress as ProgressState).topicStates.find((state) => state.topicId === 'tw_eng_g1_greetings')?.attempts).toBe(1);
     expect(window.localStorage.getItem('growth-planet:progress:v1:privy:user-a')).toBe(accountABeforeSwitch);
+  });
+
+  it('composes synchronous progress updates without losing evidence', async () => {
+    await renderProbe('guest', 2);
+
+    const storedGuest = loadProgress(window.localStorage, 'guest');
+    expect(storedGuest.topicStates.find((state) => state.topicId === 'tw_eng_g1_greetings')?.attempts).toBe(2);
+    expect(storedGuest.topicStates.find((state) => state.topicId === 'tw_eng_g1_sight_words')?.attempts).toBe(2);
   });
 });

@@ -31,7 +31,7 @@ export function ProfileDialog({open, auth, childAlias, onClose, onSaveAlias}: Pr
         <UserCircle aria-hidden="true" weight="duotone" />
         <div>
           <strong>{auth.authenticated ? '家長帳號已連線' : '訪客模式'}</strong>
-          <span>{auth.authenticated ? auth.parentEmail ?? 'Privy 家長帳號' : '進度只留在這台裝置，不會上傳孩子資料。'}</span>
+          <span>{auth.authenticated ? `${auth.parentEmail ?? 'Privy 家長帳號'} · 進度仍只留在這台裝置` : '進度只留在這台裝置，不會上傳孩子資料。'}</span>
         </div>
       </div>
 
